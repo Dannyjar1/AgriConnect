@@ -1,0 +1,41 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+  <h3 class="text-xl font-semibold mb-4 text-gray-800">¿Qué necesitas?</h3>
+  <p class="text-gray-600 mb-6 text-sm">Describe tu requerimiento y nuestro sistema asignará al mejor productor para ti.</p>
+  <form [formGroup]="needsForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div>
+      <label for="productType" class="block text-sm font-medium text-gray-700">Tipo de Producto</label>
+      <input type="text" id="productType" formControlName="productType" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: Tomates, Papas, Leche">
+      <div *ngIf="needsForm.get('productType')?.invalid && needsForm.get('productType')?.touched" class="text-red-500 text-xs mt-1">
+        El tipo de producto es requerido.
+      </div>
+    </div>
+
+    <div>
+      <label for="quantity" class="block text-sm font-medium text-gray-700">Cantidad Requerida</label>
+      <input type="text" id="quantity" formControlName="quantity" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: 100 kg, 50 litros">
+      <div *ngIf="needsForm.get('quantity')?.invalid && needsForm.get('quantity')?.touched" class="text-red-500 text-xs mt-1">
+        <span *ngIf="needsForm.get('quantity')?.errors?.['required']">La cantidad es requerida.</span>
+        <span *ngIf="needsForm.get('quantity')?.errors?.['pattern']">La cantidad debe ser un número.</span>
+      </div>
+    </div>
+
+    <div>
+      <label for="characteristics" class="block text-sm font-medium text-gray-700">Características Adicionales</label>
+      <textarea id="characteristics" formControlName="characteristics" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: Orgánico, sin pesticidas, tamaño específico"></textarea>
+    </div>
+
+    <div>
+      <label for="certifications" class="block text-sm font-medium text-gray-700">Certificaciones Deseadas</label>
+      <input type="text" id="certifications" formControlName="certifications" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: BPM, GlobalG.A.P.">
+    </div>
+
+    <div>
+      <label for="location" class="block text-sm font-medium text-gray-700">Ubicación Preferida</label>
+      <input type="text" id="location" formControlName="location" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: Pichincha, Guayas">
+    </div>
+
+    <button type="submit" [disabled]="!needsForm.valid" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
+      Buscar Productor
+    </button>
+  </form>
+</div>

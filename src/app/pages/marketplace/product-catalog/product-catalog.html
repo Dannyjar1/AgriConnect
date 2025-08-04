@@ -1,0 +1,6 @@
+<div class="product-catalog-container">
+  <h1 class="catalog-title">Catálogo de Productos</h1>
+  <div class="product-grid">
+    <app-product-card *ngFor="let product of products$ | async" [product]="product"></app-product-card>
+  </div>
+</div>
