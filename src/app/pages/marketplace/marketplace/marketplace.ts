@@ -16,7 +16,7 @@ import { ProductCard } from '../../../shared/components/product-card/product-car
     ProductCard
   ],
   templateUrl: './marketplace.html',
-  styleUrl: './marketplace.scss'
+  styleUrls: ['./marketplace.scss']
 })
 export class Marketplace {
 

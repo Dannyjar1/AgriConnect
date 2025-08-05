@@ -1,41 +1,91 @@
-<div class="bg-white p-6 rounded-lg shadow-md">
-  <h3 class="text-xl font-semibold mb-4 text-gray-800">¿Qué necesitas?</h3>
-  <p class="text-gray-600 mb-6 text-sm">Describe tu requerimiento y nuestro sistema asignará al mejor productor para ti.</p>
-  <form [formGroup]="needsForm" (ngSubmit)="onSubmit()" class="space-y-4">
-    <div>
-      <label for="productType" class="block text-sm font-medium text-gray-700">Tipo de Producto</label>
-      <input type="text" id="productType" formControlName="productType" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: Tomates, Papas, Leche">
-      <div *ngIf="needsForm.get('productType')?.invalid && needsForm.get('productType')?.touched" class="text-red-500 text-xs mt-1">
-        El tipo de producto es requerido.
+<!-- 
+  Estructura HTML del formulario de necesidades. 
+  Utiliza clases descriptivas para ser estilizadas con SCSS y organiza los elementos en tarjetas (boxes).
+-->
+<div class="needs-form-container">
+  
+  <!-- Título Principal -->
+  <div class="header">
+    <span class="material-icons header-icon">storefront</span>
+    <h1>Marketplace Agrícola</h1>
+  </div>
+
+  <!-- Barra de Búsqueda (Placeholder) -->
+  <div class="search-bar-placeholder">
+    <span class="material-icons">search</span>
+    <p>search-bar works!</p>
+  </div>
+
+  <!-- Filtro de Categoría (Placeholder) -->
+  <div class="category-filter-placeholder">
+    <span class="material-icons">filter_list</span>
+    <p>category-filter works!</p>
+  </div>
+
+  <!-- Mensaje Destacado -->
+  <div class="info-box">
+    <span class="material-icons info-icon">lightbulb</span>
+    <p>¿Qué necesitas? Describe tu requerimiento y nuestro sistema asignará al mejor productor para ti.</p>
+  </div>
+
+  <!-- Formulario de Necesidades -->
+  <form class="needs-form">
+    <div class="form-grid">
+      
+      <!-- Campo: Tipo de Producto -->
+      <div class="form-field">
+        <label for="product-type">
+          <span class="material-icons">inventory_2</span>
+          Tipo de Producto
+        </label>
+        <input type="text" id="product-type" placeholder="Ej: Tomates, Maíz, Leche Fresca">
       </div>
-    </div>
 
-    <div>
-      <label for="quantity" class="block text-sm font-medium text-gray-700">Cantidad Requerida</label>
-      <input type="text" id="quantity" formControlName="quantity" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: 100 kg, 50 litros">
-      <div *ngIf="needsForm.get('quantity')?.invalid && needsForm.get('quantity')?.touched" class="text-red-500 text-xs mt-1">
-        <span *ngIf="needsForm.get('quantity')?.errors?.['required']">La cantidad es requerida.</span>
-        <span *ngIf="needsForm.get('quantity')?.errors?.['pattern']">La cantidad debe ser un número.</span>
+      <!-- Campo: Cantidad Requerida -->
+      <div class="form-field">
+        <label for="quantity">
+          <span class="material-icons">scale</span>
+          Cantidad Requerida
+        </label>
+        <input type="text" id="quantity" placeholder="Ej: 100 kg, 50 litros">
       </div>
+
+      <!-- Campo: Características Adicionales -->
+      <div class="form-field full-width">
+        <label for="features">
+          <span class="material-icons">add_notes</span>
+          Características Adicionales
+        </label>
+        <textarea id="features" rows="3" placeholder="Ej: Maduros, sin pesticidas, para salsa"></textarea>
+      </div>
+
+      <!-- Campo: Certificaciones Deseadas -->
+      <div class="form-field">
+        <label for="certifications">
+          <span class="material-icons">verified</span>
+          Certificaciones Deseadas
+        </label>
+        <input type="text" id="certifications" placeholder="Ej: Orgánico, Comercio Justo">
+      </div>
+
+      <!-- Campo: Ubicación Preferida -->
+      <div class="form-field">
+        <label for="location">
+          <span class="material-icons">place</span>
+          Ubicación Preferida
+        </label>
+        <input type="text" id="location" placeholder="Ej: Pichincha, Guayas">
+      </div>
+
     </div>
 
-    <div>
-      <label for="characteristics" class="block text-sm font-medium text-gray-700">Características Adicionales</label>
-      <textarea id="characteristics" formControlName="characteristics" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: Orgánico, sin pesticidas, tamaño específico"></textarea>
+    <!-- Botón de Envío -->
+    <div class="form-actions">
+      <button type="submit" class="submit-btn">
+        <span class="material-icons">send</span>
+        Buscar Productores
+      </button>
     </div>
-
-    <div>
-      <label for="certifications" class="block text-sm font-medium text-gray-700">Certificaciones Deseadas</label>
-      <input type="text" id="certifications" formControlName="certifications" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: BPM, GlobalG.A.P.">
-    </div>
-
-    <div>
-      <label for="location" class="block text-sm font-medium text-gray-700">Ubicación Preferida</label>
-      <input type="text" id="location" formControlName="location" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Ej: Pichincha, Guayas">
-    </div>
-
-    <button type="submit" [disabled]="!needsForm.valid" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
-      Buscar Productor
-    </button>
   </form>
+
 </div>

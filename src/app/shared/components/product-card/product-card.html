@@ -1,11 +1,20 @@
+<!--
+  Este template comprueba si el objeto 'product' existe antes de renderizar.
+  Usa 'product.images[0]' para la imagen principal y muestra una imagen por defecto si el arreglo está vacío.
+  El pipe 'currency' se aplica a 'product.price.perUnit', que es un número, corrigiendo el error.
+-->
 <div class="product-card" *ngIf="product">
-  <img [src]="product.images[0]" alt="{{ product.name }}" class="product-image">
+  <div class="image-container">
+    <img [src]="product.images && product.images.length > 0 ? product.images[0] : defaultImageUrl" 
+         [alt]="product.name" 
+         class="product-image">
+  </div>
   <div class="product-info">
     <p class="product-category">{{ product.category }}</p>
     <h3 class="product-name">{{ product.name }}</h3>
     <div class="product-footer">
       <span class="product-price">{{ product.price.perUnit | currency }}</span>
-      <button class="add-to-cart-btn">Agregar al Carrito</button>
+      <button class="add-to-cart-btn">Agregar</button>
     </div>
   </div>
 </div>

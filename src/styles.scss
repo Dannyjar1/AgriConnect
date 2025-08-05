@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+  Este archivo importa las directivas de Tailwind CSS.
+  Estas directivas son procesadas por PostCSS para generar el CSS de utilidad
+  que se aplicará en toda la aplicación.
+*/
+
+@tailwind base;      // Estilos base y reseteos de navegador.
+@tailwind components; // Clases de componentes de Tailwind.
+@tailwind utilities;  // Clases de utilidad de Tailwind.
+
+/*
+  Aquí también puedes agregar estilos globales personalizados que no dependan de Tailwind.
+*/
