@@ -1,24 +1,58 @@
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-  <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-center text-gray-900">Registrarse</h2>
-    <form [formGroup]="form" (ngSubmit)="register()" class="space-y-6">
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-        <input formControlName="email" type="email" id="email" class="block w-full px-3 py-2 mt-1 text-gray-900 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-        <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="mt-1 text-sm text-red-600">
-          <div *ngIf="form.get('email')?.errors?.['required']">El correo es requerido.</div>
-          <div *ngIf="form.get('email')?.errors?.['email']">Correo inválido.</div>
+<!-- 
+  Estructura HTML para la pantalla de Registro.
+-->
+<div class="register-container">
+  <div class="register-card">
+    
+    <!-- Icono y Título -->
+    <div class="card-header">
+      <div class="icon-wrapper">
+        <span class="material-icons">person_add</span>
+      </div>
+      <h2>Crear Cuenta</h2>
+      <p>Únete a AgriConnect y conecta con el campo</p>
+    </div>
+
+    <!-- Formulario de Registro -->
+    <form class="register-form" (ngSubmit)="register()">
+      
+      <!-- Campo: Correo Electrónico -->
+      <div class="form-field">
+        <label for="email">Correo electrónico</label>
+        <div class="input-wrapper">
+          <span class="material-icons">email</span>
+          <input type="email" id="email" placeholder="tu.correo@ejemplo.com" [(ngModel)]="email" name="email" required>
         </div>
       </div>
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-        <input formControlName="password" type="password" id="password" class="block w-full px-3 py-2 mt-1 text-gray-900 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-        <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="mt-1 text-sm text-red-600">
-          <div *ngIf="form.get('password')?.errors?.['required']">La contraseña es requerida.</div>
-          <div *ngIf="form.get('password')?.errors?.['minLength']">La contraseña debe tener al menos 6 caracteres.</div>
+
+      <!-- Campo: Contraseña -->
+      <div class="form-field">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <span class="material-icons">lock</span>
+          <input type="password" id="password" placeholder="••••••••" [(ngModel)]="password" name="password" required>
         </div>
       </div>
-      <button type="submit" [disabled]="form.invalid" class="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400">Registrarse</button>
+
+      <!-- Campo: Confirmar Contraseña -->
+      <div class="form-field">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <div class="input-wrapper">
+          <span class="material-icons">lock_reset</span>
+          <input type="password" id="confirmPassword" placeholder="••••••••" [(ngModel)]="confirmPassword" name="confirmPassword" required>
+        </div>
+        <p *ngIf="passwordMismatch" class="error-message">Las contraseñas no coinciden.</p>
+      </div>
+
+      <!-- Botón de Registro -->
+      <button type="submit" class="register-btn">Registrarse</button>
+
     </form>
+
+    <!-- Enlaces Secundarios -->
+    <div class="card-footer">
+      <a routerLink="/auth/login" class="footer-link">¿Ya tienes una cuenta? Inicia sesión</a>
+    </div>
+
   </div>
 </div>

@@ -45,14 +45,14 @@
     </div>
 
     <!-- Botón de Inicio de Sesión con Google -->
-    <button type="button" class="google-login-btn">
+    <button type="button" class="google-login-btn" (click)="loginWithGoogle()">
       <img src="assets/icons/google-logo.svg" alt="Google logo" class="google-logo">
       <span>Iniciar sesión con Google</span>
     </button>
 
     <!-- Enlaces Secundarios -->
     <div class="card-footer">
-      <a href="#" class="footer-link">¿Olvidaste tu contraseña?</a>
+      <a routerLink="/auth/forgot-password" class="footer-link">¿Olvidaste tu contraseña?</a>
       <a href="/auth/register" class="footer-link">Crear cuenta</a>
     </div>
 

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { from, of, throwError } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
@@ -41,7 +41,7 @@ export class AuthService {
     );
   }
 
-  signInWithGoogle(): any {
+  loginWithGoogle(): any {
     const provider = new GoogleAuthProvider();
     return from(signInWithPopup(this.auth, provider)).pipe(
       switchMap(({ user }) => {
@@ -69,4 +69,14 @@ export class AuthService {
       })
     );
   }
+
+  sendPasswordResetEmail(email: string): any {
+    return from(sendPasswordResetEmail(this.auth, email)).pipe(
+      catchError(error => {
+        console.error('Firebase password reset error:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }
+

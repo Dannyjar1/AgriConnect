@@ -1,33 +1,38 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
 export class Register {
-  private fb = inject(FormBuilder);
+  email!: string;
+  password!: string;
+  confirmPassword!: string;
+  passwordMismatch: boolean = false;
+
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
-  });
+  async register() {
+    if (this.password !== this.confirmPassword) {
+      this.passwordMismatch = true;
+      return;
+    }
+    this.passwordMismatch = false;
 
-  register() {
-    if (this.form.valid) {
-      const { email, password } = this.form.getRawValue();
-      // Using the null assertion operator '!' because form.valid ensures these are not null
-      this.authService.register(email!, password!).subscribe(() => {
-        this.router.navigate(['/login']);
-      });
+    try {
+      await this.authService.register(this.email, this.password).toPromise();
+      this.router.navigate(['/marketplace']); // Redirigir a /marketplace después de un registro exitoso
+    } catch (error) {
+      console.error('Error during registration:', error);
+      // Aquí podrías mostrar un mensaje de error al usuario
     }
   }
 }
