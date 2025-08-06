@@ -1,11 +1,6 @@
-<!-- AuthHeader condicional - Solo se muestra en rutas específicas -->
+<!-- Header minimalista - Se muestra en todas las rutas excepto marketplace -->
 @if (showHeader()) {
-  <app-auth-header 
-    headline="Conéctate con el campo ecuatoriano"
-    description="Únete a la red más grande de productores y compradores agrícolas del Ecuador. Conectamos directamente el campo con tu mesa."
-    ctaText="Explorar marketplace"
-    [showFeatures]="true"
-    (ctaClicked)="onHeaderCtaClick()">
+  <app-auth-header>
   </app-auth-header>
 }
 

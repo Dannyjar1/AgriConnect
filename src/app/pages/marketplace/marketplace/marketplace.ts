@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import { Observable, combineLatest } from 'rxjs';
@@ -30,6 +31,7 @@ interface SearchForm {
 export class Marketplace implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
 
   // Señales reactivas
   readonly allProducts = signal<Product[]>([]);
@@ -51,7 +53,7 @@ export class Marketplace implements OnInit {
   // Observable para productos filtrados
   readonly filteredProducts$: Observable<Product[]>;
 
-  // Categorías disponibles
+  // Categorías disponibles - Adaptadas al contexto ecuatoriano
   readonly categories = computed(() => {
     const products = this.allProducts();
     const uniqueCategories = [...new Set(products.map(p => p.category))];
@@ -144,5 +146,12 @@ export class Marketplace implements OnInit {
   onClearFilters(): void {
     this.searchForm.reset();
     this.selectedCategory.set('');
+  }
+
+  /**
+   * Navigate to user profile page
+   */
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 }

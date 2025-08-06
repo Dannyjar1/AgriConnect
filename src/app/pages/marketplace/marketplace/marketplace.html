@@ -10,19 +10,35 @@
         <span class="text-2xl font-bold text-agri-green-600 font-epilogue tracking-tight">AgriConnect</span>
       </div>
       
+      <!-- Mobile Profile Icon - Visible on small screens -->
+      <div class="md:hidden">
+        <a (click)="navigateToProfile()" 
+           class="text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer group"
+           role="button"
+           aria-label="Ir a mi perfil"
+           title="Mi Perfil">
+          <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
+            <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
+          </div>
+        </a>
+      </div>
+      
       <!-- Navigation Menu -->
       <nav class="hidden md:flex items-center space-x-8" role="navigation">
-        <a href="#" class="text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue">Home</a>
-        <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Products</a>
-        <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Producers</a>
-        <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">About Us</a>
+        <a href="#" class="text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue">Inicio</a>
+        <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Productos</a>
+        <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Productores</a>
+        <!-- Profile Icon -->
+        <a (click)="navigateToProfile()" 
+           class="text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer group"
+           role="button"
+           aria-label="Ir a mi perfil"
+           title="Mi Perfil">
+          <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
+            <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
+          </div>
+        </a>
       </nav>
-      
-      <!-- Auth Buttons -->
-      <div class="hidden sm:flex items-center space-x-3">
-        <button class="btn-secondary">Log In</button>
-        <button class="btn-primary">Sign Up</button>
-      </div>
     </div>
   </header>
 
@@ -33,10 +49,10 @@
     <section class="py-16 lg:py-24 text-center">
       <div class="max-w-4xl mx-auto">
         <h1 class="text-4xl lg:text-6xl font-black text-gray-900 mb-6 font-epilogue leading-tight">
-          <span class="text-gradient-agri">Find Fresh</span> Local Produce
+          <span class="text-gradient-agri">Encuentra Productos</span> Frescos Locales
         </h1>
         <p class="text-xl lg:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-          Connect directly with local farmers and get the freshest produce delivered to your door
+          Conéctate directamente con productores locales y recibe los productos más frescos en tu puerta
         </p>
         
         <!-- Primary Search Bar -->
@@ -47,9 +63,9 @@
               <input 
                 type="text" 
                 formControlName="searchTerm"
-                placeholder="Search for fresh fruits, vegetables, dairy..."
+                placeholder="Busca frutas frescas, vegetales, lácteos..."
                 class="w-full pl-16 pr-6 py-6 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-agri-green-100 focus:border-agri-green-500 transition-all duration-300 bg-white shadow-lg"
-                aria-label="Search products">
+                aria-label="Buscar productos">
             </div>
           </form>
         </div>
@@ -62,9 +78,9 @@
               <input 
                 type="text" 
                 formControlName="customNeed"
-                placeholder="Need: 5kg organic tomatoes, pesticide-free vegetables..."
+                placeholder="Necesito: 5kg tomates orgánicos, vegetales sin pesticidas..."
                 class="w-full pl-16 pr-20 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-agri-green-100 focus:border-agri-green-500 transition-all bg-white italic placeholder-gray-400"
-                aria-label="Describe your specific needs">
+                aria-label="Describe tus necesidades específicas">
               <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-agri-green-600 hover:bg-agri-green-700 text-white w-12 h-12 rounded-lg transition-all hover:scale-105">
                 <span class="material-icons">send</span>
               </button>
@@ -97,16 +113,16 @@
     <section class="py-12">
       <div class="max-w-6xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold text-gray-900 mb-4 font-epilogue">Suggested Products Near You</h2>
+          <h2 class="text-4xl font-bold text-gray-900 mb-4 font-epilogue">Productos Sugeridos Cerca de Ti</h2>
           <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            Fresh produce from local farmers in your area
+            Productos frescos de productores locales en tu zona
           </p>
         </div>
         
         @if (isLoading()) {
           <div class="text-center py-16">
             <div class="w-12 h-12 border-4 border-gray-200 border-t-agri-green-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-xl text-gray-600">Finding fresh products for you...</p>
+            <p class="text-xl text-gray-600">Buscando productos frescos para ti...</p>
           </div>
         }
         
@@ -145,7 +161,7 @@
                       </div>
                       <button class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-all hover:-translate-y-0.5 flex items-center space-x-2 group-hover:shadow-lg">
                         <span class="material-icons text-lg">add_shopping_cart</span>
-                        <span>Add to Cart</span>
+                        <span>Agregar al Carrito</span>
                       </button>
                     </div>
                   </div>
@@ -154,12 +170,12 @@
             } @else {
               <div class="col-span-full text-center py-20">
                 <div class="text-8xl mb-8 opacity-60">🌱</div>
-                <h3 class="text-2xl font-bold text-gray-700 mb-4 font-epilogue">No products found</h3>
+                <h3 class="text-2xl font-bold text-gray-700 mb-4 font-epilogue">No se encontraron productos</h3>
                 <p class="text-gray-600 mb-8 max-w-md mx-auto">
-                  Try adjusting your search criteria or browse our suggested categories
+                  Prueba ajustando tus criterios de búsqueda o navega por nuestras categorías sugeridas
                 </p>
                 <button (click)="onClearFilters()" class="btn-primary">
-                  View All Products
+                  Ver Todos los Productos
                 </button>
               </div>
             }

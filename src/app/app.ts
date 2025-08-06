@@ -21,8 +21,8 @@ export class App implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly destroy$ = new Subject<void>();
 
-  // Rutas donde NO se debe mostrar el header
-  private readonly hiddenHeaderRoutes = ['/', '/auth/login', '/auth/register', '/auth/forgot-password'];
+  // Rutas donde NO se debe mostrar el header (marketplace requiere vista más limpia)
+  private readonly hiddenHeaderRoutes = ['/marketplace' , '/profile'];
 
   ngOnInit(): void {
     // Escuchar cambios de ruta para actualizar la visibilidad del header
@@ -51,15 +51,10 @@ export class App implements OnInit, OnDestroy {
     // Normalizar la URL para comparación
     const normalizedUrl = url === '' ? '/' : url;
     
-    const shouldHideHeader = this.hiddenHeaderRoutes.some(route => {
-      if (route === '/') {
-        // Para la ruta raíz, hacer coincidencia exacta
-        return normalizedUrl === '/' || normalizedUrl === '';
-      } else {
-        // Para otras rutas, usar startsWith
-        return normalizedUrl.startsWith(route);
-      }
-    });
+    // Ocultar header solo en marketplace para mantener diseño limpio
+    const shouldHideHeader = this.hiddenHeaderRoutes.some(route => 
+      normalizedUrl.startsWith(route)
+    );
     
     this.showHeader.set(!shouldHideHeader);
   }
