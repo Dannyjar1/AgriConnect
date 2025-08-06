@@ -1,13 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Product } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-
-  private products: Product[] = [
+  
+  // Signal para productos reactivos
+  readonly products = signal<Product[]>([]);
+  
+  // BehaviorSubject para compatibilidad con observables
+  private readonly productsSubject = new BehaviorSubject<Product[]>([]);
+  
+  private readonly mockProducts: Product[] = [
     {
       id: '1',
       producerId: 'prod-abc',
@@ -98,8 +104,42 @@ export class ProductService {
     }
   ];
 
+  constructor() {
+    this.initializeProducts();
+  }
+
+  private initializeProducts(): void {
+    this.products.set(this.mockProducts);
+    this.productsSubject.next(this.mockProducts);
+  }
+
   getProducts(): Observable<Product[]> {
-    return of(this.products);
+    return this.productsSubject.asObservable();
+  }
+
+  getProductsSignal() {
+    return this.products;
+  }
+
+  getProductById(id: string): Observable<Product | undefined> {
+    const product = this.mockProducts.find(p => p.id === id);
+    return of(product);
+  }
+
+  searchProducts(searchTerm: string): Observable<Product[]> {
+    const filtered = this.mockProducts.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return of(filtered);
+  }
+
+  filterByCategory(category: string): Observable<Product[]> {
+    const filtered = this.mockProducts.filter(product =>
+      product.category.toLowerCase() === category.toLowerCase()
+    );
+    return of(filtered);
   }
 
 }

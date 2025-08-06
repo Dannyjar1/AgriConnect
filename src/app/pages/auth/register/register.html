@@ -3,32 +3,36 @@
   Professional validation with comprehensive error handling
   Using Angular 20 Reactive Forms with custom validators
 -->
-<div class="min-h-screen bg-gradient-agri flex items-center justify-center p-4 sm:p-6 lg:p-8">
+
+<!-- Main Registration Section -->
+<main class="min-h-screen bg-gradient-agri flex items-center justify-center p-4 sm:p-6 lg:p-8">
   <div class="w-full max-w-lg">
-    <!-- Register Card -->
-    <div class="card bg-white p-8 sm:p-10 shadow-2xl">
+    <!-- Register Card with Enhanced Styling -->
+    <div class="card bg-white p-8 sm:p-10 shadow-2xl shadow-auth-card 
+                transform-auth-hover backdrop-blur-premium">
       
       <!-- Header Section -->
       <div class="text-center mb-8">
         <!-- Logo/Icon Circle -->
-        <div class="mx-auto w-20 h-20 bg-agri-green-100 rounded-full flex items-center justify-center mb-6 shadow-lg">
+        <div class="mx-auto w-20 h-20 bg-agri-green-100 rounded-full flex items-center justify-center mb-6 shadow-lg
+                    animate-fade-in-scale">
           <svg class="w-10 h-10 text-agri-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
           </svg>
         </div>
         
         <!-- Title and Subtitle -->
-        <h1 class="font-epilogue text-3xl font-bold text-gray-900 mb-2">
+        <h1 class="font-epilogue text-3xl font-bold text-gray-900 mb-2 animate-slide-up">
           Crear Cuenta
         </h1>
         <p class="font-noto-sans text-gray-600 text-base">
-          Únete a AgriConnect y conecta con el campo
+          Completa tus datos para unirte a nuestra comunidad agrícola
         </p>
       </div>
 
       <!-- Global Error Message -->
       @if (errorMessage()) {
-        <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
+        <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3 animate-slide-up">
           <svg class="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
@@ -56,9 +60,9 @@
               type="text" 
               id="fullName" 
               formControlName="fullName"
-              [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans ' + 
-                       (isFieldValid('fullName') ? 'border-green-300 focus:border-green-500 focus:ring-green-500/10' : '') +
-                       (isFieldInvalid('fullName') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : '')"
+              [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans focus-ring-agri ' + 
+                       (isFieldValid('fullName') ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
+                       (isFieldInvalid('fullName') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')"
               placeholder="Juan Pérez García"
               autocomplete="name">
             
@@ -99,9 +103,9 @@
               id="phone" 
               formControlName="phone"
               (input)="formatPhoneNumber($event)"
-              [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans ' + 
-                       (isFieldValid('phone') ? 'border-green-300 focus:border-green-500 focus:ring-green-500/10' : '') +
-                       (isFieldInvalid('phone') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : '')"
+              [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans focus-ring-agri ' + 
+                       (isFieldValid('phone') ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
+                       (isFieldInvalid('phone') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')"
               placeholder="0991234567"
               autocomplete="tel">
             
@@ -141,9 +145,9 @@
               type="email" 
               id="email" 
               formControlName="email"
-              [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans ' + 
-                       (isFieldValid('email') ? 'border-green-300 focus:border-green-500 focus:ring-green-500/10' : '') +
-                       (isFieldInvalid('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : '')"
+              [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans focus-ring-agri ' + 
+                       (isFieldValid('email') ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
+                       (isFieldInvalid('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')"
               placeholder="tu.correo@ejemplo.com"
               autocomplete="email">
             
@@ -182,9 +186,9 @@
             <select 
               id="userType" 
               formControlName="userType"
-              [class]="'input-field pl-12 pr-10 py-3.5 w-full text-gray-900 font-noto-sans appearance-none bg-white ' + 
-                       (isFieldValid('userType') ? 'border-green-300 focus:border-green-500 focus:ring-green-500/10' : '') +
-                       (isFieldInvalid('userType') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : '')">
+              [class]="'input-field pl-12 pr-10 py-3.5 w-full text-gray-900 font-noto-sans appearance-none bg-white focus-ring-agri ' + 
+                       (isFieldValid('userType') ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
+                       (isFieldInvalid('userType') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')">
               <option value="" disabled class="text-gray-500">Selecciona un tipo</option>
               @for (option of userTypeOptions; track option.value) {
                 <option [value]="option.value" class="text-gray-900">{{ option.label }}</option>
@@ -233,9 +237,9 @@
                 type="password" 
                 id="password" 
                 formControlName="password"
-                [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans ' + 
-                         (isFieldValid('password') ? 'border-green-300 focus:border-green-500 focus:ring-green-500/10' : '') +
-                         (isFieldInvalid('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : '')"
+                [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans focus-ring-agri ' + 
+                         (isFieldValid('password') ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
+                         (isFieldInvalid('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')"
                 placeholder="••••••••"
                 autocomplete="new-password">
               
@@ -294,9 +298,9 @@
                 type="password" 
                 id="confirmPassword" 
                 formControlName="confirmPassword"
-                [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans ' + 
-                         (isFieldValid('confirmPassword') && !hasPasswordMismatch() ? 'border-green-300 focus:border-green-500 focus:ring-green-500/10' : '') +
-                         (isFieldInvalid('confirmPassword') || hasPasswordMismatch() ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : '')"
+                [class]="'input-field pl-12 pr-4 py-3.5 w-full text-gray-900 placeholder-gray-500 font-noto-sans focus-ring-agri ' + 
+                         (isFieldValid('confirmPassword') && !hasPasswordMismatch() ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
+                         (isFieldInvalid('confirmPassword') || hasPasswordMismatch() ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')"
                 placeholder="••••••••"
                 autocomplete="new-password">
               
@@ -341,7 +345,7 @@
             [disabled]="registerForm.invalid || isLoading()"
             class="btn-primary w-full py-3.5 text-base font-semibold font-noto-sans
                    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-                   focus:ring-4 focus:ring-agri-green-500/20 relative">
+                   focus-ring-agri relative transform-auth-hover">
             
             @if (isLoading()) {
               <span class="flex items-center justify-center">
@@ -367,11 +371,11 @@
       <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
         <p class="text-sm text-gray-600 font-noto-sans text-center">
           Al crear una cuenta, aceptas nuestros 
-          <a href="/terms" class="text-agri-green-600 hover:text-agri-green-700 font-medium hover:underline">
+          <a href="/terms" class="text-agri-green-600 hover:text-agri-green-700 font-medium hover:underline focus-ring-agri">
             Términos de Servicio
           </a>
           y 
-          <a href="/privacy" class="text-agri-green-600 hover:text-agri-green-700 font-medium hover:underline">
+          <a href="/privacy" class="text-agri-green-600 hover:text-agri-green-700 font-medium hover:underline focus-ring-agri">
             Política de Privacidad
           </a>
         </p>
@@ -384,8 +388,7 @@
             routerLink="/auth/login" 
             class="text-sm font-medium text-agri-green-600 hover:text-agri-green-700 
                    transition-colors duration-200 font-noto-sans
-                   hover:underline focus:outline-none focus:ring-2 focus:ring-agri-green-500/20 
-                   focus:rounded px-2 py-1">
+                   hover:underline focus-ring-agri focus:rounded px-2 py-1">
             ¿Ya tienes una cuenta? Inicia sesión
           </a>
         </div>
@@ -397,10 +400,10 @@
     <div class="mt-6 text-center">
       <p class="text-sm text-gray-600 font-noto-sans">
         ¿Necesitas ayuda? 
-        <a href="/support" class="text-agri-green-600 hover:text-agri-green-700 font-medium hover:underline">
+        <a href="/support" class="text-agri-green-600 hover:text-agri-green-700 font-medium hover:underline focus-ring-agri">
           Contacta nuestro soporte
         </a>
       </p>
     </div>
   </div>
-</div>
+</main>

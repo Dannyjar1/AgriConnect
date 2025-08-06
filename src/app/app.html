@@ -1,1 +1,18 @@
-<router-outlet />
+<!-- AuthHeader condicional - Solo se muestra en rutas específicas -->
+@if (showHeader()) {
+  <app-auth-header 
+    headline="Conéctate con el campo ecuatoriano"
+    description="Únete a la red más grande de productores y compradores agrícolas del Ecuador. Conectamos directamente el campo con tu mesa."
+    ctaText="Explorar marketplace"
+    [showFeatures]="true"
+    (ctaClicked)="onHeaderCtaClick()">
+  </app-auth-header>
+}
+
+<!-- Contenido principal de la aplicación -->
+<main class="min-h-screen" [class.pt-0]="!showHeader()">
+  <router-outlet />
+</main>
+
+<!-- Footer global - Siempre visible -->
+<app-footer></app-footer>

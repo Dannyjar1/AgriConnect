@@ -31,7 +31,6 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'auth',
-    pathMatch: 'full'
+    loadComponent: () => import('./pages/welcome/welcome').then(m => m.WelcomeComponent)
   }
 ];
