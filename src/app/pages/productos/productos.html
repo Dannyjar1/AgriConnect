@@ -1,349 +1,203 @@
-<!-- Header del componente -->
-<div class="productos-header bg-gradient-to-r from-green-600 to-green-800 text-white py-8 px-4">
-  <div class="max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold mb-2">Catálogo de Productos</h1>
-    <p class="text-green-100">Descubre productos frescos y locales organizados por categorías</p>
-    
-    <!-- Estadísticas rápidas -->
-    <div class="flex flex-wrap gap-6 mt-6 text-sm">
-      <div class="flex items-center gap-2">
-        <span class="bg-white/20 px-2 py-1 rounded">📦</span>
-        <span>{{ stats().totalProducts }} productos</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="bg-white/20 px-2 py-1 rounded">🏷️</span>
-        <span>{{ stats().categoriesCount }} categorías</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="bg-white/20 px-2 py-1 rounded">💰</span>
-        <span>Precio promedio: ${{ stats().avgPrice }}</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Filtros y controles -->
-<div class="bg-white shadow-sm border-b py-4 px-4 sticky top-0 z-10">
-  <div class="max-w-6xl mx-auto">
-    <form [formGroup]="filterForm" class="space-y-4">
-      
-      <!-- Barra de búsqueda principal -->
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="flex-1">
-          <input 
-            type="text" 
-            formControlName="searchTerm"
-            placeholder="Buscar productos por nombre, categoría o descripción..."
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-        </div>
-        
-        <!-- Controles de vista -->
-        <div class="flex items-center gap-2">
-          <button 
-            type="button"
-            (click)="onViewModeChange('grid')"
-            [class.bg-green-500]="viewMode() === 'grid'"
-            [class.text-white]="viewMode() === 'grid'"
-            class="px-3 py-2 border rounded-lg hover:bg-gray-50 transition-colors">
-            🔲 Grid
-          </button>
-          <button 
-            type="button"
-            (click)="onViewModeChange('list')"
-            [class.bg-green-500]="viewMode() === 'list'"
-            [class.text-white]="viewMode() === 'list'"
-            class="px-3 py-2 border rounded-lg hover:bg-gray-50 transition-colors">
-            📋 Lista
-          </button>
-        </div>
-      </div>
-
-      <!-- Filtros avanzados -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        
-        <!-- Selector de categoría -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-          <select 
-            formControlName="category"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
-            @for (category of categories(); track category) {
-              <option [value]="category">{{ category }}</option>
-            }
-          </select>
-        </div>
-
-        <!-- Filtro de precio mínimo -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Precio mínimo</label>
-          <input 
-            type="number" 
-            formControlName="minPrice"
-            placeholder="$0.00"
-            min="0"
-            step="0.01"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
-        </div>
-
-        <!-- Filtro de precio máximo -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Precio máximo</label>
-          <input 
-            type="number" 
-            formControlName="maxPrice"
-            placeholder="$999.99"
-            min="0"
-            step="0.01"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
-        </div>
-
-        <!-- Filtro de certificaciones -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Certificaciones</label>
-          <input 
-            type="text" 
-            formControlName="certifications"
-            placeholder="Ej: Orgánico, Comercio Justo"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
-        </div>
-      </div>
-
-      <!-- Botón para limpiar filtros -->
-      <div class="flex justify-end">
-        <button 
-          type="button"
-          (click)="onClearFilters()"
-          class="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors">
-          🔄 Limpiar filtros
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Contenido principal -->
-<div class="max-w-6xl mx-auto px-4 py-6">
+<!-- AgriConnect Productos - Diseño Moderno con TailwindCSS v4 -->
+<div class="min-h-screen bg-gradient-agri font-noto-sans">
   
-  <!-- Indicador de carga -->
-  @if (isLoading()) {
-    <div class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-      <span class="ml-3 text-gray-600">Cargando productos...</span>
-    </div>
-  } @else {
-    
-    <!-- Filtros de categorías rápidos -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Categorías</h3>
-      <div class="flex flex-wrap gap-2">
-        @for (category of categories(); track category) {
-          <button
-            (click)="onCategorySelect(category)"
-            [class.bg-green-500]="selectedCategory() === category"
-            [class.text-white]="selectedCategory() === category"
-            [class.bg-gray-100]="selectedCategory() !== category"
-            [class.text-gray-700]="selectedCategory() !== category"
-            class="px-4 py-2 rounded-full text-sm font-medium hover:bg-green-600 hover:text-white transition-colors">
-            {{ category }}
-            @if (category !== 'Todas') {
-              <span class="ml-1 text-xs opacity-75">
-                ({{ productsByCategory().find(c => c.category === category)?.count || 0 }})
-              </span>
-            }
-          </button>
-        }
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between h-20">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 logo-image rounded-lg"></div>
+        <span class="text-2xl font-bold text-agri-green-600 font-epilogue tracking-tight">AgriConnect</span>
       </div>
-    </div>
-
-    <!-- Resultados -->
-    @if (filteredProducts().length === 0) {
-      <!-- Estado vacío -->
-      <div class="text-center py-12">
-        <div class="text-6xl mb-4">🔍</div>
-        <h3 class="text-xl font-semibold text-gray-600 mb-2">No se encontraron productos</h3>
-        <p class="text-gray-500 mb-4">Intenta ajustar los filtros o busca con términos diferentes</p>
-        <button 
-          (click)="onClearFilters()"
-          class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
-          Mostrar todos los productos
-        </button>
-      </div>
-    } @else {
       
-      <!-- Mostrar productos organizados por categoría cuando no hay filtro específico -->
-      @if (selectedCategory() === 'Todas' && !filterForm.get('searchTerm')?.value) {
-        
-        <!-- Vista por categorías -->
-        @for (categoryGroup of productsByCategory(); track trackByCategoryName($index, categoryGroup)) {
-          <div class="mb-10">
-            <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ categoryGroup.category }}</h2>
-            <p class="text-gray-600 mb-4">{{ categoryGroup.count }} productos disponibles</p>
-            
-            <!-- Grid de productos por categoría -->
-            <div [ngClass]="viewMode() === 'grid' 
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-              : 'space-y-4'">
-              
-              @for (product of categoryGroup.products; track trackByProductId($index, product)) {
-                <!-- Tarjeta de producto -->
-                <div 
-                  (click)="onProductClick(product.id)"
-                  class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-                  [ngClass]="viewMode() === 'list' ? 'flex' : 'block'">
-                  
-                  <!-- Imagen del producto -->
-                  <div [ngClass]="viewMode() === 'list' ? 'w-32 h-32 flex-shrink-0' : 'w-full h-48'">
-                    @if (product.images && product.images.length > 0) {
-                      <img 
-                        [src]="product.images[0]" 
-                        [alt]="product.name"
-                        class="w-full h-full object-cover">
-                    } @else {
-                      <div class="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
-                        🍃
-                      </div>
-                    }
-                  </div>
-                  
-                  <!-- Contenido de la tarjeta -->
-                  <div class="p-4 flex-1">
-                    <h3 class="font-semibold text-gray-800 mb-2 truncate">{{ product.name }}</h3>
-                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ product.description }}</p>
-                    
-                    <!-- Precio y disponibilidad -->
-                    <div class="flex justify-between items-center mb-3">
-                      <span class="text-lg font-bold text-green-600">
-                        ${{ product.price.perUnit }} / {{ product.price.unit }}
-                      </span>
-                      <span class="text-sm text-gray-500">
-                        {{ product.availability }} disponibles
-                      </span>
-                    </div>
-                    
-                    <!-- Certificaciones -->
-                    @if (product.certifications.length > 0) {
-                      <div class="flex flex-wrap gap-1 mb-3">
-                        @for (cert of product.certifications; track cert) {
-                          <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                            {{ cert }}
+      <!-- Navigation Menu -->
+      <nav class="hidden md:flex items-center space-x-8" role="navigation">
+        <a routerLink="/marketplace" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Inicio</a>
+        <a class="text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue">Productos</a>
+        <a routerLink="/productores" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Productores</a>
+        <!-- Profile Icon -->
+        <a routerLink="/profile" 
+           class="text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer group"
+           role="button"
+           aria-label="Ir a mi perfil"
+           title="Mi Perfil">
+          <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
+            <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
+          </div>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-6">
+    
+    <!-- Hero Section -->
+    <section class="py-16 lg:py-20 text-center">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl lg:text-5xl font-black text-gray-900 mb-6 font-epilogue leading-tight">
+          <span class="text-gradient-agri">Productos Frescos</span> Ecuatorianos
+        </h1>
+        <p class="text-xl lg:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+          Descubre la riqueza agrícola del Ecuador organizada por categorías
+        </p>
+      </div>
+    </section>
+
+    @if (isLoading()) {
+      <!-- Loading State -->
+      <section class="py-16">
+        <div class="text-center">
+          <div class="w-12 h-12 border-4 border-gray-200 border-t-agri-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p class="text-xl text-gray-600">Cargando productos frescos...</p>
+        </div>
+      </section>
+    } @else {
+      <!-- Products by Category Sections -->
+      @for (categoryData of productsByCategory(); track categoryData.category) {
+        <section class="py-8 mb-8">
+          <div class="max-w-7xl mx-auto">
+            <!-- Category Header -->
+            <div class="flex items-center justify-between mb-8">
+              <h2 class="text-3xl font-bold text-gray-900 font-epilogue flex items-center">
+                <span class="w-10 h-10 bg-agri-green-100 rounded-full flex items-center justify-center mr-4">
+                  <span class="material-icons text-agri-green-600 text-xl">category</span>
+                </span>
+                {{ categoryData.category }}
+              </h2>
+              <span class="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full font-medium">
+                {{ categoryData.products.length }} productos disponibles
+              </span>
+            </div>
+
+            <!-- Horizontal Scroll Container -->
+            <div class="relative">
+              <div class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-smooth" 
+                   style="scroll-behavior: smooth;">
+                @for (product of categoryData.products; track product.id) {
+                  <div class="flex-none w-80 snap-start">
+                    <div class="card card-hover hover-lift group cursor-pointer" 
+                         (click)="navigateToProduct(product.id)"
+                         role="button"
+                         tabindex="0"
+                         [attr.aria-label]="'Ver detalles de ' + product.name"
+                         (keydown.enter)="navigateToProduct(product.id)"
+                         (keydown.space)="navigateToProduct(product.id)">
+                      
+                      <!-- Product Image -->
+                      <div class="relative aspect-w-4 aspect-h-3 overflow-hidden">
+                        <img 
+                          [src]="product.images[0] || 'assets/images/placeholder-product.svg'" 
+                          [alt]="product.name" 
+                          class="w-full h-64 object-cover product-img">
+                        
+                        <!-- Certification Badge -->
+                        <div class="absolute top-4 left-4">
+                          @if (product.certifications.length > 0) {
+                            <span class="bg-agri-green-600 text-white px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide shadow-md">
+                              {{ product.certifications[0] }}
+                            </span>
+                          }
+                        </div>
+                        
+                        <!-- Province Badge -->
+                        <div class="absolute top-4 right-4">
+                          <span class="bg-white bg-opacity-90 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium shadow-md">
+                            {{ product.province }}
                           </span>
-                        }
+                        </div>
                       </div>
-                    }
-                    
-                    <!-- Botones de acción -->
-                    <div class="flex gap-2">
-                      <button 
-                        (click)="onAddToCart(product); $event.stopPropagation()"
-                        class="flex-1 bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition-colors text-sm">
-                        🛒 Agregar
-                      </button>
-                      @if (product.producerId) {
-                        <button 
-                          (click)="onProducerClick(product.producerId); $event.stopPropagation()"
-                          class="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm">
-                          👨‍🌾
-                        </button>
-                      }
+                      
+                      <!-- Product Info -->
+                      <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 font-epilogue leading-tight group-hover:text-agri-green-700 transition-colors">
+                          {{ product.name }}
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-2 text-sm leading-relaxed">
+                          {{ product.description }}
+                        </p>
+                        
+                        <!-- Category and Stock Info -->
+                        <div class="flex justify-between items-center mb-4">
+                          <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-sm font-medium">
+                            {{ product.category }}
+                          </span>
+                          <span class="text-gray-500 text-sm">
+                            {{ product.availability }} disponible
+                          </span>
+                        </div>
+                        
+                        <!-- Price and Add to Cart -->
+                        <div class="flex justify-between items-center">
+                          <div>
+                            <span class="text-2xl font-bold text-agri-green-600 font-epilogue">
+                              ${{ product.price.perUnit }}
+                            </span>
+                            <span class="text-gray-500 text-sm ml-1">
+                              por {{ product.price.unit }}
+                            </span>
+                          </div>
+                          <button 
+                            (click)="addToCart(product); $event.stopPropagation()"
+                            class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-all hover:-translate-y-0.5 flex items-center space-x-2 group-hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-agri-green-500 focus:ring-offset-2"
+                            [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
+                            <span class="material-icons text-lg">add_shopping_cart</span>
+                            <span class="hidden sm:inline">Agregar</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                }
+              </div>
+              
+              <!-- Scroll indicators -->
+              @if (categoryData.products.length > 3) {
+                <div class="flex justify-center mt-4 space-x-2">
+                  @for (product of categoryData.products; track product.id; let i = $index) {
+                    <div 
+                      class="w-2 h-2 rounded-full transition-all duration-300"
+                      [class]="i < 3 ? 'bg-agri-green-500' : 'bg-gray-300'"
+                      [attr.aria-label]="'Producto ' + (i + 1) + ' de ' + categoryData.products.length">
+                    </div>
+                  }
                 </div>
               }
             </div>
           </div>
-        }
-        
-      } @else {
-        
-        <!-- Vista de productos filtrados (sin agrupación por categoría) -->
-        <div class="mb-4">
-          <h2 class="text-xl font-semibold text-gray-800">
-            Resultados 
-            @if (selectedCategory() !== 'Todas') {
-              <span class="text-green-600">en {{ selectedCategory() }}</span>
-            }
-            ({{ filteredProducts().length }} productos)
-          </h2>
-        </div>
-        
-        <!-- Grid de productos filtrados -->
-        <div [ngClass]="viewMode() === 'grid' 
-          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-          : 'space-y-4'">
-          
-          @for (product of filteredProducts(); track trackByProductId($index, product)) {
-            <!-- Tarjeta de producto (igual que arriba) -->
-            <div 
-              (click)="onProductClick(product.id)"
-              class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-              [ngClass]="viewMode() === 'list' ? 'flex' : 'block'">
-              
-              <!-- Imagen del producto -->
-              <div [ngClass]="viewMode() === 'list' ? 'w-32 h-32 flex-shrink-0' : 'w-full h-48'">
-                @if (product.images && product.images.length > 0) {
-                  <img 
-                    [src]="product.images[0]" 
-                    [alt]="product.name"
-                    class="w-full h-full object-cover">
-                } @else {
-                  <div class="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
-                    🍃
-                  </div>
-                }
-              </div>
-              
-              <!-- Contenido de la tarjeta -->
-              <div class="p-4 flex-1">
-                <div class="flex justify-between items-start mb-2">
-                  <h3 class="font-semibold text-gray-800 truncate flex-1">{{ product.name }}</h3>
-                  <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-2">
-                    {{ product.category }}
-                  </span>
-                </div>
-                
-                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ product.description }}</p>
-                
-                <!-- Precio y disponibilidad -->
-                <div class="flex justify-between items-center mb-3">
-                  <span class="text-lg font-bold text-green-600">
-                    ${{ product.price.perUnit }} / {{ product.price.unit }}
-                  </span>
-                  <span class="text-sm text-gray-500">
-                    {{ product.availability }} disponibles
-                  </span>
-                </div>
-                
-                <!-- Certificaciones -->
-                @if (product.certifications.length > 0) {
-                  <div class="flex flex-wrap gap-1 mb-3">
-                    @for (cert of product.certifications; track cert) {
-                      <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                        {{ cert }}
-                      </span>
-                    }
-                  </div>
-                }
-                
-                <!-- Botones de acción -->
-                <div class="flex gap-2">
-                  <button 
-                    (click)="onAddToCart(product); $event.stopPropagation()"
-                    class="flex-1 bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition-colors text-sm">
-                    🛒 Agregar
-                  </button>
-                  @if (product.producerId) {
-                    <button 
-                      (click)="onProducerClick(product.producerId); $event.stopPropagation()"
-                      class="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm">
-                      👨‍🌾
-                    </button>
-                  }
-                </div>
-              </div>
-            </div>
-          }
-        </div>
+        </section>
       }
     }
-  }
+
+    <!-- Call to Action Section -->
+    <section class="py-16 text-center">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4 font-epilogue">
+          ¿No encuentras lo que buscas?
+        </h2>
+        <p class="text-xl text-gray-600 mb-8">
+          Conecta directamente con productores locales para solicitar productos específicos
+        </p>
+        <button 
+          routerLink="/productores"
+          class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-8 py-4 rounded-xl transition-all hover:-translate-y-1 shadow-lg hover:shadow-xl">
+          Buscar Productores
+        </button>
+      </div>
+    </section>
+    
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-50 border-t border-gray-200 py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6 text-center">
+      <div class="flex items-center justify-center space-x-3 mb-4">
+        <div class="w-8 h-8 logo-image rounded-lg"></div>
+        <span class="text-xl font-bold text-agri-green-600 font-epilogue">AgriConnect</span>
+      </div>
+      <p class="text-gray-600">
+        Conectando productores y consumidores para un Ecuador más próspero
+      </p>
+    </div>
+  </footer>
 </div>

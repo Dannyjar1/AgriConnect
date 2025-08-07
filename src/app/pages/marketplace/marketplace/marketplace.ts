@@ -160,6 +160,13 @@ export class Marketplace implements OnInit {
   }
 
   /**
+   * Navigate to productos page
+   */
+  navigateToProductos(): void {
+    this.router.navigate(['/productos']);
+  }
+
+  /**
    * Navigate to productores page
    */
   navigateToProductores(): void {

@@ -298,6 +298,13 @@ export class ProductoresComponent {
   }
 
   /**
+   * Navigate to productos page
+   */
+  protected navigateToProductos(): void {
+    this.router.navigate(['/productos']);
+  }
+
+  /**
    * Navigate to profile page
    */
   protected navigateToProfile(): void {

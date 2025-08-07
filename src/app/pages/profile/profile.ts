@@ -268,4 +268,26 @@ export class ProfileComponent implements OnInit {
   navigateToMarketplace(): void {
     this.router.navigate(['/marketplace']);
   }
+
+  /**
+   * Navigate to productos page
+   */
+  navigateToProductos(): void {
+    this.router.navigate(['/productos']);
+  }
+
+  /**
+   * Navigate to productores page
+   */
+  navigateToProductores(): void {
+    this.router.navigate(['/productores']);
+  }
+
+  /**
+   * Navigate to profile page (for consistency)
+   */
+  navigateToProfile(): void {
+    // Already on profile, could scroll to top or refresh
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
