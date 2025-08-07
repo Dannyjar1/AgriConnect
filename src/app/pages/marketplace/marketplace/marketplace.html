@@ -27,7 +27,7 @@
       <nav class="hidden md:flex items-center space-x-8" role="navigation">
         <a href="#" class="text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue">Inicio</a>
         <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Productos</a>
-        <a href="#" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue">Productores</a>
+        <a (click)="navigateToProductores()" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer">Productores</a>
         <!-- Profile Icon -->
         <a (click)="navigateToProfile()" 
            class="text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer group"
@@ -109,7 +109,13 @@
       </div>
     </section>
 
-    <!-- Products Grid Section -->
+    <!-- Ecuadorian Products by Category Section - ELIMINADA -->
+    <!-- 
+    Sección comentada: "Productos Ecuatorianos por Categoría"
+    Incluía productos como Banano, Cacao Nacional, Brócoli Andino, Quinoa Orgánica y Camarón Ecuatoriano
+    -->
+
+    <!-- Original Products Grid Section -->
     <section class="py-12">
       <div class="max-w-6xl mx-auto">
         <div class="text-center mb-16">

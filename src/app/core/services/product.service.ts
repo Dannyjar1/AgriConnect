@@ -13,6 +13,7 @@ export class ProductService {
   // BehaviorSubject para compatibilidad con observables
   private readonly productsSubject = new BehaviorSubject<Product[]>([]);
   
+  // Productos simulados para desarrollo
   private readonly mockProducts: Product[] = [
     {
       id: '1',
@@ -23,6 +24,7 @@ export class ProductService {
       images: ['assets/images/manzanas.jpg'],
       price: {
         perUnit: 2.5,
+        unit: 'unidad',
         minOrder: 1,
         maxOrder: 10
       },
@@ -40,20 +42,21 @@ export class ProductService {
       id: '2',
       producerId: 'prod-def',
       name: 'Zanahorias Orgánicas',
-      category: 'Vegetales',
-      description: 'Cultivadas sin pesticidas, llenas de sabor y nutrientes.',
+      category: 'Verduras',
+      description: 'Cultivadas sin pesticidas, ricas en betacaroteno.',
       images: ['assets/images/zanahorias.jpg'],
       price: {
         perUnit: 1.8,
-        minOrder: 2,
+        unit: 'lb',
+        minOrder: 1,
         maxOrder: 20
       },
       availability: 150,
       certifications: ['Orgánico', 'Comercio Justo'],
       traceability: {
-        batch: 'B-456',
-        coordinates: { latitude: 34.0522, longitude: -118.2437 },
-        harvestMethod: 'Mecanizado'
+        batch: 'Z-456',
+        coordinates: { latitude: 41.2033, longitude: -77.1945 },
+        harvestMethod: 'Manual'
       },
       createdAt: new Date(),
       updatedAt: new Date()
@@ -63,19 +66,20 @@ export class ProductService {
       producerId: 'prod-ghi',
       name: 'Leche Fresca de Granja',
       category: 'Lácteos',
-      description: 'Directamente de la granja a tu mesa.',
+      description: 'Leche fresca de vacas alimentadas con pasto natural.',
       images: ['assets/images/leche.jpg'],
       price: {
-        perUnit: 3.0,
+        perUnit: 3.2,
+        unit: 'litro',
         minOrder: 1,
-        maxOrder: 5
+        maxOrder: 12
       },
-      availability: 50,
-      certifications: [],
+      availability: 80,
+      certifications: ['Pastoreo Libre'],
       traceability: {
-        batch: 'B-789',
-        coordinates: { latitude: 41.8781, longitude: -87.6298 },
-        harvestMethod: 'Automático'
+        batch: 'L-789',
+        coordinates: { latitude: 39.7392, longitude: -104.9903 },
+        harvestMethod: 'Ordeño Manual'
       },
       createdAt: new Date(),
       updatedAt: new Date()
@@ -85,19 +89,20 @@ export class ProductService {
       producerId: 'prod-jkl',
       name: 'Pan Artesanal de Masa Madre',
       category: 'Panadería',
-      description: 'Horneado diariamente con ingredientes naturales.',
+      description: 'Pan horneado con masa madre tradicional de 48 horas de fermentación.',
       images: ['assets/images/pan.jpg'],
       price: {
-        perUnit: 4.0,
+        perUnit: 4.5,
+        unit: 'hogaza',
         minOrder: 1,
-        maxOrder: 3
+        maxOrder: 6
       },
-      availability: 30,
+      availability: 25,
       certifications: ['Artesanal'],
       traceability: {
-        batch: 'B-101',
-        coordinates: { latitude: 39.9526, longitude: -75.1652 },
-        harvestMethod: 'Manual'
+        batch: 'P-012',
+        coordinates: { latitude: 40.7589, longitude: -73.9851 },
+        harvestMethod: 'Horneado Tradicional'
       },
       createdAt: new Date(),
       updatedAt: new Date()
@@ -109,6 +114,7 @@ export class ProductService {
   }
 
   private initializeProducts(): void {
+    // Inicializar con productos simulados
     this.products.set(this.mockProducts);
     this.productsSubject.next(this.mockProducts);
   }
@@ -122,12 +128,16 @@ export class ProductService {
   }
 
   getProductById(id: string): Observable<Product | undefined> {
-    const product = this.mockProducts.find(p => p.id === id);
+    // TODO: Reemplazar con llamada a API/Base de Datos
+    const currentProducts = this.products();
+    const product = currentProducts.find(p => p.id === id);
     return of(product);
   }
 
   searchProducts(searchTerm: string): Observable<Product[]> {
-    const filtered = this.mockProducts.filter(product =>
+    // TODO: Reemplazar con llamada a API/Base de Datos
+    const currentProducts = this.products();
+    const filtered = currentProducts.filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -136,10 +146,25 @@ export class ProductService {
   }
 
   filterByCategory(category: string): Observable<Product[]> {
-    const filtered = this.mockProducts.filter(product =>
+    // TODO: Reemplazar con llamada a API/Base de Datos
+    const currentProducts = this.products();
+    const filtered = currentProducts.filter(product =>
       product.category.toLowerCase() === category.toLowerCase()
     );
     return of(filtered);
+  }
+
+  // Método para cargar productos desde API (listo para implementar)
+  loadProductsFromAPI(): Observable<Product[]> {
+    // TODO: Implementar llamada HTTP a la API
+    // return this.http.get<Product[]>('/api/products');
+    return of([]);
+  }
+
+  // Método para actualizar productos dinámicamente
+  updateProducts(products: Product[]): void {
+    this.products.set(products);
+    this.productsSubject.next(products);
   }
 
 }

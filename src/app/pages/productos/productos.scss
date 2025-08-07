@@ -1,0 +1,349 @@
+// Estilos específicos para el componente Productos
+// Usando Angular 20 y Tailwind CSS como base
+
+.productos-header {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/assets/images/farm-pattern.png') repeat,
+                linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(22, 163, 74, 0.95));
+    opacity: 0.1;
+    z-index: 0;
+  }
+  
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Animaciones para las tarjetas de productos
+.product-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .product-image {
+    position: relative;
+    overflow: hidden;
+    
+    img {
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    &:hover img {
+      transform: scale(1.05);
+    }
+    
+    // Overlay para mostrar acciones rápidas
+    .quick-actions {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      
+      .action-btn {
+        @apply bg-white text-gray-800 px-4 py-2 rounded-full mx-1 hover:bg-gray-100 transition-colors;
+      }
+    }
+    
+    &:hover .quick-actions {
+      opacity: 1;
+    }
+  }
+}
+
+// Filtros de categorías con efectos visuales
+.category-filters {
+  .category-btn {
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    &:hover::before {
+      left: 100%;
+    }
+    
+    &.active {
+      box-shadow: 0 0 0 2px theme('colors.green.200');
+    }
+  }
+}
+
+// Estilos para diferentes modos de vista
+.view-mode-grid {
+  .product-card {
+    @apply block;
+    
+    .product-content {
+      @apply p-4;
+    }
+  }
+}
+
+.view-mode-list {
+  .product-card {
+    @apply flex items-center;
+    min-height: 140px;
+    
+    .product-image {
+      @apply w-32 h-32 flex-shrink-0;
+    }
+    
+    .product-content {
+      @apply p-4 flex-1;
+    }
+  }
+}
+
+// Indicadores de estado
+.availability-indicator {
+  position: relative;
+  
+  &.high-stock {
+    @apply text-green-600;
+    
+    &::before {
+      content: '●';
+      color: theme('colors.green.500');
+      margin-right: 4px;
+    }
+  }
+  
+  &.medium-stock {
+    @apply text-yellow-600;
+    
+    &::before {
+      content: '●';
+      color: theme('colors.yellow.500');
+      margin-right: 4px;
+    }
+  }
+  
+  &.low-stock {
+    @apply text-red-600;
+    
+    &::before {
+      content: '●';
+      color: theme('colors.red.500');
+      margin-right: 4px;
+    }
+  }
+}
+
+// Certificaciones con colores específicos
+.certification-badge {
+  &.organico {
+    @apply bg-green-100 text-green-800 border border-green-200;
+  }
+  
+  &.comercio-justo {
+    @apply bg-blue-100 text-blue-800 border border-blue-200;
+  }
+  
+  &.artesanal {
+    @apply bg-purple-100 text-purple-800 border border-purple-200;
+  }
+  
+  &.natural {
+    @apply bg-emerald-100 text-emerald-800 border border-emerald-200;
+  }
+  
+  &.sustentable {
+    @apply bg-teal-100 text-teal-800 border border-teal-200;
+  }
+}
+
+// Formulario de filtros con estilos mejorados
+.filter-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  
+  .filter-input {
+    @apply border-gray-300 focus:border-green-500 focus:ring-green-500 focus:ring-opacity-50;
+    transition: all 0.2s ease-in-out;
+    
+    &:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+    }
+  }
+}
+
+// Estados de carga con skeleton loaders
+.product-skeleton {
+  .skeleton-image {
+    @apply bg-gray-200 animate-pulse rounded-t-lg;
+    height: 192px; // h-48
+  }
+  
+  .skeleton-content {
+    @apply p-4 space-y-3;
+    
+    .skeleton-title {
+      @apply h-4 bg-gray-200 rounded animate-pulse;
+      width: 75%;
+    }
+    
+    .skeleton-description {
+      @apply h-3 bg-gray-200 rounded animate-pulse;
+      
+      &:first-child { width: 100%; }
+      &:last-child { width: 60%; }
+    }
+    
+    .skeleton-price {
+      @apply h-6 bg-gray-200 rounded animate-pulse;
+      width: 40%;
+    }
+  }
+}
+
+// Efectos de scroll y lazy loading
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+  
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.3s; }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Estado vacío con ilustración
+.empty-state {
+  .empty-illustration {
+    font-size: 4rem;
+    opacity: 0.6;
+    margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+// Responsive breakpoints específicos
+@media (max-width: 640px) {
+  .productos-header {
+    padding: 1.5rem 1rem;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+  
+  .filter-section {
+    .filter-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .view-mode-list .product-card {
+    flex-direction: column;
+    
+    .product-image {
+      @apply w-full h-48;
+    }
+  }
+}
+
+// Accesibilidad y focus states
+.focus-visible {
+  outline: 2px solid theme('colors.green.500');
+  outline-offset: 2px;
+}
+
+// Estados de botones interactivos
+.interactive-btn {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+// Utilidades adicionales
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Print styles
+@media print {
+  .productos-header,
+  .filter-section {
+    display: none;
+  }
+  
+  .product-card {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+}

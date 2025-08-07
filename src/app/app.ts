@@ -22,7 +22,7 @@ export class App implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   // Rutas donde NO se debe mostrar el header (marketplace requiere vista más limpia)
-  private readonly hiddenHeaderRoutes = ['/marketplace' , '/profile'];
+  private readonly hiddenHeaderRoutes = ['/marketplace' , '/profile', '/productores'];
 
   ngOnInit(): void {
     // Escuchar cambios de ruta para actualizar la visibilidad del header

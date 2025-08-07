@@ -42,3 +42,80 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Horizontal scroll styles for category sliders */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scroll behavior for horizontal sliders */
+.overflow-x-auto {
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+/* Card snap points */
+.snap-start {
+  scroll-snap-align: start;
+}
+
+/* Mobile responsive horizontal scroll */
+@media (max-width: 768px) {
+  .flex-none.w-80 {
+    width: 280px;
+  }
+  
+  .gap-6 {
+    gap: 1rem;
+  }
+  
+  /* Adjust card padding for mobile */
+  .card .p-6 {
+    padding: 1rem;
+  }
+  
+  /* Smaller text on mobile */
+  .card h3 {
+    font-size: 1.125rem;
+  }
+}
+
+/* Touch scrolling optimization */
+@supports (-webkit-overflow-scrolling: touch) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Focus styles for accessibility */
+.overflow-x-auto:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Hover effects for scroll indicators */
+.relative:hover .w-2 {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+/* Category header styling */
+.category-header {
+  border-bottom: 2px solid #f3f4f6;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Smooth transitions for category cards */
+.card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
