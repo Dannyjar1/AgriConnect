@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
+import { SharedHeaderComponent } from '../../../shared/components/shared-header/shared-header.component';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -23,7 +24,8 @@ interface SearchForm {
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedHeaderComponent
   ],
   templateUrl: './marketplace.html',
   styleUrls: ['./marketplace.scss']
@@ -152,26 +154,6 @@ export class Marketplace implements OnInit {
     this.selectedCategory.set('');
   }
 
-  /**
-   * Navigate to user profile page
-   */
-  navigateToProfile(): void {
-    this.router.navigate(['/profile']);
-  }
-
-  /**
-   * Navigate to productos page
-   */
-  navigateToProductos(): void {
-    this.router.navigate(['/productos']);
-  }
-
-  /**
-   * Navigate to productores page
-   */
-  navigateToProductores(): void {
-    this.router.navigate(['/productores']);
-  }
 
   /**
    * Load Ecuadorian products organized by categories

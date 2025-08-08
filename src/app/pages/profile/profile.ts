@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { User } from '../../core/models/user.model';
 import { Product } from '../../core/models/product.model';
+import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
 
 interface ProfileStats {
   productsListed: number;
@@ -24,7 +25,8 @@ interface ProfileTab {
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedHeaderComponent
   ],
   templateUrl: './profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -262,32 +264,4 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['/buyer/orders']);
   }
 
-  /**
-   * Navigate back to marketplace
-   */
-  navigateToMarketplace(): void {
-    this.router.navigate(['/marketplace']);
-  }
-
-  /**
-   * Navigate to productos page
-   */
-  navigateToProductos(): void {
-    this.router.navigate(['/productos']);
-  }
-
-  /**
-   * Navigate to productores page
-   */
-  navigateToProductores(): void {
-    this.router.navigate(['/productores']);
-  }
-
-  /**
-   * Navigate to profile page (for consistency)
-   */
-  navigateToProfile(): void {
-    // Already on profile, could scroll to top or refresh
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 }

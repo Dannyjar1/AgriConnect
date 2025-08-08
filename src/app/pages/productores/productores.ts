@@ -1,6 +1,7 @@
 import { Component, signal, computed, ChangeDetectionStrategy, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
 
 interface Producer {
   id: string;
@@ -21,7 +22,7 @@ interface Producer {
 @Component({
   selector: 'app-productores',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SharedHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './productores.html',
   styleUrls: ['./productores.scss']
@@ -391,26 +392,6 @@ export class ProductoresComponent implements OnDestroy {
     return labels[type];
   }
 
-  /**
-   * Navigate to marketplace page
-   */
-  protected navigateToMarketplace(): void {
-    this.router.navigate(['/marketplace']);
-  }
-
-  /**
-   * Navigate to productos page
-   */
-  protected navigateToProductos(): void {
-    this.router.navigate(['/productos']);
-  }
-
-  /**
-   * Navigate to profile page
-   */
-  protected navigateToProfile(): void {
-    this.router.navigate(['/profile']);
-  }
 
   /**
    * Component cleanup - clear all timers

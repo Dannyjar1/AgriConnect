@@ -3,82 +3,95 @@
   <div class="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between h-20">
     
     <!-- Logo Section -->
-    <div class="flex items-center space-x-3 cursor-pointer" (click)="navigateToHome()">
-      <div class="w-10 h-10 logo-image rounded-lg"></div>
-      <span class="text-2xl font-bold text-agri-green-600 font-epilogue tracking-tight">
+    <div class="flex items-center space-x-3 cursor-pointer flex-shrink-0" 
+         (click)="navigateToHome()"
+         role="button"
+         tabindex="0"
+         (keydown.enter)="navigateToHome()"
+         (keydown.space)="navigateToHome()"
+         aria-label="Ir al inicio">
+      <div class="w-10 h-10 logo-image rounded-lg flex-shrink-0"></div>
+      <span class="text-2xl font-bold text-agri-green-600 font-epilogue tracking-tight whitespace-nowrap">
         AgriConnect
       </span>
     </div>
     
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center space-x-8" role="navigation" aria-label="Navegación principal">
-      <!-- Inicio/Marketplace -->
-      <a (click)="navigateToHome()" 
-         [class]="isActivePage('marketplace') || isActivePage('home') ? 
-           'text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer' : 
-           'text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer'"
-         role="button"
-         tabindex="0"
-         (keydown.enter)="navigateToHome()"
-         (keydown.space)="navigateToHome()">
-        Inicio
-      </a>
+    <nav class="hidden md:flex items-center space-x-6 lg:space-x-8 flex-grow justify-end" 
+         role="navigation" 
+         aria-label="Navegación principal">
+      <div class="flex items-center space-x-6 lg:space-x-8">
+        <!-- Inicio/Marketplace -->
+        <a (click)="navigateToHome()" 
+           [class]="isActivePage('marketplace') || isActivePage('home') ? 
+             'text-agri-green-600 font-semibold px-3 py-2 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer whitespace-nowrap transition-all' : 
+             'text-gray-600 hover:text-agri-green-600 font-medium px-3 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer whitespace-nowrap'"
+           role="button"
+           tabindex="0"
+           (keydown.enter)="navigateToHome()"
+           (keydown.space)="navigateToHome()">
+          Inicio
+        </a>
+        
+        <!-- Productos -->
+        <a (click)="navigateToProductos()" 
+           [class]="isActivePage('productos') ? 
+             'text-agri-green-600 font-semibold px-3 py-2 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer whitespace-nowrap transition-all' : 
+             'text-gray-600 hover:text-agri-green-600 font-medium px-3 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer whitespace-nowrap'"
+           role="button"
+           tabindex="0"
+           (keydown.enter)="navigateToProductos()"
+           (keydown.space)="navigateToProductos()">
+          Productos
+        </a>
+        
+        <!-- Productores -->
+        <a (click)="navigateToProductores()" 
+           [class]="isActivePage('productores') ? 
+             'text-agri-green-600 font-semibold px-3 py-2 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer whitespace-nowrap transition-all' : 
+             'text-gray-600 hover:text-agri-green-600 font-medium px-3 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer whitespace-nowrap'"
+           role="button"
+           tabindex="0"
+           (keydown.enter)="navigateToProductores()"
+           (keydown.space)="navigateToProductores()">
+          Productores
+        </a>
+      </div>
       
-      <!-- Productos -->
-      <a (click)="navigateToProductos()" 
-         [class]="isActivePage('productos') ? 
-           'text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer' : 
-           'text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer'"
-         role="button"
-         tabindex="0"
-         (keydown.enter)="navigateToProductos()"
-         (keydown.space)="navigateToProductos()">
-        Productos
-      </a>
-      
-      <!-- Productores -->
-      <a (click)="navigateToProductores()" 
-         [class]="isActivePage('productores') ? 
-           'text-agri-green-600 font-semibold px-4 py-2 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer' : 
-           'text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer'"
-         role="button"
-         tabindex="0"
-         (keydown.enter)="navigateToProductores()"
-         (keydown.space)="navigateToProductores()">
-        Productores
-      </a>
-      
-      <!-- Carrito - Botón amarillo destacado -->
-      <button (click)="navigateToCart()" 
-              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-all hover:shadow-md flex items-center space-x-2"
-              aria-label="Ver carrito de compras"
-              title="Carrito">
-        <span class="material-icons text-lg">shopping_cart</span>
-        <span class="hidden lg:inline">Carrito</span>
-      </button>
-      
-      <!-- Profile Icon -->
-      <a (click)="navigateToProfile()" 
-         [class]="isActivePage('profile') ? 
-           'text-agri-green-600 p-2 rounded-lg bg-agri-green-50 transition-all cursor-pointer group' : 
-           'text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer group'"
-         role="button"
-         tabindex="0"
-         (keydown.enter)="navigateToProfile()"
-         (keydown.space)="navigateToProfile()"
-         aria-label="Ir a mi perfil"
-         title="Mi Perfil">
-        <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
-          <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
-        </div>
-      </a>
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-4 ml-6">
+        <!-- Carrito - Botón amarillo destacado -->
+        <button (click)="navigateToCart()" 
+                class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-all hover:shadow-md flex items-center space-x-2 whitespace-nowrap"
+                aria-label="Ver carrito de compras"
+                title="Carrito">
+          <span class="material-icons text-lg">shopping_cart</span>
+          <span class="hidden lg:inline">Carrito</span>
+        </button>
+        
+        <!-- Profile Icon -->
+        <a (click)="navigateToProfile()" 
+           [class]="isActivePage('profile') ? 
+             'text-agri-green-600 p-2 rounded-lg bg-agri-green-50 transition-all cursor-pointer group flex-shrink-0' : 
+             'text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer group flex-shrink-0'"
+           role="button"
+           tabindex="0"
+           (keydown.enter)="navigateToProfile()"
+           (keydown.space)="navigateToProfile()"
+           aria-label="Ir a mi perfil"
+           title="Mi Perfil">
+          <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
+            <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
+          </div>
+        </a>
+      </div>
     </nav>
     
     <!-- Mobile Menu Button -->
-    <div class="md:hidden flex items-center space-x-3">
+    <div class="md:hidden flex items-center space-x-2 flex-shrink-0">
       <!-- Mobile Cart Button -->
       <button (click)="navigateToCart()" 
-              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-2 rounded-lg transition-all hover:shadow-md"
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-2.5 rounded-lg transition-all hover:shadow-md flex items-center justify-center w-11 h-11"
               aria-label="Ver carrito de compras"
               title="Carrito">
         <span class="material-icons text-xl">shopping_cart</span>
@@ -86,7 +99,7 @@
       
       <!-- Hamburger Menu -->
       <button (click)="toggleMenu()" 
-              class="text-gray-600 hover:text-agri-green-600 p-2 rounded-lg hover:bg-gray-50 transition-all"
+              class="text-gray-600 hover:text-agri-green-600 p-2.5 rounded-lg hover:bg-gray-50 transition-all flex items-center justify-center w-11 h-11"
               aria-label="Abrir menú de navegación"
               [attr.aria-expanded]="isMenuOpen()"
               aria-controls="mobile-menu">
@@ -102,7 +115,7 @@
   <!-- Mobile Navigation Menu -->
   @if (isMenuOpen()) {
     <div id="mobile-menu" 
-         class="md:hidden bg-white border-t border-gray-200 shadow-lg animate-slide-down"
+         class="md:hidden bg-white border-t border-gray-200 shadow-lg animate-slide-down absolute top-full left-0 right-0 z-40"
          role="navigation" 
          aria-label="Navegación móvil">
       <div class="px-4 py-6 space-y-4">
@@ -181,7 +194,7 @@
 
 <!-- Overlay for mobile menu -->
 @if (isMenuOpen()) {
-  <div class="fixed inset-0 bg-black bg-opacity-25 z-40 md:hidden" 
+  <div class="fixed inset-0 bg-black bg-opacity-25 z-30 md:hidden" 
        (click)="closeMenu()"
        aria-hidden="true"></div>
 }

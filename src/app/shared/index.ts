@@ -8,6 +8,7 @@
 // Components
 export { SharedHeaderComponent } from './components/shared-header/shared-header.component';
 export { AuthHeaderComponent } from './components/auth-header/auth-header';
+export { AppFooterComponent } from './components/app-footer/app-footer';
 
 // Add other shared components here as they are created
 // export { FooterComponent } from './components/footer/footer';

@@ -7,7 +7,7 @@ import { Product } from '../../core/models/product.model';
 /**
  * Interface for cart items with quantity and additional metadata
  */
-interface CartItem {
+export interface CartItem {
   id: string;
   product: Product;
   quantity: number;
@@ -18,7 +18,7 @@ interface CartItem {
 /**
  * Interface for cart summary calculations
  */
-interface CartSummary {
+export interface CartSummary {
   subtotal: number;
   tax: number;
   taxRate: number;
@@ -166,14 +166,14 @@ interface CartSummary {
                           <div class="space-y-1">
                             <div class="flex items-baseline space-x-2">
                               <span class="text-2xl font-bold text-agri-green-600 font-epilogue">
-                                ${{ item.product.price.perUnit.toFixed(2) }}
+                                \${{ item.product.price.perUnit.toFixed(2) }}
                               </span>
                               <span class="text-gray-500 text-sm">
                                 por {{ item.product.price.unit }}
                               </span>
                             </div>
                             <div class="text-sm text-gray-600">
-                              Subtotal: <span class="font-semibold">${{ item.subtotal.toFixed(2) }}</span>
+                              Subtotal: <span class="font-semibold">\${{ item.subtotal.toFixed(2) }}</span>
                             </div>
                           </div>
                           
@@ -231,12 +231,12 @@ interface CartSummary {
                   <div class="space-y-3 text-sm">
                     <div class="flex justify-between items-center">
                       <span class="text-gray-600">Artículos ({{ cartSummary().itemCount }})</span>
-                      <span class="font-semibold">${{ cartSummary().subtotal.toFixed(2) }}</span>
+                      <span class="font-semibold">\${{ cartSummary().subtotal.toFixed(2) }}</span>
                     </div>
                     
                     <div class="flex justify-between items-center">
                       <span class="text-gray-600">IVA ({{ (cartSummary().taxRate * 100).toFixed(0) }}%)</span>
-                      <span class="font-semibold">${{ cartSummary().tax.toFixed(2) }}</span>
+                      <span class="font-semibold">\${{ cartSummary().tax.toFixed(2) }}</span>
                     </div>
                     
                     <div class="flex justify-between items-center">
@@ -244,7 +244,7 @@ interface CartSummary {
                       @if (cartSummary().shipping === 0) {
                         <span class="font-semibold text-agri-green-600">Gratis</span>
                       } @else {
-                        <span class="font-semibold">${{ cartSummary().shipping.toFixed(2) }}</span>
+                        <span class="font-semibold">\${{ cartSummary().shipping.toFixed(2) }}</span>
                       }
                     </div>
                     
@@ -252,7 +252,7 @@ interface CartSummary {
                     
                     <div class="flex justify-between items-center text-lg font-bold text-gray-900">
                       <span>Total</span>
-                      <span class="text-agri-green-600">${{ cartSummary().total.toFixed(2) }}</span>
+                      <span class="text-agri-green-600">\${{ cartSummary().total.toFixed(2) }}</span>
                     </div>
                   </div>
                   

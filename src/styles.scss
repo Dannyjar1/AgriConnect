@@ -1,6 +1,6 @@
 /*
   AgriConnect - Global Styles with Tailwind CSS v4
-  Using the new @use directive and CSS-first configuration
+  Using the modern @use directive - Dart Sass 3.0 compatible
 */
 
 @use "tailwindcss";
@@ -210,6 +210,8 @@
   .font-noto-sans {
     font-family: 'Noto Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+
+  /* Essential background utilities - TailwindCSS v4 compatible */
 
   /* AgriConnect color utilities */
   .bg-agri-green-50 { background-color: var(--color-agri-green-50); }

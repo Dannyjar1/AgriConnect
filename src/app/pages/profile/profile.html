@@ -1,46 +1,8 @@
 <!-- AgriConnect Profile Page - Modern Design with Tailwind CSS -->
 <div class="min-h-screen bg-gradient-agri font-noto-sans">
   
-  <!-- Header Navigation -->
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between h-20">
-      <!-- Logo -->
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 logo-image rounded-lg"></div>
-        <span class="text-2xl font-bold text-agri-green-600 font-epilogue tracking-tight">AgriConnect</span>
-      </div>
-      
-      <!-- Mobile Profile Icon - Visible on small screens -->
-      <div class="md:hidden">
-        <a (click)="navigateToProfile()" 
-           class="text-agri-green-600 p-2 rounded-lg bg-agri-green-50 transition-all cursor-pointer group"
-           role="button"
-           aria-label="Ir a mi perfil"
-           title="Mi Perfil">
-          <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
-            <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
-          </div>
-        </a>
-      </div>
-      
-      <!-- Navigation Menu -->
-      <nav class="hidden md:flex items-center space-x-8" role="navigation">
-        <a (click)="navigateToMarketplace()" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer">Inicio</a>
-        <a (click)="navigateToProductos()" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer">Productos</a>
-        <a (click)="navigateToProductores()" class="text-gray-600 hover:text-agri-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer">Productores</a>
-        <!-- Profile Icon - Active state -->
-        <a (click)="navigateToProfile()" 
-           class="text-agri-green-600 p-2 rounded-lg bg-agri-green-50 transition-all cursor-pointer group"
-           role="button"
-           aria-label="Mi perfil (página actual)"
-           title="Mi Perfil">
-          <div class="w-8 h-8 bg-agri-green-100 rounded-full flex items-center justify-center group-hover:bg-agri-green-200 transition-all">
-            <span class="material-icons text-lg text-agri-green-600 group-hover:text-agri-green-700">account_circle</span>
-          </div>
-        </a>
-      </nav>
-    </div>
-  </header>
+  <!-- Shared Header Component -->
+  <app-shared-header currentPage="profile"></app-shared-header>
 
   <!-- Main Profile Content -->
   <main class="max-w-7xl mx-auto px-4 lg:px-6 py-8">

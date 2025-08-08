@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Product } from '../../core/models/product.model';
+import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
 
 interface ProductsByCategory {
   category: string;
@@ -11,7 +12,7 @@ interface ProductsByCategory {
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SharedHeaderComponent],
   templateUrl: './productos.html',
   styleUrls: ['./productos.scss']
 })
