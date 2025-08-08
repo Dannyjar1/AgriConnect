@@ -64,7 +64,7 @@
         <button 
           (click)="setCategory('')"
           [class]="selectedCategory() === '' ? 
-            'bg-agri-green-600 text-white border-agri-green-600' : 
+            'bg-agri-green-600 text-gray-800 border-agri-green-600' : 
             'bg-white text-gray-600 border-gray-300 hover:border-agri-green-500 hover:text-agri-green-600 hover:bg-agri-green-50'"
           class="px-6 py-3 rounded-full border font-medium transition-all duration-200 font-epilogue">
           Todas las Categorías
@@ -74,7 +74,7 @@
           <button 
             (click)="setCategory(category.key)"
             [class]="selectedCategory() === category.key ? 
-              'bg-agri-green-600 text-white border-agri-green-600' : 
+              'bg-agri-green-600 text-gray-800 border-agri-green-600' : 
               'bg-white text-gray-600 border-gray-300 hover:border-agri-green-500 hover:text-agri-green-600 hover:bg-agri-green-50'"
             class="px-6 py-3 rounded-full border font-medium transition-all duration-200 font-epilogue flex items-center space-x-2">
             <span class="text-lg">{{ category.icon }}</span>
@@ -105,7 +105,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               @for (producer of category.producers; track producer.id) {
                 <!-- Flip Card -->
-                <div class="flip-card h-64" (click)="toggleCard(producer.id)">
+                <div class="flip-card h-64" 
+                     (click)="toggleCard(producer.id)"
+                     (keydown.enter)="toggleCard(producer.id)"
+                     (keydown.space)="toggleCard(producer.id); $event.preventDefault()"
+                     tabindex="0"
+                     role="button"
+                     [attr.aria-label]="getCardAriaLabel(producer)"
+                     [attr.aria-expanded]="isCardFlipped(producer.id)"
+                     [attr.aria-describedby]="'card-help-' + producer.id">
                   <div class="flip-card-inner" [class.flipped]="isCardFlipped(producer.id)">
                     
                     <!-- Front Side -->
@@ -122,12 +130,12 @@
                               (error)="$any($event.target).style.display = 'none'; $any($event.target).nextElementSibling.style.display = 'flex'">
                             <!-- Fallback Icon -->
                             <div class="hidden w-12 h-12 bg-agri-green-600 rounded-full items-center justify-center">
-                              <span class="material-icons text-white text-lg">business</span>
+                              <span class="material-icons text-gray-800 text-lg">business</span>
                             </div>
                           </div>
                         } @else {
                           <div class="w-16 h-16 mb-4 bg-agri-green-600 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-xl">
+                            <span class="material-icons text-gray-800 text-xl">
                               {{ producer.companyName ? 'business' : 'person' }}
                             </span>
                           </div>
@@ -153,40 +161,50 @@
 
                     <!-- Back Side -->
                     <div class="flip-card-back">
-                      <div class="card h-full p-6 bg-gradient-to-br from-agri-green-600 to-agri-green-700 text-white">
+                      <div class="card h-full p-6 bg-gradient-to-br from-green-200 via-green-300 to-green-400 text-gray-800">
                         
                         <!-- Product Info -->
                         <div class="text-center mb-4">
-                          <h4 class="text-lg font-bold mb-2 font-epilogue">{{ producer.productName }}</h4>
-                          <p class="text-agri-green-100 text-sm mb-3">{{ getProducerTypeLabel(producer.type) }}</p>
+                          <h4 class="text-lg font-bold mb-2 font-epilogue text-gray-800">{{ producer.productName }}</h4>
+                          <p class="text-gray-600 text-sm mb-3">{{ getProducerTypeLabel(producer.type) }}</p>
                         </div>
                         
                         <!-- Contact Information -->
                         <div class="space-y-2 text-sm">
                           @if (producer.contactInfo?.phone) {
                             <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2">phone</span>
-                              <span class="text-agri-green-100">{{ producer.contactInfo?.phone }}</span>
+                              <span class="material-icons text-sm mr-2 text-gray-800">phone</span>
+                              <span class="text-gray-800">{{ producer.contactInfo?.phone }}</span>
                             </div>
                           }
                           
                           @if (producer.contactInfo?.email) {
                             <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2">email</span>
-                              <span class="text-agri-green-100 truncate">{{ producer.contactInfo?.email }}</span>
+                              <span class="material-icons text-sm mr-2 text-gray-800">email</span>
+                              <span class="text-gray-800 truncate">{{ producer.contactInfo?.email }}</span>
                             </div>
                           }
                           
                           @if (producer.contactInfo?.address) {
                             <div class="flex items-start">
-                              <span class="material-icons text-sm mr-2 mt-0.5">location_on</span>
-                              <span class="text-agri-green-100 text-xs leading-tight">{{ producer.contactInfo?.address }}</span>
+                              <span class="material-icons text-sm mr-2 mt-0.5 text-gray-800">location_on</span>
+                              <span class="text-gray-800 text-xs leading-tight">{{ producer.contactInfo?.address }}</span>
                             </div>
                           }
                         </div>
                         
+                        <!-- Auto-return timer indicator -->
+                        @if (hasActiveTimer(producer.id)) {
+                          <div class="text-center mb-2">
+                            <div class="inline-flex items-center space-x-1 text-xs text-gray-600">
+                              <span class="material-icons text-sm animate-pulse">schedule</span>
+                              <span>Se volteará automáticamente</span>
+                            </div>
+                          </div>
+                        }
+                        
                         <!-- Back hint -->
-                        <p class="text-xs text-agri-green-200 mt-auto pt-4 text-center">
+                        <p class="text-xs text-gray-600 mt-auto pt-2 text-center">
                           <span class="material-icons text-sm mr-1">touch_app</span>
                           Toca para volver
                         </p>
@@ -215,7 +233,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               @for (producer of category.producers; track producer.id) {
                 <!-- Flip Card (same as above) -->
-                <div class="flip-card h-64" (click)="toggleCard(producer.id)">
+                <div class="flip-card h-64" 
+                     (click)="toggleCard(producer.id)"
+                     (keydown.enter)="toggleCard(producer.id)"
+                     (keydown.space)="toggleCard(producer.id); $event.preventDefault()"
+                     tabindex="0"
+                     role="button"
+                     [attr.aria-label]="getCardAriaLabel(producer)"
+                     [attr.aria-expanded]="isCardFlipped(producer.id)"
+                     [attr.aria-describedby]="'card-help-' + producer.id">
                   <div class="flip-card-inner" [class.flipped]="isCardFlipped(producer.id)">
                     
                     <!-- Front Side -->
@@ -230,12 +256,12 @@
                               class="w-12 h-12 object-contain"
                               (error)="$any($event.target).style.display = 'none'; $any($event.target).nextElementSibling.style.display = 'flex'">
                             <div class="hidden w-12 h-12 bg-agri-green-600 rounded-full items-center justify-center">
-                              <span class="material-icons text-white text-lg">business</span>
+                              <span class="material-icons text-gray-800 text-lg">business</span>
                             </div>
                           </div>
                         } @else {
                           <div class="w-16 h-16 mb-4 bg-agri-green-600 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-xl">
+                            <span class="material-icons text-gray-800 text-xl">
                               {{ producer.companyName ? 'business' : 'person' }}
                             </span>
                           </div>
@@ -258,37 +284,37 @@
 
                     <!-- Back Side -->
                     <div class="flip-card-back">
-                      <div class="card h-full p-6 bg-gradient-to-br from-agri-green-600 to-agri-green-700 text-white">
+                      <div class="card h-full p-6 bg-gradient-to-br from-green-200 via-green-300 to-green-400 text-gray-800">
                         
                         <div class="text-center mb-4">
-                          <h4 class="text-lg font-bold mb-2 font-epilogue">{{ producer.productName }}</h4>
-                          <p class="text-agri-green-100 text-sm mb-3">{{ getProducerTypeLabel(producer.type) }}</p>
+                          <h4 class="text-lg font-bold mb-2 font-epilogue text-gray-800">{{ producer.productName }}</h4>
+                          <p class="text-gray-600 text-sm mb-3">{{ getProducerTypeLabel(producer.type) }}</p>
                         </div>
                         
                         <div class="space-y-2 text-sm">
                           @if (producer.contactInfo?.phone) {
                             <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2">phone</span>
-                              <span class="text-agri-green-100">{{ producer.contactInfo?.phone }}</span>
+                              <span class="material-icons text-sm mr-2 text-gray-800">phone</span>
+                              <span class="text-gray-800">{{ producer.contactInfo?.phone }}</span>
                             </div>
                           }
                           
                           @if (producer.contactInfo?.email) {
                             <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2">email</span>
-                              <span class="text-agri-green-100 truncate">{{ producer.contactInfo?.email }}</span>
+                              <span class="material-icons text-sm mr-2 text-gray-800">email</span>
+                              <span class="text-gray-800 truncate">{{ producer.contactInfo?.email }}</span>
                             </div>
                           }
                           
                           @if (producer.contactInfo?.address) {
                             <div class="flex items-start">
-                              <span class="material-icons text-sm mr-2 mt-0.5">location_on</span>
-                              <span class="text-agri-green-100 text-xs leading-tight">{{ producer.contactInfo?.address }}</span>
+                              <span class="material-icons text-sm mr-2 mt-0.5 text-gray-800">location_on</span>
+                              <span class="text-gray-800 text-xs leading-tight">{{ producer.contactInfo?.address }}</span>
                             </div>
                           }
                         </div>
                         
-                        <p class="text-xs text-agri-green-200 mt-auto pt-4 text-center">
+                        <p class="text-xs text-gray-600 mt-auto pt-4 text-center">
                           <span class="material-icons text-sm mr-1">touch_app</span>
                           Toca para volver
                         </p>

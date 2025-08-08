@@ -1,4 +1,4 @@
-import { Component, signal, computed, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -26,7 +26,7 @@ interface Producer {
   templateUrl: './productores.html',
   styleUrls: ['./productores.scss']
 })
-export class ProductoresComponent {
+export class ProductoresComponent implements OnDestroy {
   
   // Router injection for navigation
   private readonly router = inject(Router);
@@ -238,18 +238,31 @@ export class ProductoresComponent {
 
   // Estado de flip card
   protected readonly flippedCards = signal<Set<string>>(new Set());
+  
+  // Auto-return timers for flipped cards
+  private cardTimers = new Map<string, number>();
+  private readonly AUTO_RETURN_DELAY = 15000; // 15 seconds
+  
+  // Optional: Track cards with active timers for visual indicators
+  protected readonly cardsWithActiveTimers = signal<Set<string>>(new Set());
 
   /**
-   * Toggle flip state of a card
+   * Toggle flip state of a card with auto-return functionality
    */
   protected toggleCard(producerId: string): void {
     const flipped = this.flippedCards();
     const newFlipped = new Set(flipped);
     
+    // Clear existing timer for this card
+    this.clearCardTimer(producerId);
+    
     if (newFlipped.has(producerId)) {
+      // Card is currently flipped, return to front
       newFlipped.delete(producerId);
     } else {
+      // Card is currently front, flip to back and set auto-return timer
       newFlipped.add(producerId);
+      this.setAutoReturnTimer(producerId);
     }
     
     this.flippedCards.set(newFlipped);
@@ -260,6 +273,73 @@ export class ProductoresComponent {
    */
   protected isCardFlipped(producerId: string): boolean {
     return this.flippedCards().has(producerId);
+  }
+
+  /**
+   * Set auto-return timer for a card
+   */
+  private setAutoReturnTimer(producerId: string): void {
+    const timerId = window.setTimeout(() => {
+      this.returnCardToFront(producerId);
+    }, this.AUTO_RETURN_DELAY);
+    
+    this.cardTimers.set(producerId, timerId);
+    
+    // Add to active timers set for visual indicators
+    const activeTimers = this.cardsWithActiveTimers();
+    const newActiveTimers = new Set(activeTimers);
+    newActiveTimers.add(producerId);
+    this.cardsWithActiveTimers.set(newActiveTimers);
+  }
+
+  /**
+   * Clear timer for a specific card
+   */
+  private clearCardTimer(producerId: string): void {
+    const timerId = this.cardTimers.get(producerId);
+    if (timerId) {
+      window.clearTimeout(timerId);
+      this.cardTimers.delete(producerId);
+    }
+    
+    // Remove from active timers set
+    const activeTimers = this.cardsWithActiveTimers();
+    const newActiveTimers = new Set(activeTimers);
+    newActiveTimers.delete(producerId);
+    this.cardsWithActiveTimers.set(newActiveTimers);
+  }
+
+  /**
+   * Return a card to front position (used by auto-return timer)
+   */
+  private returnCardToFront(producerId: string): void {
+    const flipped = this.flippedCards();
+    const newFlipped = new Set(flipped);
+    
+    if (newFlipped.has(producerId)) {
+      newFlipped.delete(producerId);
+      this.flippedCards.set(newFlipped);
+    }
+    
+    // Clean up the timer reference
+    this.cardTimers.delete(producerId);
+    
+    // Remove from active timers set
+    const activeTimers = this.cardsWithActiveTimers();
+    const newActiveTimers = new Set(activeTimers);
+    newActiveTimers.delete(producerId);
+    this.cardsWithActiveTimers.set(newActiveTimers);
+  }
+
+  /**
+   * Clear all card timers
+   */
+  private clearAllCardTimers(): void {
+    this.cardTimers.forEach((timerId) => {
+      window.clearTimeout(timerId);
+    });
+    this.cardTimers.clear();
+    this.cardsWithActiveTimers.set(new Set());
   }
 
   /**
@@ -274,6 +354,27 @@ export class ProductoresComponent {
    */
   protected getDisplayName(producer: Producer): string {
     return producer.companyName || producer.producerName;
+  }
+
+  /**
+   * Get accessible aria-label for card with auto-return information
+   */
+  protected getCardAriaLabel(producer: Producer): string {
+    const name = this.getDisplayName(producer);
+    const isFlipped = this.isCardFlipped(producer.id);
+    
+    if (isFlipped) {
+      return `Tarjeta de ${name}. Mostrando información de contacto. Se volteará automáticamente en 15 segundos o haz clic para voltear manualmente.`;
+    } else {
+      return `Tarjeta de ${name}. Haz clic para ver información de contacto. Se volteará automáticamente después de 15 segundos.`;
+    }
+  }
+
+  /**
+   * Check if a card has an active auto-return timer
+   */
+  protected hasActiveTimer(producerId: string): boolean {
+    return this.cardsWithActiveTimers().has(producerId);
   }
 
   /**
@@ -309,5 +410,12 @@ export class ProductoresComponent {
    */
   protected navigateToProfile(): void {
     this.router.navigate(['/profile']);
+  }
+
+  /**
+   * Component cleanup - clear all timers
+   */
+  ngOnDestroy(): void {
+    this.clearAllCardTimers();
   }
 }

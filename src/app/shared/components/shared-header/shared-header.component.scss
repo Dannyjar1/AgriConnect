@@ -1,0 +1,247 @@
+/**
+ * SharedHeaderComponent Styles
+ * 
+ * Estilos específicos para el header compartido de AgriConnect
+ * Incluye logo styling, animaciones y responsive design
+ */
+
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Logo Image Styling */
+.logo-image {
+  background-image: url('/assets/images/agriconnect-logo.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  transition: transform 0.2s ease-in-out;
+
+  /* Fallback gradient when image doesn't load */
+  background: 
+    url('/assets/images/agriconnect-logo.svg') center/contain no-repeat,
+    linear-gradient(135deg, var(--color-agri-green-500), var(--color-agri-green-600));
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* Logo fallback when image fails */
+.logo-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--color-agri-green-500), var(--color-agri-green-600));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.logo-image::after {
+  content: '🌱';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.logo-image:not([style*="background-image"])::before,
+.logo-image:not([style*="background-image"])::after {
+  opacity: 1;
+}
+
+/* Mobile menu animation */
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+  transform-origin: top;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Navigation link hover effects */
+nav a {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-agri-green-500), transparent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+  
+  &:hover::before {
+    width: 80%;
+  }
+}
+
+/* Active page indicator enhancement */
+nav a[class*="bg-agri-green-50"] {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 60%;
+    height: 2px;
+    background: var(--color-agri-green-600);
+    border-radius: 1px;
+    transform: translateX(-50%);
+  }
+}
+
+/* Cart button special styling */
+button[class*="bg-yellow-400"] {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+  
+  /* Cart pulse effect when items exist (future enhancement) */
+  &.has-items {
+    animation: cartPulse 2s infinite;
+  }
+}
+
+@keyframes cartPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(251, 191, 36, 0);
+  }
+}
+
+/* Profile icon hover effect */
+.group:hover .bg-agri-green-100 {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.2);
+}
+
+/* Mobile menu overlay */
+.fixed.inset-0.bg-black {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Ensure proper spacing on mobile */
+  header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Mobile menu styling */
+  #mobile-menu {
+    max-height: calc(100vh - 5rem);
+    overflow-y: auto;
+  }
+  
+  /* Mobile navigation links */
+  #mobile-menu a {
+    &:active {
+      background-color: var(--color-agri-green-50);
+      transform: scale(0.98);
+    }
+  }
+}
+
+/* Focus states for accessibility */
+a:focus,
+button:focus {
+  outline: 2px solid var(--color-agri-green-500);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  header {
+    border-bottom: 2px solid black;
+  }
+  
+  .logo-image {
+    border: 1px solid black;
+  }
+  
+  nav a {
+    border: 1px solid transparent;
+    
+    &:hover,
+    &:focus {
+      border-color: black;
+    }
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .logo-image,
+  .animate-slide-down,
+  nav a,
+  button {
+    animation: none;
+    transition: none;
+  }
+  
+  .logo-image:hover {
+    transform: none;
+  }
+  
+  nav a::before,
+  button::before {
+    transition: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  :host {
+    display: none;
+  }
+}
