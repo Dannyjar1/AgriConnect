@@ -23,6 +23,9 @@ export class Productos implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly selectedCategory = signal<string>('');
   
+  // Nueva señal para la imagen de multifrutas
+  readonly multifruitImage = signal<string>('assets/images/multifrutas.webp');
+  
   // Productos organizados por categorías - Datos completos
   readonly productsByCategory = signal<ProductsByCategory[]>([]);
 
@@ -35,6 +38,12 @@ export class Productos implements OnInit {
   // Categorías disponibles
   readonly categories = computed(() => {
     return this.productsByCategory().map(cat => cat.category);
+  });
+
+  // Computed para determinar si una categoría es de frutas para mostrar la imagen decorativa
+  readonly isFruitCategory = computed(() => (categoryName: string) => {
+    return categoryName.toLowerCase().includes('fruta') || 
+           categoryName.toLowerCase().includes('fruit');
   });
 
   ngOnInit(): void {
@@ -837,5 +846,19 @@ export class Productos implements OnInit {
   addToCart(product: Product): void {
     console.log('Agregando al carrito:', product);
     // TODO: Implementar funcionalidad del carrito
+  }
+
+  /**
+   * Handle image loading errors
+   */
+  onImageError(event: any): void {
+    event.target.src = 'assets/images/placeholder-product.svg';
+  }
+
+  /**
+   * Get background image style for multifruit decorative elements
+   */
+  getMultifruitBackgroundStyle(opacity: number = 0.1): string {
+    return `background-image: url('${this.multifruitImage()}'); opacity: ${opacity}; background-size: cover; background-position: center; background-repeat: no-repeat;`;
   }
 }

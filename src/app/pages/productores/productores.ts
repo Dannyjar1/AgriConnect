@@ -32,6 +32,9 @@ export class ProductoresComponent implements OnDestroy {
   // Router injection for navigation
   private readonly router = inject(Router);
   
+  // Multifrutas image path for visual enhancements
+  protected readonly multifrutasImagePath = 'assets/images/multifrutas.webp';
+  
   // Mock data de productores ecuatorianos
   private readonly allProducers = signal<Producer[]>([
     // Frutas
@@ -392,6 +395,31 @@ export class ProductoresComponent implements OnDestroy {
     return labels[type];
   }
 
+  /**
+   * Get inline style for multifrutas background pattern on front card
+   */
+  protected getFrontCardStyle(): string {
+    return `background-image: 
+      linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%),
+      url('${this.multifrutasImagePath}');
+      background-size: 120px 120px, cover;
+      background-position: center, center;
+      background-repeat: no-repeat, no-repeat;
+      background-blend-mode: overlay;`;
+  }
+
+  /**
+   * Get inline style for multifrutas background pattern on back card
+   */
+  protected getBackCardStyle(): string {
+    return `background-image: 
+      linear-gradient(135deg, rgba(187, 247, 208, 0.85) 0%, rgba(134, 239, 172, 0.85) 50%, rgba(74, 222, 128, 0.85) 100%),
+      url('${this.multifrutasImagePath}');
+      background-size: 80px 80px, cover;
+      background-position: right bottom, center;
+      background-repeat: no-repeat, no-repeat;
+      background-blend-mode: soft-light;`;
+  }
 
   /**
    * Component cleanup - clear all timers

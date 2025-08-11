@@ -124,7 +124,7 @@ export class ProfileComponent implements OnInit {
         uid: 'user123',
         email: 'usuario@agriconnect.com',
         displayName: 'María García López',
-        photoURL: '',
+        photoURL: 'assets/images/sofia-dominguez-800x453-medium-size.jpg',
         userType: 'producer',
         phone: '+593 99 123 4567',
         address: 'Av. Principal 123, Quito, Pichincha',

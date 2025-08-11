@@ -39,6 +39,9 @@ export class Marketplace implements OnInit {
   readonly allProducts = signal<Product[]>([]);
   readonly isLoading = signal<boolean>(false);
   readonly selectedCategory = signal<string>('');
+  
+  // Nueva señal para la imagen de multifrutas
+  readonly multifruitImage = signal<string>('assets/images/multifrutas.webp');
 
   // Productos ecuatorianos organizados por categorías
   readonly productsByCategory = signal<Array<{category: string, products: Product[]}>>([]);
@@ -64,6 +67,12 @@ export class Marketplace implements OnInit {
     const uniqueCategories = [...new Set(products.map(p => p.category))];
     return ['Todas', ...uniqueCategories];
   });
+  
+  // Computed para determinar si una categoría es de frutas para mostrar la imagen decorativa
+  readonly isFruitCategory = computed(() => (categoryName: string) => {
+    return categoryName.toLowerCase().includes('fruta') || 
+           categoryName.toLowerCase().includes('fruit');
+  });
 
   constructor() {
     // Configurar filtros reactivos
@@ -81,7 +90,6 @@ export class Marketplace implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-    // this.loadEcuadorianProducts(); // Sección eliminada - Solo productos principales
   }
 
   private loadProducts(): void {
@@ -154,94 +162,32 @@ export class Marketplace implements OnInit {
     this.selectedCategory.set('');
   }
 
-
   /**
-   * Load Ecuadorian products organized by categories
+   * Add product to cart (placeholder)
    */
-  private loadEcuadorianProducts(): void {
-    const ecuadorianProducts: Array<{category: string, products: Product[]}> = [
-      {
-        category: 'Frutas',
-        products: [
-          {
-            id: 'fruit-01',
-            name: 'Banano',
-            description: 'Banano ecuatoriano de exportación, dulce y nutritivo',
-            category: 'Frutas',
-            price: { perUnit: 0.75, unit: 'lb' },
-            availability: 250,
-            certifications: ['ORGÁNICO'],
-            images: ['/assets/images/products/banano.jpg'],
-            province: 'El Oro'
-          },
-          {
-            id: 'fruit-02',
-            name: 'Cacao Nacional',
-            description: 'Cacao fino de aroma, reconocido mundialmente por su calidad',
-            category: 'Frutas',
-            price: { perUnit: 12.50, unit: 'kg' },
-            availability: 180,
-            certifications: ['ORGÁNICO', 'COMERCIO JUSTO'],
-            images: ['/assets/images/products/cacao.jpg'],
-            province: 'Manabí'
-          }
-        ]
-      },
-      {
-        category: 'Verduras',
-        products: [
-          {
-            id: 'veg-01',
-            name: 'Brócoli Andino',
-            description: 'Brócoli cultivado en los valles andinos, rico en nutrientes',
-            category: 'Verduras',
-            price: { perUnit: 1.25, unit: 'unidad' },
-            availability: 120,
-            certifications: ['NATURAL'],
-            images: ['/assets/images/products/brocoli.jpg'],
-            province: 'Pichincha'
-          },
-          {
-            id: 'veg-02',
-            name: 'Quinoa Orgánica',
-            description: 'Quinoa de altura, superfood ancestral ecuatoriano',
-            category: 'Verduras',
-            price: { perUnit: 8.90, unit: 'lb' },
-            availability: 95,
-            certifications: ['ORGÁNICO', 'ANCESTRAL'],
-            images: ['/assets/images/products/quinoa.jpg'],
-            province: 'Chimborazo'
-          }
-        ]
-      },
-      {
-        category: 'Mariscos',
-        products: [
-          {
-            id: 'sea-01',
-            name: 'Camarón Ecuatoriano',
-            description: 'Camarón fresco de las piscinas ecuatorianas, sabor inigualable',
-            category: 'Mariscos',
-            price: { perUnit: 15.75, unit: 'lb' },
-            availability: 60,
-            certifications: ['FRESCO', 'SUSTENTABLE'],
-            images: ['/assets/images/products/camaron.jpg'],
-            province: 'Guayas'
-          }
-        ]
-      }
-    ];
-    this.productsByCategory.set(ecuadorianProducts);
+  addToCart(product: Product): void {
+    console.log('Agregando al carrito:', product);
+    // TODO: Implementar funcionalidad del carrito
   }
 
   /**
-   * Método para cargar productos por categoría desde API (listo para implementar)
+   * Handle image loading errors
    */
-  loadProductsByCategoryFromAPI(): void {
-    // TODO: Implementar llamada a API para obtener productos por categoría
-    // this.http.get<Array<{category: string, products: Product[]}>>('/api/products/by-category')
-    //   .subscribe(data => {
-    //     this.productsByCategory.set(data);
-    //   });
+  onImageError(event: any): void {
+    event.target.src = 'assets/images/placeholder-product.svg';
+  }
+
+  /**
+   * Navigate to product detail page
+   */
+  navigateToProduct(productId: string): void {
+    this.router.navigate(['/producto', productId]);
+  }
+
+  /**
+   * Get background image style for multifruit decorative elements
+   */
+  getMultifruitBackgroundStyle(opacity: number = 0.1): string {
+    return `background-image: url('${this.multifruitImage()}'); opacity: ${opacity}; background-size: cover; background-position: center; background-repeat: no-repeat;`;
   }
 }

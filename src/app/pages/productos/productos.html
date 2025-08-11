@@ -7,15 +7,37 @@
   <!-- Main Content Area -->
   <main class="max-w-7xl mx-auto px-4 lg:px-6 py-8">
     
-    <!-- Page Title Section -->
-    <section class="py-12 text-center">
-      <div class="max-w-4xl mx-auto">
+    <!-- Page Title Section with Decorative Background -->
+    <section class="py-12 text-center relative overflow-hidden">
+      <!-- Decorative background pattern for the hero section -->
+      <div class="absolute inset-0 opacity-5">
+        <img [src]="multifruitImage()" 
+             alt="Decorative fruits pattern"
+             class="w-full h-full object-cover object-center scale-110 transform rotate-3"
+             loading="lazy">
+      </div>
+      
+      <div class="max-w-4xl mx-auto relative z-10">
         <h1 class="text-4xl lg:text-6xl font-black text-gray-900 mb-6 font-epilogue leading-tight">
           <span class="text-gradient-agri">Productos</span> Frescos de Ecuador
         </h1>
         <p class="text-xl lg:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
           Descubre la variedad más amplia de productos agrícolas ecuatorianos, directo desde el campo hasta tu mesa
         </p>
+        
+        <!-- Floating fruit elements for visual appeal -->
+        <div class="absolute -top-4 -left-8 w-16 h-16 opacity-20 animate-bounce animation-delay-1000">
+          <img [src]="multifruitImage()" 
+               alt="Fruit decoration"
+               class="w-full h-full object-cover rounded-full"
+               loading="lazy">
+        </div>
+        <div class="absolute -top-8 -right-12 w-20 h-20 opacity-15 animate-bounce animation-delay-2000">
+          <img [src]="multifruitImage()" 
+               alt="Fruit decoration"
+               class="w-full h-full object-cover rounded-full transform rotate-45"
+               loading="lazy">
+        </div>
       </div>
     </section>
 
@@ -28,54 +50,120 @@
         </div>
       } @else {
         @for (categoryData of productsByCategory(); track categoryData.category) {
-          <div class="mb-16">
-            <!-- Category Title -->
-            <div class="text-center mb-12">
-              <h2 class="text-3xl font-bold text-gray-900 mb-4 font-epilogue">{{ categoryData.category }}</h2>
-              <div class="w-24 h-1 bg-agri-green-500 mx-auto rounded-full"></div>
+          <div class="mb-16 relative">
+            <!-- Category Title with Enhanced Design -->
+            <div class="text-center mb-12 relative">
+              <!-- Background decoration for fruit categories -->
+              @if (isFruitCategory()(categoryData.category)) {
+                <div class="absolute -inset-8 opacity-5 pointer-events-none">
+                  <img [src]="multifruitImage()" 
+                       alt="Category decoration"
+                       class="w-full h-32 object-cover object-center rounded-lg transform scale-110"
+                       loading="lazy">
+                </div>
+              }
+              
+              <div class="relative z-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4 font-epilogue">{{ categoryData.category }}</h2>
+                <div class="w-24 h-1 bg-agri-green-500 mx-auto rounded-full"></div>
+                
+                <!-- Special indicator for fruit categories -->
+                @if (isFruitCategory()(categoryData.category)) {
+                  <div class="mt-3 flex justify-center items-center space-x-2">
+                    <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-gray-600 font-medium">Frutas Frescas Ecuatorianas</span>
+                    <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse animation-delay-500"></div>
+                  </div>
+                }
+              </div>
             </div>
             
-            <!-- Products Grid -->
+            <!-- Products Grid with Enhanced Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               @for (product of categoryData.products; track product.id) {
-                <div class="card card-hover hover-lift group cursor-pointer" 
+                <div class="card card-hover hover-lift group cursor-pointer relative overflow-hidden" 
                      (click)="navigateToProduct(product.id)">
-                  <div class="relative aspect-w-4 aspect-h-3 overflow-hidden">
+                  
+                  <!-- Subtle background decoration for fruit products -->
+                  @if (isFruitCategory()(categoryData.category)) {
+                    <div class="absolute inset-0 opacity-3 pointer-events-none">
+                      <img [src]="multifruitImage()" 
+                           alt="Product decoration"
+                           class="w-full h-full object-cover transform scale-150 rotate-12"
+                           loading="lazy">
+                    </div>
+                  }
+                  
+                  <!-- Product Image Container -->
+                  <div class="relative aspect-w-4 aspect-h-3 overflow-hidden z-10">
                     <img 
                       [src]="product.images[0] || 'assets/images/placeholder-product.svg'" 
                       [alt]="product.name" 
-                      class="w-full h-64 object-cover product-img">
+                      class="w-full h-64 object-cover product-img"
+                      (error)="onImageError($event)"
+                      loading="lazy">
+                    
+                    <!-- Enhanced overlay with gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <!-- Certifications Badge -->
                     <div class="absolute top-4 left-4">
                       @if (product.certifications.length > 0) {
-                        <span class="bg-agri-green-600 text-white px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide">
+                        <span class="bg-agri-green-600 text-white px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide shadow-lg">
                           {{ product.certifications[0] }}
                         </span>
                       }
                     </div>
+                    
+                    <!-- Province Badge -->
                     <div class="absolute top-4 right-4">
-                      <span class="bg-white bg-opacity-90 text-gray-600 px-2 py-1 rounded text-xs font-medium">
+                      <span class="bg-white bg-opacity-95 text-gray-700 px-2 py-1 rounded text-xs font-medium shadow-md">
                         {{ product.province }}
                       </span>
                     </div>
+                    
+                    <!-- Special fruit indicator -->
+                    @if (isFruitCategory()(categoryData.category)) {
+                      <div class="absolute bottom-4 left-4">
+                        <div class="flex items-center space-x-1 bg-yellow-400/90 text-yellow-900 px-2 py-1 rounded-full text-xs font-medium">
+                          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                          </svg>
+                          <span>Premium</span>
+                        </div>
+                      </div>
+                    }
                   </div>
                   
-                  <div class="p-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-2 font-epilogue leading-tight">{{ product.name }}</h3>
+                  <!-- Product Information -->
+                  <div class="p-6 relative z-10">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 font-epilogue leading-tight group-hover:text-agri-green-700 transition-colors">
+                      {{ product.name }}
+                    </h3>
                     <p class="text-gray-600 mb-4 line-clamp-2">{{ product.description }}</p>
                     
+                    <!-- Category and Availability -->
                     <div class="flex justify-between items-center mb-6">
-                      <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-sm font-medium">{{ product.category }}</span>
-                      <span class="text-gray-500 text-sm">{{ product.availability }} disponible</span>
+                      <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-sm font-medium">
+                        {{ product.category }}
+                      </span>
+                      <span class="text-gray-500 text-sm flex items-center space-x-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full stock-indicator"></span>
+                        <span>{{ product.availability }} disponible</span>
+                      </span>
                     </div>
                     
+                    <!-- Price and Add to Cart -->
                     <div class="flex justify-between items-center">
                       <div>
-                        <span class="text-2xl font-bold text-agri-green-600 font-epilogue">${{ product.price.perUnit }}</span>
+                        <span class="text-2xl font-bold text-agri-green-600 font-epilogue">
+                          ${{ product.price.perUnit }}
+                        </span>
                         <span class="text-gray-500 text-sm ml-1">por {{ product.price.unit }}</span>
                       </div>
                       <button 
                         (click)="addToCart(product); $event.stopPropagation()"
-                        class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-all hover:-translate-y-0.5 flex items-center space-x-2 group-hover:shadow-lg">
+                        class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-2 group-hover:shadow-lg focus:ring-2 focus:ring-agri-green-500 focus:ring-offset-2">
                         <span class="material-icons text-lg">add_shopping_cart</span>
                         <span class="hidden sm:inline">Agregar</span>
                       </button>
@@ -89,10 +177,28 @@
       }
     </section>
     
+    <!-- Decorative Footer Section -->
+    <section class="py-12 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-5">
+        <img [src]="multifruitImage()" 
+             alt="Footer decoration"
+             class="w-full h-full object-cover transform scale-125 -rotate-6"
+             loading="lazy">
+      </div>
+      <div class="text-center relative z-10">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">
+          ¡Descubre más productos ecuatorianos!
+        </h3>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Cada producto cuenta una historia única de nuestros productores locales. 
+          Apoya la agricultura ecuatoriana y disfruta de la frescura auténtica.
+        </p>
+      </div>
+    </section>
   </main>
 </div>
 
-<!-- Custom styles specific to this page -->
+<!-- Enhanced Custom Styles -->
 <style>
 .logo-image {
   background-image: url('/assets/images/agriconnect-logo.svg');
@@ -111,11 +217,12 @@
 
 .card-hover {
   transition: all 0.3s ease;
+  backdrop-filter: blur(1px);
 }
 
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 }
 
 .hover-lift {
@@ -139,5 +246,106 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Enhanced animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+
+/* Fruit decoration animations */
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Stock indicator pulse */
+.stock-indicator::before {
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.33);
+  }
+  80%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Hover effects for category sections */
+@media (min-width: 768px) {
+  .category-section:hover .multifruit-bg {
+    opacity: 0.08;
+    transform: scale(1.05);
+  }
+}
+
+/* Improved focus states for accessibility */
+button:focus-visible,
+.card:focus-visible {
+  outline: 2px solid var(--color-agri-green-500);
+  outline-offset: 2px;
+}
+
+/* Responsive enhancements */
+@media (max-width: 640px) {
+  .absolute.-top-4.-left-8,
+  .absolute.-top-8.-right-12 {
+    display: none;
+  }
+  
+  .card .absolute.inset-0.opacity-3 {
+    opacity: 0.02;
+  }
+}
+
+/* Loading state improvements */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Enhanced premium badge */
+.bg-yellow-400\/90 {
+  background-color: rgb(251 191 36 / 0.9);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 </style>

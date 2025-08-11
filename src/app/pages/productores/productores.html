@@ -1,4 +1,4 @@
-<!-- AgriConnect Productores - Diseño Moderno con TailwindCSS -->
+<!-- AgriConnect Productores - Diseño Moderno con TailwindCSS y Multifrutas Enhancement -->
 <div class="min-h-screen bg-gradient-agri font-noto-sans">
   
   <!-- Shared Header Component -->
@@ -7,9 +7,18 @@
   <!-- Main Content Area -->
   <main class="max-w-7xl mx-auto px-4 lg:px-6">
     
-    <!-- Hero Section -->
-    <section class="py-16 lg:py-20 text-center">
-      <div class="max-w-4xl mx-auto">
+    <!-- Hero Section with Subtle Multifrutas Background -->
+    <section class="py-16 lg:py-20 text-center relative overflow-hidden">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 opacity-5 pointer-events-none">
+        <img 
+          [src]="multifrutasImagePath" 
+          alt="" 
+          class="w-full h-full object-cover object-center scale-110"
+          loading="lazy">
+      </div>
+      
+      <div class="max-w-4xl mx-auto relative z-10">
         <h1 class="text-4xl lg:text-6xl font-black text-gray-900 mb-6 font-epilogue leading-tight">
           <span class="text-gradient-agri">Nuestros</span> Productores
         </h1>
@@ -66,7 +75,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               @for (producer of category.producers; track producer.id) {
-                <!-- Flip Card -->
+                <!-- Enhanced Flip Card with Multifrutas Background -->
                 <div class="flip-card h-64" 
                      (click)="toggleCard(producer.id)"
                      (keydown.enter)="toggleCard(producer.id)"
@@ -78,98 +87,110 @@
                      [attr.aria-describedby]="'card-help-' + producer.id">
                   <div class="flip-card-inner" [class.flipped]="isCardFlipped(producer.id)">
                     
-                    <!-- Front Side -->
+                    <!-- Front Side with Multifrutas Background -->
                     <div class="flip-card-front">
-                      <div class="card card-hover h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-white to-gray-50">
+                      <div class="card card-hover h-full flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
+                           [style]="getFrontCardStyle()">
                         
-                        <!-- Logo or Name Display -->
-                        @if (producer.logoUrl) {
-                          <div class="w-16 h-16 mb-4 bg-agri-green-100 rounded-full flex items-center justify-center">
-                            <img 
-                              [src]="producer.logoUrl" 
-                              [alt]="getDisplayName(producer) + ' logo'"
-                              class="w-12 h-12 object-contain"
-                              (error)="$any($event.target).style.display = 'none'; $any($event.target).nextElementSibling.style.display = 'flex'">
-                            <!-- Fallback Icon -->
-                            <div class="hidden w-12 h-12 bg-agri-green-600 rounded-full items-center justify-center">
-                              <span class="material-icons text-gray-800 text-lg">business</span>
+                        <!-- Content Overlay -->
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full">
+                          <!-- Logo or Name Display -->
+                          @if (producer.logoUrl) {
+                            <div class="w-16 h-16 mb-4 bg-agri-green-100/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                              <img 
+                                [src]="producer.logoUrl" 
+                                [alt]="getDisplayName(producer) + ' logo'"
+                                class="w-12 h-12 object-contain"
+                                (error)="$any($event.target).style.display = 'none'; $any($event.target).nextElementSibling.style.display = 'flex'">
+                              <!-- Fallback Icon -->
+                              <div class="hidden w-12 h-12 bg-agri-green-600 rounded-full items-center justify-center">
+                                <span class="material-icons text-gray-800 text-lg">business</span>
+                              </div>
                             </div>
-                          </div>
-                        } @else {
-                          <div class="w-16 h-16 mb-4 bg-agri-green-600 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-gray-800 text-xl">
-                              {{ producer.companyName ? 'business' : 'person' }}
-                            </span>
-                          </div>
-                        }
-                        
-                        <!-- Producer/Company Name -->
-                        <h3 class="text-lg font-bold text-gray-900 mb-2 font-epilogue leading-tight">
-                          {{ getDisplayName(producer) }}
-                        </h3>
-                        
-                        <!-- Province Badge -->
-                        <span class="bg-agri-green-100 text-agri-green-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
-                          {{ producer.province }}
-                        </span>
-                        
-                        <!-- Click hint -->
-                        <p class="text-xs text-gray-500 mt-auto">
-                          <span class="material-icons text-sm mr-1">touch_app</span>
-                          Toca para más información
-                        </p>
+                          } @else {
+                            <div class="w-16 h-16 mb-4 bg-agri-green-600/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                              <span class="material-icons text-gray-800 text-xl">
+                                {{ producer.companyName ? 'business' : 'person' }}
+                              </span>
+                            </div>
+                          }
+                          
+                          <!-- Producer/Company Name -->
+                          <h3 class="text-lg font-bold text-gray-900 mb-2 font-epilogue leading-tight bg-white/70 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">
+                            {{ getDisplayName(producer) }}
+                          </h3>
+                          
+                          <!-- Province Badge -->
+                          <span class="bg-agri-green-100/90 backdrop-blur-sm text-agri-green-800 px-3 py-1 rounded-full text-sm font-medium mb-4 shadow-sm">
+                            {{ producer.province }}
+                          </span>
+                          
+                          <!-- Click hint -->
+                          <p class="text-xs text-gray-600 mt-auto bg-white/60 backdrop-blur-sm px-2 py-1 rounded">
+                            <span class="material-icons text-sm mr-1">touch_app</span>
+                            Toca para más información
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <!-- Back Side -->
+                    <!-- Back Side with Enhanced Multifrutas Background -->
                     <div class="flip-card-back">
-                      <div class="card h-full p-6 bg-gradient-to-br from-green-200 via-green-300 to-green-400 text-gray-800">
+                      <div class="card h-full p-6 relative overflow-hidden"
+                           [style]="getBackCardStyle()">
                         
-                        <!-- Product Info -->
-                        <div class="text-center mb-4">
-                          <h4 class="text-lg font-bold mb-2 font-epilogue text-gray-800">{{ producer.productName }}</h4>
-                          <p class="text-gray-600 text-sm mb-3">{{ getProducerTypeLabel(producer.type) }}</p>
-                        </div>
-                        
-                        <!-- Contact Information -->
-                        <div class="space-y-2 text-sm">
-                          @if (producer.contactInfo?.phone) {
-                            <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2 text-gray-800">phone</span>
-                              <span class="text-gray-800">{{ producer.contactInfo?.phone }}</span>
-                            </div>
-                          }
-                          
-                          @if (producer.contactInfo?.email) {
-                            <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2 text-gray-800">email</span>
-                              <span class="text-gray-800 truncate">{{ producer.contactInfo?.email }}</span>
-                            </div>
-                          }
-                          
-                          @if (producer.contactInfo?.address) {
-                            <div class="flex items-start">
-                              <span class="material-icons text-sm mr-2 mt-0.5 text-gray-800">location_on</span>
-                              <span class="text-gray-800 text-xs leading-tight">{{ producer.contactInfo?.address }}</span>
-                            </div>
-                          }
-                        </div>
-                        
-                        <!-- Auto-return timer indicator -->
-                        @if (hasActiveTimer(producer.id)) {
-                          <div class="text-center mb-2">
-                            <div class="inline-flex items-center space-x-1 text-xs text-gray-600">
-                              <span class="material-icons text-sm animate-pulse">schedule</span>
-                              <span>Se volteará automáticamente</span>
-                            </div>
+                        <!-- Content Overlay -->
+                        <div class="relative z-10 h-full flex flex-col">
+                          <!-- Product Info -->
+                          <div class="text-center mb-4">
+                            <h4 class="text-lg font-bold mb-2 font-epilogue text-gray-800 bg-white/70 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm inline-block">
+                              {{ producer.productName }}
+                            </h4>
+                            <p class="text-gray-700 text-sm mb-3 bg-white/50 backdrop-blur-sm px-2 py-1 rounded inline-block">
+                              {{ getProducerTypeLabel(producer.type) }}
+                            </p>
                           </div>
-                        }
-                        
-                        <!-- Back hint -->
-                        <p class="text-xs text-gray-600 mt-auto pt-2 text-center">
-                          <span class="material-icons text-sm mr-1">touch_app</span>
-                          Toca para volver
-                        </p>
+                          
+                          <!-- Contact Information -->
+                          <div class="space-y-2 text-sm mb-4 flex-grow">
+                            @if (producer.contactInfo?.phone) {
+                              <div class="flex items-center bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                                <span class="material-icons text-sm mr-2 text-gray-800">phone</span>
+                                <span class="text-gray-800 font-medium">{{ producer.contactInfo?.phone }}</span>
+                              </div>
+                            }
+                            
+                            @if (producer.contactInfo?.email) {
+                              <div class="flex items-center bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                                <span class="material-icons text-sm mr-2 text-gray-800">email</span>
+                                <span class="text-gray-800 truncate font-medium">{{ producer.contactInfo?.email }}</span>
+                              </div>
+                            }
+                            
+                            @if (producer.contactInfo?.address) {
+                              <div class="flex items-start bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                                <span class="material-icons text-sm mr-2 mt-0.5 text-gray-800">location_on</span>
+                                <span class="text-gray-800 text-xs leading-tight font-medium">{{ producer.contactInfo?.address }}</span>
+                              </div>
+                            }
+                          </div>
+                          
+                          <!-- Auto-return timer indicator -->
+                          @if (hasActiveTimer(producer.id)) {
+                            <div class="text-center mb-2">
+                              <div class="inline-flex items-center space-x-1 text-xs text-gray-700 bg-white/50 backdrop-blur-sm px-2 py-1 rounded">
+                                <span class="material-icons text-sm animate-pulse">schedule</span>
+                                <span>Se volteará automáticamente</span>
+                              </div>
+                            </div>
+                          }
+                          
+                          <!-- Back hint -->
+                          <p class="text-xs text-gray-700 mt-auto pt-2 text-center bg-white/50 backdrop-blur-sm px-2 py-1 rounded">
+                            <span class="material-icons text-sm mr-1">touch_app</span>
+                            Toca para volver
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -194,7 +215,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               @for (producer of category.producers; track producer.id) {
-                <!-- Flip Card (same as above) -->
+                <!-- Enhanced Flip Card with Multifrutas Background (same as above) -->
                 <div class="flip-card h-64" 
                      (click)="toggleCard(producer.id)"
                      (keydown.enter)="toggleCard(producer.id)"
@@ -206,80 +227,92 @@
                      [attr.aria-describedby]="'card-help-' + producer.id">
                   <div class="flip-card-inner" [class.flipped]="isCardFlipped(producer.id)">
                     
-                    <!-- Front Side -->
+                    <!-- Front Side with Multifrutas Background -->
                     <div class="flip-card-front">
-                      <div class="card card-hover h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-white to-gray-50">
+                      <div class="card card-hover h-full flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
+                           [style]="getFrontCardStyle()">
                         
-                        @if (producer.logoUrl) {
-                          <div class="w-16 h-16 mb-4 bg-agri-green-100 rounded-full flex items-center justify-center">
-                            <img 
-                              [src]="producer.logoUrl" 
-                              [alt]="getDisplayName(producer) + ' logo'"
-                              class="w-12 h-12 object-contain"
-                              (error)="$any($event.target).style.display = 'none'; $any($event.target).nextElementSibling.style.display = 'flex'">
-                            <div class="hidden w-12 h-12 bg-agri-green-600 rounded-full items-center justify-center">
-                              <span class="material-icons text-gray-800 text-lg">business</span>
+                        <!-- Content Overlay -->
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full">
+                          @if (producer.logoUrl) {
+                            <div class="w-16 h-16 mb-4 bg-agri-green-100/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                              <img 
+                                [src]="producer.logoUrl" 
+                                [alt]="getDisplayName(producer) + ' logo'"
+                                class="w-12 h-12 object-contain"
+                                (error)="$any($event.target).style.display = 'none'; $any($event.target).nextElementSibling.style.display = 'flex'">
+                              <div class="hidden w-12 h-12 bg-agri-green-600 rounded-full items-center justify-center">
+                                <span class="material-icons text-gray-800 text-lg">business</span>
+                              </div>
                             </div>
-                          </div>
-                        } @else {
-                          <div class="w-16 h-16 mb-4 bg-agri-green-600 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-gray-800 text-xl">
-                              {{ producer.companyName ? 'business' : 'person' }}
-                            </span>
-                          </div>
-                        }
-                        
-                        <h3 class="text-lg font-bold text-gray-900 mb-2 font-epilogue leading-tight">
-                          {{ getDisplayName(producer) }}
-                        </h3>
-                        
-                        <span class="bg-agri-green-100 text-agri-green-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
-                          {{ producer.province }}
-                        </span>
-                        
-                        <p class="text-xs text-gray-500 mt-auto">
-                          <span class="material-icons text-sm mr-1">touch_app</span>
-                          Toca para más información
-                        </p>
+                          } @else {
+                            <div class="w-16 h-16 mb-4 bg-agri-green-600/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                              <span class="material-icons text-gray-800 text-xl">
+                                {{ producer.companyName ? 'business' : 'person' }}
+                              </span>
+                            </div>
+                          }
+                          
+                          <h3 class="text-lg font-bold text-gray-900 mb-2 font-epilogue leading-tight bg-white/70 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">
+                            {{ getDisplayName(producer) }}
+                          </h3>
+                          
+                          <span class="bg-agri-green-100/90 backdrop-blur-sm text-agri-green-800 px-3 py-1 rounded-full text-sm font-medium mb-4 shadow-sm">
+                            {{ producer.province }}
+                          </span>
+                          
+                          <p class="text-xs text-gray-600 mt-auto bg-white/60 backdrop-blur-sm px-2 py-1 rounded">
+                            <span class="material-icons text-sm mr-1">touch_app</span>
+                            Toca para más información
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <!-- Back Side -->
+                    <!-- Back Side with Enhanced Multifrutas Background -->
                     <div class="flip-card-back">
-                      <div class="card h-full p-6 bg-gradient-to-br from-green-200 via-green-300 to-green-400 text-gray-800">
+                      <div class="card h-full p-6 relative overflow-hidden"
+                           [style]="getBackCardStyle()">
                         
-                        <div class="text-center mb-4">
-                          <h4 class="text-lg font-bold mb-2 font-epilogue text-gray-800">{{ producer.productName }}</h4>
-                          <p class="text-gray-600 text-sm mb-3">{{ getProducerTypeLabel(producer.type) }}</p>
-                        </div>
-                        
-                        <div class="space-y-2 text-sm">
-                          @if (producer.contactInfo?.phone) {
-                            <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2 text-gray-800">phone</span>
-                              <span class="text-gray-800">{{ producer.contactInfo?.phone }}</span>
-                            </div>
-                          }
+                        <!-- Content Overlay -->
+                        <div class="relative z-10 h-full flex flex-col">
+                          <div class="text-center mb-4">
+                            <h4 class="text-lg font-bold mb-2 font-epilogue text-gray-800 bg-white/70 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm inline-block">
+                              {{ producer.productName }}
+                            </h4>
+                            <p class="text-gray-700 text-sm mb-3 bg-white/50 backdrop-blur-sm px-2 py-1 rounded inline-block">
+                              {{ getProducerTypeLabel(producer.type) }}
+                            </p>
+                          </div>
                           
-                          @if (producer.contactInfo?.email) {
-                            <div class="flex items-center">
-                              <span class="material-icons text-sm mr-2 text-gray-800">email</span>
-                              <span class="text-gray-800 truncate">{{ producer.contactInfo?.email }}</span>
-                            </div>
-                          }
+                          <div class="space-y-2 text-sm mb-4 flex-grow">
+                            @if (producer.contactInfo?.phone) {
+                              <div class="flex items-center bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                                <span class="material-icons text-sm mr-2 text-gray-800">phone</span>
+                                <span class="text-gray-800 font-medium">{{ producer.contactInfo?.phone }}</span>
+                              </div>
+                            }
+                            
+                            @if (producer.contactInfo?.email) {
+                              <div class="flex items-center bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                                <span class="material-icons text-sm mr-2 text-gray-800">email</span>
+                                <span class="text-gray-800 truncate font-medium">{{ producer.contactInfo?.email }}</span>
+                              </div>
+                            }
+                            
+                            @if (producer.contactInfo?.address) {
+                              <div class="flex items-start bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                                <span class="material-icons text-sm mr-2 mt-0.5 text-gray-800">location_on</span>
+                                <span class="text-gray-800 text-xs leading-tight font-medium">{{ producer.contactInfo?.address }}</span>
+                              </div>
+                            }
+                          </div>
                           
-                          @if (producer.contactInfo?.address) {
-                            <div class="flex items-start">
-                              <span class="material-icons text-sm mr-2 mt-0.5 text-gray-800">location_on</span>
-                              <span class="text-gray-800 text-xs leading-tight">{{ producer.contactInfo?.address }}</span>
-                            </div>
-                          }
+                          <p class="text-xs text-gray-700 mt-auto pt-4 text-center bg-white/50 backdrop-blur-sm px-2 py-1 rounded">
+                            <span class="material-icons text-sm mr-1">touch_app</span>
+                            Toca para volver
+                          </p>
                         </div>
-                        
-                        <p class="text-xs text-gray-600 mt-auto pt-4 text-center">
-                          <span class="material-icons text-sm mr-1">touch_app</span>
-                          Toca para volver
-                        </p>
                       </div>
                     </div>
                   </div>

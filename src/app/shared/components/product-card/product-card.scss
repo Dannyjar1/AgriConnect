@@ -1,7 +1,158 @@
-.product-card {
-  transition: transform 0.3s ease;
+// Modern CSS Custom Properties for theming
+:host {
+  --card-transition-duration: 0.3s;
+  --card-hover-scale: 1.02;
+  --card-hover-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --card-border-radius: 0.75rem; /* 12px */
+  --multifrutas-opacity-base: 0.03;
+  --multifrutas-opacity-hover: 0.06;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
+// Enhanced card transitions and hover effects
+.product-card {
+  transition: 
+    transform var(--card-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow var(--card-transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Modern backdrop filter support
+  @supports (backdrop-filter: blur(10px)) {
+    .bg-opacity-95 {
+      backdrop-filter: blur(10px);
+    }
+  }
+  
+  // Enhanced hover effects with GPU acceleration
+  &:hover {
+    transform: translateY(-2px) scale(var(--card-hover-scale));
+    box-shadow: var(--card-hover-shadow);
+    
+    // Optimized performance hint
+    will-change: transform, box-shadow;
+  }
+  
+  // Focus management for accessibility
+  &:focus-within {
+    outline: 2px solid #10b981; /* green-500 */
+    outline-offset: 2px;
+  }
+}
+
+// Container queries support for modern responsive design
+@container (min-width: 320px) {
+  .product-card {
+    .product-image {
+      height: 13rem; /* h-52 */
+    }
+    
+    .product-info {
+      padding: 1.25rem; /* p-5 */
+    }
+  }
+}
+
+@container (min-width: 480px) {
+  .product-card {
+    .product-image {
+      height: 14rem; /* h-56 */
+    }
+    
+    .product-info {
+      padding: 1.5rem; /* p-6 */
+    }
+  }
+}
+
+// Multifrutas background pattern optimization
+.multifrutas-background {
+  // Performance optimization for background images
+  transform: translateZ(0); /* Force GPU layer */
+  backface-visibility: hidden;
+  
+  // Smooth opacity transitions
+  transition: opacity var(--card-transition-duration) ease-out;
+  
+  // Ensure crisp rendering
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+// Fresh badge enhancements
+.fresh-badge {
+  // Subtle animation on hover
+  transition: all var(--card-transition-duration) ease-out;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  // Ensure readability on all backgrounds
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
+}
+
+// Line clamp utility for product names (fallback for browsers without CSS line-clamp)
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  
+  // Fallback for browsers without webkit support
+  @supports not (-webkit-line-clamp: 2) {
+    max-height: calc(1.25rem * 2); /* 2 lines at text-lg */
+    overflow: hidden;
+    
+    &::after {
+      content: "...";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      padding-left: 1rem;
+      background: linear-gradient(to right, transparent, white 50%);
+    }
+  }
+}
+
+// Dark mode support (if implemented in the future)
+@media (prefers-color-scheme: dark) {
+  :host {
+    --multifrutas-opacity-base: 0.02;
+    --multifrutas-opacity-hover: 0.04;
+  }
+}
+
+// Reduced motion support for accessibility
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .product-card:hover {
+    transform: none !important;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .product-card {
+    border: 2px solid currentColor;
+    
+    .fresh-badge {
+      border: 1px solid white;
+    }
+  }
+}
+
+// Print styles optimization
+@media print {
+  .product-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    transform: none !important;
+    
+    .multifrutas-background {
+      display: none !important; // Hide decorative elements in print
+    }
+  }
 }
