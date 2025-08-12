@@ -6,9 +6,5 @@
 
 export { CarritoComponent } from './carrito';
 
-// Export cart-related interfaces and types for external use
-export type { CartItem, CartSummary } from './carrito';
-
-// Future exports for cart-related services or utilities
-// export { CartService } from './services/cart.service';
-// export { CartUtils } from './utils/cart.utils';
+// Re-export cart-related interfaces and types from unified models
+export type { CartItem, CartSummary, CartState } from '../../core/models/cart.model';

@@ -1,21 +1,11 @@
-import { Component, signal, computed, ChangeDetectionStrategy, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
-import { CartService, CartState, CartItem } from '../../core/services/cart'; // Integración carrito unificado
-
-/**
- * Interface for cart summary calculations
- */
-export interface CartSummary {
-  subtotal: number;
-  tax: number;
-  taxRate: number;
-  shipping: number;
-  total: number;
-  itemCount: number;
-}
+import { CheckoutOverlay } from '../../shared/components/checkout-overlay/checkout-overlay';
+import { CartService } from '../../core/services/cart'; // Integración carrito unificado
+import type { CartItem, CartSummary, CartState } from '../../core/models/cart.model';
 
 /**
  * CarritoComponent - Shopping Cart Page for AgriConnect
@@ -31,16 +21,17 @@ export interface CartSummary {
  * - Empty state with call-to-action
  * - Quantity management with validation
  * - Remove item functionality
- * - Checkout process integration ready
+ * - Checkout overlay integration
  * - Integración carrito unificado + fallback de imagen
+ * - Null-safety corrections aplicadas (TS2532 eliminated)
  * 
  * @author AgriConnect Team
- * @version 1.0.0
+ * @version 1.1.0
  */
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CommonModule, SharedHeaderComponent],
+  imports: [CommonModule, SharedHeaderComponent, CheckoutOverlay],
   template: `
     <!-- Page Header -->
     <app-shared-header currentPage="carrito" />
@@ -164,21 +155,21 @@ export interface CartSummary {
                             {{ item.nombre }}
                           </h3>
                           <p class="text-gray-600 font-noto-sans text-sm line-clamp-2">
-                            {{ item.product.description }}
+                            {{ item.product?.description || '-' }}
                           </p>
                           
                           <!-- Product Meta Information -->
                           <div class="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
-                            @if (item.product.province) {
+                            @if (item.product?.province) {
                               <span class="flex items-center space-x-1">
                                 <span class="material-icons text-sm text-agri-green-500">place</span>
-                                <span>{{ item.product.province }}</span>
+                                <span>{{ item.product?.province }}</span>
                               </span>
                             }
-                            @if (item.product.certifications.length > 0) {
+                            @if ((item.product?.certifications?.length ?? 0) > 0) {
                               <span class="flex items-center space-x-1">
                                 <span class="material-icons text-sm text-agri-green-500">verified</span>
-                                <span>{{ item.product.certifications[0] }}</span>
+                                <span>{{ item.product?.certifications?.[0] }}</span>
                               </span>
                             }
                             <!-- AgriConnect freshness indicator -->
@@ -202,7 +193,7 @@ export interface CartSummary {
                                 \${{ item.precio.toFixed(2) }}
                               </span>
                               <span class="text-gray-500 text-sm">
-                                por {{ item.product.price.unit }}
+                                por {{ item.product?.price?.unit || 'unidad' }}
                               </span>
                               <!-- Subtle multifrutas accent in price area -->
                               <div class="w-5 h-5 rounded-full bg-gradient-to-br from-green-100 to-emerald-100
@@ -237,7 +228,7 @@ export interface CartSummary {
                               
                               <button
                                 (click)="increaseQuantity(item.id)"
-                                [disabled]="item.qty >= item.product.availability"
+                                [disabled]="item.qty >= (item.product?.availability ?? 0)"
                                 class="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors relative group/btn"
                                 [attr.aria-label]="'Aumentar cantidad de ' + item.nombre">
                                 <span class="material-icons text-lg text-gray-600 group-hover/btn:text-agri-green-600 transition-colors">add</span>
@@ -331,9 +322,12 @@ export interface CartSummary {
                     <!-- Checkout Button -->
                     <button
                       (click)="proceedToCheckout()"
+                      [disabled]="cartItems().length === 0"
                       class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 
+                             disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed
                              text-gray-900 font-bold py-4 px-6 rounded-lg transition-all duration-200 
                              flex items-center justify-center space-x-2 hover:shadow-lg transform hover:scale-105
+                             disabled:transform-none disabled:shadow-none
                              relative overflow-hidden"
                       aria-label="Proceder al checkout">
                       <!-- Subtle checkout button enhancement -->
@@ -376,6 +370,9 @@ export interface CartSummary {
         </div>
       </div>
     </main>
+
+    <!-- Checkout Overlay Component -->
+    <app-checkout-overlay #checkoutOverlay />
   `,
   styleUrls: ['./carrito.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -385,6 +382,9 @@ export class CarritoComponent implements OnInit, OnDestroy {
   // Router injection for navigation
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService); // Integración carrito unificado
+  
+  // ViewChild reference to checkout overlay
+  @ViewChild('checkoutOverlay') checkoutOverlay!: CheckoutOverlay;
   
   // Cart state management with signals - Subscribe to CartService
   protected readonly cartItems = signal<CartItem[]>([]);
@@ -491,19 +491,23 @@ export class CarritoComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Proceed to checkout
-   * TODO: Implement checkout flow
+   * Proceed to checkout - Open checkout overlay
+   * Updated to use CheckoutOverlay component
    */
   protected proceedToCheckout(): void {
-    // In a real implementation, this would navigate to checkout
-    // or open a checkout modal/component
+    // Check if cart has items
+    if (this.cartItems().length === 0) {
+      console.warn('Cannot proceed to checkout: cart is empty');
+      return;
+    }
+
     console.log('Procediendo al checkout...', {
       items: this.cartItems(),
       summary: this.cartSummary()
     });
     
-    // For now, show alert
-    alert(`Procediendo al checkout por un total de $${this.cartSummary().total.toFixed(2)}`);
+    // Open the checkout overlay
+    this.checkoutOverlay.openOverlay();
   }
 
   /**

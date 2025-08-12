@@ -1,27 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from '../models/product.model';
-
-/**
- * Interface para elementos del carrito
- */
-export interface CartItem {
-  id: string;
-  nombre: string;
-  precio: number;
-  qty: number;
-  image: string;
-  product: Product; // Referencia completa al producto
-}
-
-/**
- * Interface para el estado del carrito
- */
-export interface CartState {
-  items: CartItem[];
-  total: number;
-  count: number;
-}
+import type { CartItem, CartState } from '../models/cart.model';
 
 /**
  * Cart Service - Servicio unificado de carrito para AgriConnect
@@ -86,6 +66,21 @@ export class CartService {
   }
 
   /**
+   * Normaliza un producto con valores por defecto para null-safety
+   */
+  private withDefaults(product: Product): Product {
+    return {
+      ...product,
+      description: product.description || '-',
+      province: product.province || '',
+      certifications: product.certifications || [],
+      price: product.price || { perUnit: 0, unit: 'unidad' },
+      availability: product.availability || 0,
+      images: product.images?.length > 0 ? product.images : ['assets/images/multifrutas.webp']
+    };
+  }
+
+  /**
    * Agregar producto al carrito
    * Maneja duplicados sumando qty si id existe
    * 
@@ -99,8 +94,11 @@ export class CartService {
       return;
     }
 
+    // Normalizar producto con valores por defecto
+    const normalizedProduct = this.withDefaults(producto);
+
     const currentState = this.cartState$.value;
-    const existingItemIndex = currentState.items.findIndex(item => item.id === producto.id);
+    const existingItemIndex = currentState.items.findIndex(item => item.id === normalizedProduct.id);
 
     let updatedItems: CartItem[];
 
@@ -114,12 +112,12 @@ export class CartService {
     } else {
       // Nuevo producto, agregarlo al carrito
       const newItem: CartItem = {
-        id: producto.id,
-        nombre: producto.name,
-        precio: producto.price.perUnit,
+        id: normalizedProduct.id,
+        nombre: normalizedProduct.name,
+        precio: normalizedProduct.price.perUnit,
         qty: qty,
-        image: this.getValidImageUrl(producto),
-        product: producto
+        image: this.getValidImageUrl(normalizedProduct),
+        product: normalizedProduct
       };
       updatedItems = [...currentState.items, newItem];
     }

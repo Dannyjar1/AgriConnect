@@ -2,7 +2,8 @@ import { Component, Input, inject, ChangeDetectionStrategy, signal, OnInit, OnDe
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CartService, CartState } from '../../../core/services/cart'; // Integración carrito unificado
+import { CartService } from '../../../core/services/cart'; // Integración carrito unificado
+import type { CartState } from '../../../core/models/cart.model';
 
 /**
  * SharedHeaderComponent - Header universal para AgriConnect
