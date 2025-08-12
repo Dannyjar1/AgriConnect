@@ -9,6 +9,7 @@
 export { SharedHeaderComponent } from './components/shared-header/shared-header.component';
 export { AuthHeaderComponent } from './components/auth-header/auth-header';
 export { AppFooterComponent } from './components/app-footer/app-footer';
+export { CheckoutOverlay } from './components/checkout-overlay/checkout-overlay';
 
 // Add other shared components here as they are created
 // export { FooterComponent } from './components/footer/footer';
