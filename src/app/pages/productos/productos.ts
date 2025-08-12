@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Product } from '../../core/models/product.model';
+import { CartService } from '../../core/services/cart'; // Integración carrito unificado + fallback de imagen
 import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
 
 interface ProductsByCategory {
@@ -18,6 +19,7 @@ interface ProductsByCategory {
 })
 export class Productos implements OnInit {
   private readonly router = inject(Router);
+  private readonly cartService = inject(CartService); // Integración carrito unificado
 
   // Señales reactivas
   readonly isLoading = signal<boolean>(false);
@@ -841,18 +843,38 @@ export class Productos implements OnInit {
   }
 
   /**
-   * Add product to cart (placeholder)
+   * Add product to cart using CartService
+   * Integración carrito unificado + fallback de imagen
    */
   addToCart(product: Product): void {
-    console.log('Agregando al carrito:', product);
-    // TODO: Implementar funcionalidad del carrito
+    // Conectar "Agregar" buttons al CartService.add(product)
+    this.cartService.add(product, 1);
+    console.log('Producto agregado al carrito:', product.name);
+    
+    // Opcional: Mostrar feedback visual (toast, notification, etc.)
+    // Para este ejemplo, usamos console.log
   }
 
   /**
    * Handle image loading errors
+   * Integración carrito unificado + fallback de imagen
    */
   onImageError(event: any): void {
-    event.target.src = 'assets/images/placeholder-product.svg';
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      // Si no hay imagen válida, usar multifrutas.webp como fallback
+      if (!img.src.includes('multifrutas.webp')) {
+        img.src = 'assets/images/multifrutas.webp';
+        img.className = 'w-full h-40 object-cover rounded-lg'; // Aplicar clase específica
+      } else {
+        // Si multifrutas.webp también falla, mostrar icono
+        img.style.display = 'none';
+        const parent = img.parentElement;
+        if (parent) {
+          parent.innerHTML = '<div class="w-full h-40 flex items-center justify-center bg-gray-100 rounded-lg"><span class="material-icons text-gray-400 text-2xl">image</span></div>';
+        }
+      }
+    }
   }
 
   /**
@@ -860,5 +882,19 @@ export class Productos implements OnInit {
    */
   getMultifruitBackgroundStyle(opacity: number = 0.1): string {
     return `background-image: url('${this.multifruitImage()}'); opacity: ${opacity}; background-size: cover; background-position: center; background-repeat: no-repeat;`;
+  }
+
+  /**
+   * Check if product is in cart
+   */
+  isInCart(productId: string): boolean {
+    return this.cartService.isInCart(productId);
+  }
+
+  /**
+   * Get product quantity in cart
+   */
+  getProductCartQuantity(productId: string): number {
+    return this.cartService.getProductQuantity(productId);
   }
 }

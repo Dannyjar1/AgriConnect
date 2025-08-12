@@ -60,13 +60,20 @@
       
       <!-- Right Actions -->
       <div class="flex items-center space-x-4 ml-6">
-        <!-- Carrito - Botón amarillo destacado -->
+        <!-- Carrito - Botón amarillo destacado con cart counter badge -->
         <button (click)="navigateToCart()" 
-                class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-all hover:shadow-md flex items-center space-x-2 whitespace-nowrap"
+                class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-all hover:shadow-md flex items-center space-x-2 whitespace-nowrap relative"
                 aria-label="Ver carrito de compras"
                 title="Carrito">
           <span class="material-icons text-lg">shopping_cart</span>
           <span class="hidden lg:inline">Carrito</span>
+          <!-- Cart counter badge showing count from CartService -->
+          @if (cartCount() > 0) {
+            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-5 animate-pulse"
+                  [attr.aria-label]="cartCount() + ' productos en el carrito'">
+              {{ cartCount() > 99 ? '99+' : cartCount() }}
+            </span>
+          }
         </button>
         
         <!-- Profile Icon -->
@@ -89,12 +96,19 @@
     
     <!-- Mobile Menu Button -->
     <div class="md:hidden flex items-center space-x-2 flex-shrink-0">
-      <!-- Mobile Cart Button -->
+      <!-- Mobile Cart Button with counter badge -->
       <button (click)="navigateToCart()" 
-              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-2.5 rounded-lg transition-all hover:shadow-md flex items-center justify-center w-11 h-11"
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-2.5 rounded-lg transition-all hover:shadow-md flex items-center justify-center w-11 h-11 relative"
               aria-label="Ver carrito de compras"
               title="Carrito">
         <span class="material-icons text-xl">shopping_cart</span>
+        <!-- Mobile cart counter badge -->
+        @if (cartCount() > 0) {
+          <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center min-w-4 animate-pulse"
+                [attr.aria-label]="cartCount() + ' productos en el carrito'">
+            {{ cartCount() > 9 ? '9+' : cartCount() }}
+          </span>
+        }
       </button>
       
       <!-- Hamburger Menu -->
@@ -180,11 +194,17 @@
         
         <!-- Separator -->
         <div class="border-t border-gray-200 pt-4">
-          <!-- Cart - Full width button on mobile -->
+          <!-- Cart - Full width button on mobile with counter -->
           <button (click)="navigateToCart()" 
-                  class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-3 rounded-lg transition-all hover:shadow-md flex items-center justify-center space-x-2">
+                  class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-3 rounded-lg transition-all hover:shadow-md flex items-center justify-center space-x-2 relative">
             <span class="material-icons text-xl">shopping_cart</span>
             <span>Ver Carrito</span>
+            @if (cartCount() > 0) {
+              <span class="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1 ml-2"
+                    [attr.aria-label]="cartCount() + ' productos en el carrito'">
+                {{ cartCount() }}
+              </span>
+            }
           </button>
         </div>
       </div>

@@ -1,22 +1,25 @@
-import { Component, Input, inject, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, Input, inject, ChangeDetectionStrategy, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { CartService, CartState } from '../../../core/services/cart'; // Integración carrito unificado
 
 /**
  * SharedHeaderComponent - Header universal para AgriConnect
  * 
  * Componente header reutilizable diseñado para ser usado en todas las páginas
- * de la aplicación AgriConnect. Incluye navegación responsive, logo, y botón
- * de carrito.
+ * de la aplicación AgriConnect. Incluye navegación responsive, logo, botón
+ * de carrito con contador en tiempo real.
  * 
  * Features:
  * - Standalone component (Angular 20+)
  * - OnPush change detection strategy
  * - Responsive design (mobile-first)
  * - Navegación dinámica basada en currentPage
- * - Botón de carrito destacado
+ * - Botón de carrito destacado con badge count en tiempo real
  * - Material Icons integration
  * - Accessibility compliant
+ * - Integración carrito unificado
  */
 @Component({
   selector: 'app-shared-header',
@@ -26,8 +29,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./shared-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SharedHeaderComponent {
+export class SharedHeaderComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
+  private readonly cartService = inject(CartService); // Integración carrito unificado
 
   /**
    * Página actual para highlighting de navegación
@@ -44,6 +48,31 @@ export class SharedHeaderComponent {
    */
   protected readonly logoLoadError = signal<boolean>(false);
   protected readonly logoLoaded = signal<boolean>(false);
+
+  /**
+   * Cart count for real-time updates
+   * Subscribe to cart$ for real-time updates
+   */
+  protected readonly cartCount = signal<number>(0);
+
+  /**
+   * Subscription to cart service
+   */
+  private cartSubscription?: Subscription;
+
+  ngOnInit(): void {
+    // Subscribe to cart$ for real-time updates
+    this.cartSubscription = this.cartService.cart$.subscribe((cartState: CartState) => {
+      this.cartCount.set(cartState.count);
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscription
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
+  }
 
   /**
    * Navegación a la página de inicio/marketplace
@@ -120,5 +149,12 @@ export class SharedHeaderComponent {
   onLogoError(): void {
     this.logoLoadError.set(true);
     this.logoLoaded.set(false);
+  }
+
+  /**
+   * Get cart count for display
+   */
+  getCartCount(): number {
+    return this.cartCount();
   }
 }

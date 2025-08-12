@@ -122,11 +122,12 @@
               @for (product of products; track product.id) {
                 <div class="card card-hover hover-lift group">
                   <div class="relative aspect-w-4 aspect-h-3 overflow-hidden">
+                    <!-- Integración carrito unificado + fallback de imagen -->
                     <img 
-                      [src]="product.images && product.images.length > 0 ? product.images[0] : 'assets/images/placeholder-product.svg'" 
+                      [src]="product.images && product.images.length > 0 ? product.images[0] : 'assets/images/multifrutas.webp'" 
                       [alt]="product.name" 
                       (error)="onImageError($event)"
-                      class="w-full h-64 object-cover product-img">
+                      class="w-full h-40 object-cover rounded-lg product-img">
                     <div class="absolute top-4 left-4">
                       @if (product.certifications.length > 0) {
                         <span class="bg-agri-green-600 text-white px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide">
@@ -142,15 +143,19 @@
                     
                     <div class="flex justify-between items-center mb-6">
                       <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-sm font-medium">{{ product.category }}</span>
-                      <span class="text-gray-500 text-sm">{{ product.availability }} available</span>
+                      <span class="text-gray-500 text-sm">{{ product.availability }} disponibles</span>
                     </div>
                     
                     <div class="flex justify-between items-center">
                       <div>
-                        <span class="text-2xl font-bold text-agri-green-600 font-epilogue">${{ product.price.perUnit }}</span>
-                        <span class="text-gray-500 text-sm ml-1">per unit</span>
+                        <span class="text-2xl font-bold text-agri-green-600 font-epilogue">${{ product.price.perUnit.toFixed(2) }}</span>
+                        <span class="text-gray-500 text-sm ml-1">por {{ product.price.unit }}</span>
                       </div>
-                      <button class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-all hover:-translate-y-0.5 flex items-center space-x-2 group-hover:shadow-lg">
+                      <!-- Conectar "Agregar" buttons al CartService.add(product) -->
+                      <button 
+                        (click)="addToCart(product)"
+                        class="bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-all hover:-translate-y-0.5 flex items-center space-x-2 group-hover:shadow-lg"
+                        [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
                         <span class="material-icons text-lg">add_shopping_cart</span>
                         <span>Agregar</span>
                       </button>

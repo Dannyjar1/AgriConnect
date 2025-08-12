@@ -1,19 +1,9 @@
-import { Component, signal, computed, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
-import { Product } from '../../core/models/product.model';
-
-/**
- * Interface for cart items with quantity and additional metadata
- */
-export interface CartItem {
-  id: string;
-  product: Product;
-  quantity: number;
-  addedAt: Date;
-  subtotal: number;
-}
+import { CartService, CartState, CartItem } from '../../core/services/cart'; // Integración carrito unificado
 
 /**
  * Interface for cart summary calculations
@@ -42,6 +32,7 @@ export interface CartSummary {
  * - Quantity management with validation
  * - Remove item functionality
  * - Checkout process integration ready
+ * - Integración carrito unificado + fallback de imagen
  * 
  * @author AgriConnect Team
  * @version 1.0.0
@@ -127,7 +118,7 @@ export interface CartSummary {
                   <article 
                     class="card p-6 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
                     [class.updating]="isUpdatingItem() === item.id"
-                    [attr.aria-label]="'Producto: ' + item.product.name + ', cantidad: ' + item.quantity">
+                    [attr.aria-label]="'Producto: ' + item.nombre + ', cantidad: ' + item.qty">
                     
                     <!-- Subtle multifrutas background pattern for cart items -->
                     <div class="absolute inset-0 opacity-[0.025] group-hover:opacity-[0.04] 
@@ -143,18 +134,12 @@ export interface CartSummary {
                       <!-- Product Image with Enhanced Visual Elements -->
                       <div class="flex-shrink-0 relative">
                         <div class="w-24 h-24 sm:w-32 sm:h-32 bg-gray-100 rounded-lg overflow-hidden relative group/image">
-                          @if (item.product.images && item.product.images.length > 0) {
-                            <img 
-                              [src]="item.product.images[0]" 
-                              [alt]="item.product.name"
-                              class="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                              loading="lazy"
-                              (error)="onImageError($event)">
-                          } @else {
-                            <div class="w-full h-full flex items-center justify-center">
-                              <span class="material-icons text-gray-400 text-2xl">image</span>
-                            </div>
-                          }
+                          <img 
+                            [src]="item.image" 
+                            [alt]="item.nombre"
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                            loading="lazy"
+                            (error)="onImageError($event)">
                           
                           <!-- Fresh Product Badge with multifrutas accent -->
                           <div class="absolute top-1 right-1 bg-gradient-to-r from-green-500 to-emerald-600
@@ -176,7 +161,7 @@ export interface CartSummary {
                       <div class="flex-grow space-y-3 relative">
                         <div>
                           <h3 class="text-lg font-semibold text-gray-900 font-epilogue group-hover:text-agri-green-700 transition-colors">
-                            {{ item.product.name }}
+                            {{ item.nombre }}
                           </h3>
                           <p class="text-gray-600 font-noto-sans text-sm line-clamp-2">
                             {{ item.product.description }}
@@ -214,7 +199,7 @@ export interface CartSummary {
                           <div class="space-y-1">
                             <div class="flex items-baseline space-x-2">
                               <span class="text-2xl font-bold text-agri-green-600 font-epilogue group-hover:text-agri-green-700 transition-colors">
-                                \${{ item.product.price.perUnit.toFixed(2) }}
+                                \${{ item.precio.toFixed(2) }}
                               </span>
                               <span class="text-gray-500 text-sm">
                                 por {{ item.product.price.unit }}
@@ -227,7 +212,7 @@ export interface CartSummary {
                               </div>
                             </div>
                             <div class="text-sm text-gray-600">
-                              Subtotal: <span class="font-semibold text-agri-green-600">\${{ item.subtotal.toFixed(2) }}</span>
+                              Subtotal: <span class="font-semibold text-agri-green-600">\${{ (item.precio * item.qty).toFixed(2) }}</span>
                             </div>
                           </div>
                           
@@ -236,14 +221,14 @@ export interface CartSummary {
                             <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
                               <button
                                 (click)="decreaseQuantity(item.id)"
-                                [disabled]="item.quantity <= 1"
+                                [disabled]="item.qty <= 1"
                                 class="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors relative group/btn"
-                                [attr.aria-label]="'Disminuir cantidad de ' + item.product.name">
+                                [attr.aria-label]="'Disminuir cantidad de ' + item.nombre">
                                 <span class="material-icons text-lg text-gray-600 group-hover/btn:text-agri-green-600 transition-colors">remove</span>
                               </button>
                               
                               <div class="px-4 py-2 border-x border-gray-300 min-w-16 text-center font-semibold bg-gray-50 relative">
-                                {{ item.quantity }}
+                                {{ item.qty }}
                                 <!-- Quantity update animation indicator -->
                                 @if (isUpdatingItem() === item.id) {
                                   <div class="absolute inset-0 bg-agri-green-100 rounded animate-pulse"></div>
@@ -252,9 +237,9 @@ export interface CartSummary {
                               
                               <button
                                 (click)="increaseQuantity(item.id)"
-                                [disabled]="item.quantity >= item.product.availability"
+                                [disabled]="item.qty >= item.product.availability"
                                 class="p-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors relative group/btn"
-                                [attr.aria-label]="'Aumentar cantidad de ' + item.product.name">
+                                [attr.aria-label]="'Aumentar cantidad de ' + item.nombre">
                                 <span class="material-icons text-lg text-gray-600 group-hover/btn:text-agri-green-600 transition-colors">add</span>
                               </button>
                             </div>
@@ -263,7 +248,7 @@ export interface CartSummary {
                             <button
                               (click)="removeItem(item.id)"
                               class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all group/remove relative"
-                              [attr.aria-label]="'Eliminar ' + item.product.name + ' del carrito'">
+                              [attr.aria-label]="'Eliminar ' + item.nombre + ' del carrito'">
                               <span class="material-icons text-lg">delete</span>
                               <!-- Remove button ripple effect -->
                               <div class="absolute inset-0 bg-red-100 rounded-lg scale-0 group-hover/remove:scale-100 transition-transform duration-200 -z-10"></div>
@@ -395,27 +380,31 @@ export interface CartSummary {
   styleUrls: ['./carrito.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CarritoComponent implements OnInit {
+export class CarritoComponent implements OnInit, OnDestroy {
   
   // Router injection for navigation
   private readonly router = inject(Router);
+  private readonly cartService = inject(CartService); // Integración carrito unificado
   
-  // Cart state management with signals
+  // Cart state management with signals - Subscribe to CartService
   protected readonly cartItems = signal<CartItem[]>([]);
   
   // Loading states
   protected readonly isLoading = signal<boolean>(false);
   protected readonly isUpdatingItem = signal<string | null>(null);
   
+  // Subscription to cart service
+  private cartSubscription?: Subscription;
+  
   // Calculated cart summary using computed signals
   protected readonly cartSummary = computed<CartSummary>(() => {
     const items = this.cartItems();
-    const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const subtotal = items.reduce((sum, item) => sum + (item.precio * item.qty), 0);
     const taxRate = 0.12; // 12% IVA Ecuador
     const tax = subtotal * taxRate;
     const shipping = subtotal >= 25 ? 0 : 3.50; // Free shipping over $25
     const total = subtotal + tax + shipping;
-    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    const itemCount = items.reduce((sum, item) => sum + item.qty, 0);
     
     return {
       subtotal,
@@ -428,94 +417,32 @@ export class CarritoComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadCartItems();
+    // Subscribe to cart$ and render items in real-time
+    this.cartSubscription = this.cartService.cart$.subscribe((cartState: CartState) => {
+      this.cartItems.set(cartState.items);
+    });
   }
 
-  /**
-   * Load cart items (mock data for demonstration)
-   * TODO: Replace with actual cart service integration
-   */
-  private loadCartItems(): void {
-    this.isLoading.set(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      // Mock cart data with sample products using correct image paths
-      const mockCartItems: CartItem[] = [
-        {
-          id: 'cart-item-1',
-          product: {
-            id: 'fruit-001',
-            name: 'Banano Ecuatoriano Orgánico',
-            description: 'Banano ecuatoriano de exportación, dulce y nutritivo, cultivado de forma orgánica sin pesticidas.',
-            category: 'Frutas',
-            price: { perUnit: 0.75, unit: 'lb' },
-            availability: 250,
-            certifications: ['ORGÁNICO', 'COMERCIO JUSTO'],
-            images: ['assets/images/multifrutas.webp'],
-            province: 'El Oro'
-          },
-          quantity: 3,
-          addedAt: new Date(),
-          subtotal: 2.25
-        },
-        {
-          id: 'cart-item-2',
-          product: {
-            id: 'dairy-001',
-            name: 'Queso de Hoja Tradicional',
-            description: 'Queso fresco tradicional de la sierra norte del Ecuador, elaborado artesanalmente.',
-            category: 'Lácteos',
-            price: { perUnit: 3.50, unit: 'lb' },
-            availability: 150,
-            certifications: ['ARTESANAL', 'TRADICIONAL'],
-            images: ['assets/images/placeholder-product.jpg'],
-            province: 'Imbabura'
-          },
-          quantity: 2,
-          addedAt: new Date(),
-          subtotal: 7.00
-        },
-        {
-          id: 'cart-item-3',
-          product: {
-            id: 'veg-001',
-            name: 'Papa Chaucha Andina',
-            description: 'Papa pequeña y cremosa de los valles andinos, perfecta para preparaciones gourmet.',
-            category: 'Verduras y Hortalizas',
-            price: { perUnit: 1.25, unit: 'lb' },
-            availability: 400,
-            certifications: ['ORGÁNICO', 'ANDINO'],
-            images: ['assets/images/placeholder-product.svg'],
-            province: 'Carchi'
-          },
-          quantity: 5,
-          addedAt: new Date(),
-          subtotal: 6.25
-        }
-      ];
-      
-      this.cartItems.set(mockCartItems);
-      this.isLoading.set(false);
-    }, 800);
+  ngOnDestroy(): void {
+    // Clean up subscription
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
   }
 
   /**
    * Handle image loading errors with fallback
+   * Integración carrito unificado + fallback de imagen
    */
   protected onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     if (img) {
-      // First fallback to placeholder JPG
-      if (!img.src.includes('placeholder-product.jpg')) {
-        img.src = 'assets/images/placeholder-product.jpg';
-      } 
-      // Second fallback to placeholder SVG
-      else if (!img.src.includes('placeholder-product.svg')) {
-        img.src = 'assets/images/placeholder-product.svg';
-      }
-      // Final fallback to hide image and show icon
-      else {
+      // Si no hay imagen válida, usar multifrutas.webp como fallback
+      if (!img.src.includes('multifrutas.webp')) {
+        img.src = 'assets/images/multifrutas.webp';
+        img.className = 'w-full h-full object-cover transition-transform duration-300 hover:scale-110';
+      } else {
+        // Si multifrutas.webp también falla, mostrar icono
         img.style.display = 'none';
         const parent = img.parentElement;
         if (parent) {
@@ -526,58 +453,26 @@ export class CarritoComponent implements OnInit {
   }
 
   /**
-   * Increase quantity of a cart item
+   * Increase quantity of a cart item using CartService
    */
   protected increaseQuantity(itemId: string): void {
-    const items = this.cartItems();
-    const updatedItems = items.map(item => {
-      if (item.id === itemId && item.quantity < item.product.availability) {
-        const newQuantity = item.quantity + 1;
-        const newSubtotal = newQuantity * item.product.price.perUnit;
-        return { 
-          ...item, 
-          quantity: newQuantity,
-          subtotal: newSubtotal
-        };
-      }
-      return item;
-    });
-    
-    this.cartItems.set(updatedItems);
+    this.cartService.incrementQuantity(itemId);
     this.animateItemUpdate(itemId);
   }
 
   /**
-   * Decrease quantity of a cart item
+   * Decrease quantity of a cart item using CartService
    */
   protected decreaseQuantity(itemId: string): void {
-    const items = this.cartItems();
-    const updatedItems = items.map(item => {
-      if (item.id === itemId && item.quantity > 1) {
-        const newQuantity = item.quantity - 1;
-        const newSubtotal = newQuantity * item.product.price.perUnit;
-        return { 
-          ...item, 
-          quantity: newQuantity,
-          subtotal: newSubtotal
-        };
-      }
-      return item;
-    });
-    
-    this.cartItems.set(updatedItems);
+    this.cartService.decrementQuantity(itemId);
     this.animateItemUpdate(itemId);
   }
 
   /**
-   * Remove item from cart
+   * Remove item from cart using CartService
    */
   protected removeItem(itemId: string): void {
-    const items = this.cartItems();
-    const updatedItems = items.filter(item => item.id !== itemId);
-    this.cartItems.set(updatedItems);
-    
-    // Show confirmation (could be replaced with a toast notification)
+    this.cartService.remove(itemId);
     console.log('Producto eliminado del carrito');
   }
 
@@ -622,35 +517,10 @@ export class CarritoComponent implements OnInit {
   }
 
   /**
-   * Add product to cart (helper method for external use)
-   * TODO: Integrate with cart service
-   */
-  addProductToCart(product: Product, quantity: number = 1): void {
-    const items = this.cartItems();
-    const existingItem = items.find(item => item.product.id === product.id);
-    
-    if (existingItem) {
-      // Update quantity if item already exists
-      this.increaseQuantity(existingItem.id);
-    } else {
-      // Add new item
-      const newItem: CartItem = {
-        id: `cart-item-${Date.now()}`,
-        product,
-        quantity,
-        addedAt: new Date(),
-        subtotal: quantity * product.price.perUnit
-      };
-      
-      this.cartItems.set([...items, newItem]);
-    }
-  }
-
-  /**
-   * Clear entire cart
+   * Clear entire cart using CartService
    */
   protected clearCart(): void {
-    this.cartItems.set([]);
+    this.cartService.clear();
   }
 
   /**
