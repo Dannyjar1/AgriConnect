@@ -10,101 +10,13 @@
  * - Animation and transitions
  */
 
-// Import Tailwind utilities if not globally available
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+// Tailwind CSS v4 integration - Use global styles from src/styles.scss
+// No local @import statements needed for Tailwind v4
 
-// Component-specific styles
+// Component-specific styles for checkout overlay
+// All form styling has been migrated to inline Tailwind CSS classes in HTML template
 :host {
-  // Form base styles
-  .form-group {
-    @apply space-y-2;
-  }
-
-  .form-label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
-    
-    &.required {
-      @apply relative;
-      
-      &::after {
-        content: '*';
-        @apply text-red-500 ml-1;
-      }
-    }
-  }
-
-  .form-input {
-    @apply block w-full px-4 py-3 text-sm border border-gray-300 rounded-lg 
-           bg-white placeholder-gray-500 
-           focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20
-           dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400
-           dark:focus:border-agri-green-400 dark:focus:ring-agri-green-400
-           transition-all duration-200;
-    
-    &.error {
-      @apply border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20
-             bg-red-50 dark:bg-red-900/20;
-    }
-
-    &:disabled {
-      @apply bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-60;
-    }
-  }
-
-  .form-error {
-    @apply flex items-center space-x-1 text-sm text-red-600 dark:text-red-400;
-    
-    .material-icons {
-      @apply text-base;
-    }
-  }
-
-  .form-hint {
-    @apply text-xs text-gray-500 dark:text-gray-400;
-  }
-
-  // Payment method selection styles
-  .payment-option {
-    @apply relative cursor-pointer;
-
-    .payment-option-content {
-      @apply flex items-center justify-between p-4 border border-gray-200 rounded-lg
-             hover:border-agri-green-300 hover:bg-agri-green-50
-             dark:border-gray-600 dark:hover:border-agri-green-400 dark:hover:bg-agri-green-900/20
-             transition-all duration-200;
-    }
-
-    .payment-option-radio {
-      @apply w-5 h-5 border-2 border-gray-300 rounded-full relative
-             dark:border-gray-600;
-      
-      .payment-option-radio-inner {
-        @apply w-3 h-3 bg-agri-green-600 rounded-full absolute top-1/2 left-1/2 
-               transform -translate-x-1/2 -translate-y-1/2 scale-0
-               transition-transform duration-200;
-      }
-    }
-
-    &.selected {
-      .payment-option-content {
-        @apply border-agri-green-500 bg-agri-green-50 dark:bg-agri-green-900/30;
-      }
-
-      .payment-option-radio {
-        @apply border-agri-green-500;
-        
-        .payment-option-radio-inner {
-          @apply scale-100;
-        }
-      }
-    }
-
-    input:focus + .payment-option-content {
-      @apply ring-2 ring-agri-green-500 ring-opacity-20;
-    }
-  }
+  // Custom styles that cannot be replaced with Tailwind utility classes
 
   // Animation classes
   .animate-fade-in-scale {
@@ -120,12 +32,6 @@
       opacity: 1;
       transform: scale(1) translateY(0);
     }
-  }
-
-  // Custom card styles for better UX
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200
-           dark:bg-gray-800 dark:border-gray-700;
   }
 
   // Scrollbar styling for overlay
@@ -151,102 +57,9 @@
     }
   }
 
-  // Focus trap and accessibility enhancements
-  [role="dialog"] {
-    @apply outline-none;
-  }
-
-  // Custom styles for sticky elements
-  .sticky {
-    @apply sticky;
-    
-    &.bottom-0 {
-      box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-  }
-
-  // Responsive improvements
-  @media (max-width: 640px) {
-    .grid-cols-1.sm\\:grid-cols-2 {
-      @apply grid-cols-1;
-    }
-    
-    .payment-option-content {
-      @apply flex-col items-start space-y-2;
-      
-      .payment-option-radio {
-        @apply absolute top-4 right-4;
-      }
-    }
-  }
-
-  // Loading state styles
-  .updating {
-    @apply relative;
-    
-    &::after {
-      content: '';
-      @apply absolute inset-0 bg-white bg-opacity-70 rounded-lg animate-pulse;
-    }
-  }
-
-  // Enhanced button styles for better interaction
-  button {
-    &:focus-visible {
-      @apply ring-2 ring-offset-2 ring-agri-green-500 dark:ring-offset-gray-800;
-    }
-    
-    &:disabled {
-      @apply cursor-not-allowed;
-    }
-  }
-
-  // Improved select styling
-  select.form-input {
-    @apply appearance-none bg-no-repeat bg-right bg-center pr-10;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    background-size: 20px;
-    
-    &:disabled {
-      @apply opacity-50 cursor-not-allowed;
-    }
-  }
-
-  // Dark mode enhancements
-  @media (prefers-color-scheme: dark) {
-    .card {
-      @apply bg-gray-800 border-gray-700;
-    }
-    
-    select.form-input {
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%9CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    }
-  }
-
-  // Print styles (in case of printing receipts)
-  @media print {
-    .fixed, .sticky {
-      @apply relative;
-    }
-    
-    button {
-      @apply hidden;
-    }
-  }
-
-  // High contrast mode support
-  @media (prefers-contrast: high) {
-    .form-input {
-      @apply border-2;
-    }
-    
-    .payment-option-content {
-      @apply border-2;
-    }
-    
-    button {
-      @apply border-2 border-black;
-    }
+  // Custom styles for sticky elements bottom shadow
+  .sticky.bottom-0 {
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   // Reduced motion support
@@ -259,85 +72,8 @@
   }
 }
 
-// Global utilities for AgriConnect theme
-.btn-primary {
-  @apply bg-gradient-to-r from-agri-green-500 to-agri-green-600 
-         hover:from-agri-green-600 hover:to-agri-green-700
-         text-white font-semibold py-3 px-6 rounded-lg
-         transition-all duration-200 
-         focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-50
-         disabled:opacity-50 disabled:cursor-not-allowed;
-}
+// Global utilities moved to global styles or replaced with inline classes
+// No @apply statements in component SCSS files for Tailwind CSS v4 compatibility
 
-.btn-secondary {
-  @apply bg-white border border-gray-300 text-gray-700
-         hover:bg-gray-50 hover:border-gray-400
-         font-semibold py-3 px-6 rounded-lg
-         transition-all duration-200
-         focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
-         dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300
-         dark:hover:bg-gray-700 dark:hover:border-gray-500;
-}
-
-// Screen reader only utility
-.sr-only {
-  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
-  clip: rect(0, 0, 0, 0);
-}
-
-// AgriConnect color variables (if not defined globally)
-:root {
-  --agri-green-50: #f0fdf4;
-  --agri-green-100: #dcfce7;
-  --agri-green-200: #bbf7d0;
-  --agri-green-300: #86efac;
-  --agri-green-400: #4ade80;
-  --agri-green-500: #22c55e;
-  --agri-green-600: #16a34a;
-  --agri-green-700: #15803d;
-  --agri-green-800: #166534;
-  --agri-green-900: #14532d;
-}
-
-// Define Tailwind color classes if not available
-.text-agri-green-50 { color: var(--agri-green-50); }
-.text-agri-green-100 { color: var(--agri-green-100); }
-.text-agri-green-200 { color: var(--agri-green-200); }
-.text-agri-green-300 { color: var(--agri-green-300); }
-.text-agri-green-400 { color: var(--agri-green-400); }
-.text-agri-green-500 { color: var(--agri-green-500); }
-.text-agri-green-600 { color: var(--agri-green-600); }
-.text-agri-green-700 { color: var(--agri-green-700); }
-.text-agri-green-800 { color: var(--agri-green-800); }
-.text-agri-green-900 { color: var(--agri-green-900); }
-
-.bg-agri-green-50 { background-color: var(--agri-green-50); }
-.bg-agri-green-100 { background-color: var(--agri-green-100); }
-.bg-agri-green-200 { background-color: var(--agri-green-200); }
-.bg-agri-green-300 { background-color: var(--agri-green-300); }
-.bg-agri-green-400 { background-color: var(--agri-green-400); }
-.bg-agri-green-500 { background-color: var(--agri-green-500); }
-.bg-agri-green-600 { background-color: var(--agri-green-600); }
-.bg-agri-green-700 { background-color: var(--agri-green-700); }
-.bg-agri-green-800 { background-color: var(--agri-green-800); }
-.bg-agri-green-900 { background-color: var(--agri-green-900); }
-
-.border-agri-green-200 { border-color: var(--agri-green-200); }
-.border-agri-green-300 { border-color: var(--agri-green-300); }
-.border-agri-green-400 { border-color: var(--agri-green-400); }
-.border-agri-green-500 { border-color: var(--agri-green-500); }
-.border-agri-green-600 { border-color: var(--agri-green-600); }
-
-.ring-agri-green-400 { --tw-ring-color: var(--agri-green-400); }
-.ring-agri-green-500 { --tw-ring-color: var(--agri-green-500); }
-.ring-agri-green-600 { --tw-ring-color: var(--agri-green-600); }
-
-.focus\:border-agri-green-400:focus { border-color: var(--agri-green-400); }
-.focus\:border-agri-green-500:focus { border-color: var(--agri-green-500); }
-.focus\:ring-agri-green-400:focus { --tw-ring-color: var(--agri-green-400); }
-.focus\:ring-agri-green-500:focus { --tw-ring-color: var(--agri-green-500); }
-
-.hover\:border-agri-green-300:hover { border-color: var(--agri-green-300); }
-.hover\:border-agri-green-400:hover { border-color: var(--agri-green-400); }
-.hover\:bg-agri-green-50:hover { background-color: var(--agri-green-50); }
-.hover\:bg-agri-green-100:hover { background-color: var(--agri-green-100); }
+// All color utilities are now defined in global styles.scss
+// This component relies on global Tailwind CSS v4 configuration

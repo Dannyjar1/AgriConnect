@@ -45,24 +45,29 @@ import type { OrderRequest } from '../../../core/services/order';
         
         <!-- Semi-transparent backdrop -->
         <div 
-          class="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
+          class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm transition-opacity duration-300"
           (click)="closeOverlay()"
           aria-hidden="true">
         </div>
         
         <!-- Overlay Panel -->
-        <div class="fixed inset-y-0 right-0 w-full sm:max-w-md bg-white shadow-2xl overflow-y-auto">
+        <div class="fixed inset-y-0 right-0 w-full sm:max-w-md bg-gradient-to-br from-white to-agri-green-50 shadow-xl border-l border-agri-green-100 overflow-y-auto">
           <div class="min-h-full flex flex-col">
             
             <!-- Header -->
-            <header class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 z-10">
+            <header class="sticky top-0 bg-white border-b border-agri-green-200 px-6 py-5 z-10 shadow-sm backdrop-blur-sm">
               <div class="flex items-center justify-between">
-                <h1 id="checkout-title" class="text-xl font-bold text-gray-900 font-epilogue">
-                  Finalizar Compra
-                </h1>
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-agri-green-500 to-agri-green-600 rounded-lg flex items-center justify-center">
+                    <span class="material-icons text-white text-sm">shopping_bag</span>
+                  </div>
+                  <h1 id="checkout-title" class="text-xl font-bold text-gray-900 font-epilogue">
+                    Finalizar Compra
+                  </h1>
+                </div>
                 <button
                   (click)="closeOverlay()"
-                  class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  class="p-2 text-slate-400 hover:text-slate-600 hover:bg-white/80 rounded-full transition-all duration-200 hover:shadow-md"
                   aria-label="Cerrar checkout"
                   #closeButton>
                   <span class="material-icons text-xl">close</span>
@@ -70,11 +75,12 @@ import type { OrderRequest } from '../../../core/services/order';
               </div>
               
               <!-- Progress indicator -->
-              <div class="mt-4 flex items-center space-x-2 text-sm text-gray-600">
-                <span class="material-icons text-sm text-agri-green-500">shopping_cart</span>
-                <span>{{ cartSummary().itemCount }} {{ cartSummary().itemCount === 1 ? 'artículo' : 'artículos' }}</span>
-                <span>•</span>
-                <span class="font-semibold text-agri-green-600">\${{ cartSummary().total.toFixed(2) }}</span>
+              <div class="mt-4 flex items-center justify-between p-3 bg-white/60 rounded-lg border border-agri-green-100">
+                <div class="flex items-center space-x-2 text-sm text-slate-600">
+                  <span class="material-icons text-sm text-agri-green-600">shopping_cart</span>
+                  <span>{{ cartSummary().itemCount }} {{ cartSummary().itemCount === 1 ? 'artículo' : 'artículos' }}</span>
+                </div>
+                <div class="text-lg font-bold text-agri-green-700">\${{ cartSummary().total.toFixed(2) }}</div>
               </div>
             </header>
             
@@ -84,14 +90,15 @@ import type { OrderRequest } from '../../../core/services/order';
                 
                 <!-- Cart Summary Section -->
                 <section class="mb-8" aria-labelledby="cart-summary-title">
-                  <h2 id="cart-summary-title" class="text-lg font-semibold text-gray-900 font-epilogue mb-4">
+                  <h2 id="cart-summary-title" class="text-lg font-semibold text-gray-900 font-epilogue mb-4 flex items-center">
+                    <span class="material-icons text-agri-green-600 mr-2">receipt_long</span>
                     Resumen del Pedido
                   </h2>
                   
-                  <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                  <div class="bg-gradient-to-br from-agri-green-50 to-emerald-50 rounded-xl p-5 space-y-3 border border-agri-green-100 shadow-sm">
                     @for (item of cartItems(); track item.id) {
-                      <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                      <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-lg border border-agri-green-100">
+                        <div class="w-12 h-12 bg-gradient-to-br from-agri-green-100 to-emerald-100 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
                           <img 
                             [src]="item.image" 
                             [alt]="item.nombre"
@@ -101,35 +108,35 @@ import type { OrderRequest } from '../../../core/services/order';
                         </div>
                         <div class="flex-1 min-w-0">
                           <p class="text-sm font-medium text-gray-900 truncate">{{ item.nombre }}</p>
-                          <p class="text-xs text-gray-500">Cantidad: {{ item.qty }}</p>
+                          <p class="text-xs text-agri-green-600 font-medium">Cantidad: {{ item.qty }}</p>
                         </div>
-                        <div class="text-sm font-semibold text-gray-900">
+                        <div class="text-sm font-bold text-agri-green-700">
                           \${{ (item.precio * item.qty).toFixed(2) }}
                         </div>
                       </div>
                     }
                     
                     <!-- Totals -->
-                    <div class="border-t border-gray-200 pt-3 space-y-2">
+                    <div class="border-t border-agri-green-200 pt-4 space-y-3 bg-white/50 rounded-lg p-4 mt-4">
                       <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Subtotal</span>
-                        <span class="font-medium">\${{ cartSummary().subtotal.toFixed(2) }}</span>
+                        <span class="text-slate-600">Subtotal</span>
+                        <span class="font-semibold text-gray-800">\${{ cartSummary().subtotal.toFixed(2) }}</span>
                       </div>
                       <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">IVA (12%)</span>
-                        <span class="font-medium">\${{ cartSummary().tax.toFixed(2) }}</span>
+                        <span class="text-slate-600">IVA (12%)</span>
+                        <span class="font-semibold text-gray-800">\${{ cartSummary().tax.toFixed(2) }}</span>
                       </div>
                       <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Envío</span>
+                        <span class="text-slate-600">Envío</span>
                         @if (cartSummary().shipping === 0) {
-                          <span class="font-medium text-agri-green-600">Gratis</span>
+                          <span class="font-semibold text-emerald-600">Gratis</span>
                         } @else {
-                          <span class="font-medium">\${{ cartSummary().shipping.toFixed(2) }}</span>
+                          <span class="font-semibold text-gray-800">\${{ cartSummary().shipping.toFixed(2) }}</span>
                         }
                       </div>
-                      <div class="flex justify-between font-bold text-lg border-t border-gray-200 pt-2">
-                        <span>Total</span>
-                        <span class="text-agri-green-600">\${{ cartSummary().total.toFixed(2) }}</span>
+                      <div class="flex justify-between font-bold text-lg border-t border-agri-green-200 pt-3">
+                        <span class="text-gray-800">Total</span>
+                        <span class="text-agri-green-700">\${{ cartSummary().total.toFixed(2) }}</span>
                       </div>
                     </div>
                   </div>
@@ -137,45 +144,45 @@ import type { OrderRequest } from '../../../core/services/order';
                 
                 <!-- Shipping Information Section -->
                 <section class="mb-8" aria-labelledby="shipping-title">
-                  <h2 id="shipping-title" class="text-lg font-semibold text-gray-900 font-epilogue mb-4">
-                    Información de Envío
-                  </h2>
-                  
-                  <div class="space-y-4">
+                  <div class="bg-gradient-to-br from-agri-green-50 to-emerald-50 rounded-xl p-6 border border-agri-green-100 shadow-sm">
+                    <h2 id="shipping-title" class="text-lg font-semibold text-gray-900 font-epilogue mb-6 flex items-center">
+                      <span class="material-icons text-agri-green-600 mr-2">local_shipping</span>
+                      Información de Envío
+                    </h2>
+                    
+                    <div class="space-y-4">
                     <!-- Name fields -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div class="form-group">
-                        <label for="nombres" class="form-label required">Nombres</label>
+                      <div class="space-y-2">
+                        <label for="nombres" class="block text-sm font-medium text-gray-900 relative after:content-['*'] after:text-red-500 after:ml-1">Nombres</label>
                         <input
                           id="nombres"
                           type="text"
                           formControlName="nombres"
-                          class="form-input"
-                          [class.error]="isFieldInvalid('nombres')"
+                          [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('nombres') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                           placeholder="Ingresa tus nombres"
                           aria-describedby="nombres-error"
                           autocomplete="given-name">
                         @if (isFieldInvalid('nombres')) {
-                          <div id="nombres-error" class="form-error" role="alert">
+                          <div id="nombres-error" class="flex items-center space-x-1 text-sm text-red-600" role="alert">
                             <span class="material-icons text-sm">error</span>
                             Los nombres son requeridos
                           </div>
                         }
                       </div>
                       
-                      <div class="form-group">
-                        <label for="apellidos" class="form-label required">Apellidos</label>
+                      <div class="space-y-2">
+                        <label for="apellidos" class="block text-sm font-medium text-gray-900 relative after:content-['*'] after:text-red-500 after:ml-1">Apellidos</label>
                         <input
                           id="apellidos"
                           type="text"
                           formControlName="apellidos"
-                          class="form-input"
-                          [class.error]="isFieldInvalid('apellidos')"
+                          [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('apellidos') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                           placeholder="Ingresa tus apellidos"
                           aria-describedby="apellidos-error"
                           autocomplete="family-name">
                         @if (isFieldInvalid('apellidos')) {
-                          <div id="apellidos-error" class="form-error" role="alert">
+                          <div id="apellidos-error" class="flex items-center space-x-1 text-sm text-red-600" role="alert">
                             <span class="material-icons text-sm">error</span>
                             Los apellidos son requeridos
                           </div>
@@ -185,19 +192,18 @@ import type { OrderRequest } from '../../../core/services/order';
                     
                     <!-- Contact fields -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div class="form-group">
-                        <label for="correo" class="form-label required">Correo Electrónico</label>
+                      <div class="space-y-2">
+                        <label for="correo" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Correo Electrónico</label>
                         <input
                           id="correo"
                           type="email"
                           formControlName="correo"
-                          class="form-input"
-                          [class.error]="isFieldInvalid('correo')"
+                          [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('correo') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                           placeholder="ejemplo@correo.com"
                           aria-describedby="correo-error"
                           autocomplete="email">
                         @if (isFieldInvalid('correo')) {
-                          <div id="correo-error" class="form-error" role="alert">
+                          <div id="correo-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                             <span class="material-icons text-sm">error</span>
                             @if (checkoutForm.get('correo')?.hasError('required')) {
                               El correo es requerido
@@ -208,20 +214,19 @@ import type { OrderRequest } from '../../../core/services/order';
                         }
                       </div>
                       
-                      <div class="form-group">
-                        <label for="telefono" class="form-label required">Teléfono</label>
+                      <div class="space-y-2">
+                        <label for="telefono" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Teléfono</label>
                         <input
                           id="telefono"
                           type="tel"
                           formControlName="telefono"
-                          class="form-input"
-                          [class.error]="isFieldInvalid('telefono')"
+                          [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('telefono') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                           placeholder="0999123456"
                           aria-describedby="telefono-error"
                           autocomplete="tel"
                           (input)="onPhoneInput($event)">
                         @if (isFieldInvalid('telefono')) {
-                          <div id="telefono-error" class="form-error" role="alert">
+                          <div id="telefono-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                             <span class="material-icons text-sm">error</span>
                             @if (checkoutForm.get('telefono')?.hasError('required')) {
                               El teléfono es requerido
@@ -234,45 +239,44 @@ import type { OrderRequest } from '../../../core/services/order';
                     </div>
                     
                     <!-- Address fields -->
-                    <div class="form-group">
-                      <label for="direccion" class="form-label required">Dirección</label>
+                    <div class="space-y-2">
+                      <label for="direccion" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Dirección</label>
                       <input
                         id="direccion"
                         type="text"
                         formControlName="direccion"
-                        class="form-input"
-                        [class.error]="isFieldInvalid('direccion')"
-                        placeholder="Calle principal y secundaria"
+                        [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('direccion') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
+                        placeholder="Calle Principal y Secundaria"
                         aria-describedby="direccion-error"
                         autocomplete="street-address">
                       @if (isFieldInvalid('direccion')) {
-                        <div id="direccion-error" class="form-error" role="alert">
+                        <div id="direccion-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                           <span class="material-icons text-sm">error</span>
                           La dirección es requerida
                         </div>
                       }
                     </div>
                     
-                    <div class="form-group">
-                      <label for="referencia" class="form-label">Referencia</label>
+                    <div class="space-y-2">
+                      <label for="referencia" class="block text-sm font-medium text-gray-900 ">Referencia</label>
                       <input
                         id="referencia"
                         type="text"
                         formControlName="referencia"
-                        class="form-input"
+                        class="block w-full px-4 py-3 text-sm border border-agri-green-100 rounded-lg bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900 transition-all duration-200"
                         placeholder="Casa de color azul, junto al parque"
                         autocomplete="address-line2">
                     </div>
                     
                     <!-- Location fields -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div class="form-group">
-                        <label for="provincia" class="form-label required">Provincia</label>
+                      <div class="space-y-2">
+                        <label for="provincia" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Provincia</label>
                         <select
                           id="provincia"
                           formControlName="provincia"
-                          class="form-input"
-                          [class.error]="isFieldInvalid('provincia')"
+                          [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 appearance-none bg-no-repeat bg-right bg-center pr-10 ' + (isFieldInvalid('provincia') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
+                          style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' fill=\\'none\\' viewBox=\\'0 0 20 20\\'%3E%3Cpath stroke=\\'%236B7280\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'1.5\\' d=\\'M6 8l4 4 4-4\\'/%3E%3C/svg%3E'); background-size: 20px;"
                           aria-describedby="provincia-error"
                           (change)="onProvinciaChange()">
                           <option value="">Selecciona una provincia</option>
@@ -281,20 +285,20 @@ import type { OrderRequest } from '../../../core/services/order';
                           }
                         </select>
                         @if (isFieldInvalid('provincia')) {
-                          <div id="provincia-error" class="form-error" role="alert">
+                          <div id="provincia-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                             <span class="material-icons text-sm">error</span>
                             La provincia es requerida
                           </div>
                         }
                       </div>
                       
-                      <div class="form-group">
-                        <label for="ciudad" class="form-label required">Ciudad</label>
+                      <div class="space-y-2">
+                        <label for="ciudad" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Ciudad</label>
                         <select
                           id="ciudad"
                           formControlName="ciudad"
-                          class="form-input"
-                          [class.error]="isFieldInvalid('ciudad')"
+                          [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 appearance-none bg-no-repeat bg-right bg-center pr-10 ' + (isFieldInvalid('ciudad') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed')"
+                          style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' fill=\\'none\\' viewBox=\\'0 0 20 20\\'%3E%3Cpath stroke=\\'%236B7280\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'1.5\\' d=\\'M6 8l4 4 4-4\\'/%3E%3C/svg%3E'); background-size: 20px;"
                           [disabled]="!checkoutForm.get('provincia')?.value"
                           aria-describedby="ciudad-error">
                           <option value="">Selecciona una ciudad</option>
@@ -303,7 +307,7 @@ import type { OrderRequest } from '../../../core/services/order';
                           }
                         </select>
                         @if (isFieldInvalid('ciudad')) {
-                          <div id="ciudad-error" class="form-error" role="alert">
+                          <div id="ciudad-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                             <span class="material-icons text-sm">error</span>
                             La ciudad es requerida
                           </div>
@@ -311,61 +315,65 @@ import type { OrderRequest } from '../../../core/services/order';
                       </div>
                     </div>
                     
-                    <div class="form-group">
-                      <label for="codigoPostal" class="form-label">Código Postal</label>
+                    <div class="space-y-2">
+                      <label for="codigoPostal" class="block text-sm font-medium text-gray-900 ">Código Postal</label>
                       <input
                         id="codigoPostal"
                         type="text"
                         formControlName="codigoPostal"
-                        class="form-input"
+                        class="block w-full px-4 py-3 text-sm border border-agri-green-100 rounded-lg bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900 transition-all duration-200"
                         placeholder="170150"
                         maxlength="6"
                         autocomplete="postal-code">
                     </div>
                     
-                    <div class="form-group">
-                      <label for="notas" class="form-label">Notas Especiales</label>
+                    <div class="space-y-2">
+                      <label for="notas" class="block text-sm font-medium text-gray-900 ">Notas Especiales</label>
                       <textarea
                         id="notas"
                         formControlName="notas"
-                        class="form-input"
+                        class="block w-full px-4 py-3 text-sm border border-agri-green-100 rounded-lg bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900 transition-all duration-200"
                         rows="3"
                         placeholder="Instrucciones especiales para la entrega"
                         maxlength="500"></textarea>
-                      <div class="form-hint">{{ getNotasLength() }}/500 caracteres</div>
+                      <div class="text-xs text-slate-500 ">{{ getNotasLength() }}/500 caracteres</div>
+                    </div>
                     </div>
                   </div>
                 </section>
                 
                 <!-- Payment Information Section -->
                 <section class="mb-8" aria-labelledby="payment-title">
-                  <h2 id="payment-title" class="text-lg font-semibold text-gray-900 font-epilogue mb-4">
-                    Información de Pago
-                  </h2>
-                  
-                  <!-- Payment Method Selection -->
-                  <div class="form-group">
+                  <div class="bg-gradient-to-br from-agri-green-50 to-emerald-50 rounded-xl p-6 border border-agri-green-100 shadow-sm">
+                    <h2 id="payment-title" class="text-lg font-semibold text-gray-900 font-epilogue mb-6 flex items-center">
+                      <span class="material-icons text-agri-green-600 mr-2">payment</span>
+                      Información de Pago
+                    </h2>
+                    
+                    <!-- Payment Method Selection -->
+                  <div class="space-y-2">
                     <fieldset>
-                      <legend class="form-label required">Método de Pago</legend>
+                      <legend class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Método de Pago</legend>
                       <div class="space-y-3" role="radiogroup" aria-labelledby="payment-title">
                         @for (metodo of metodosPago; track metodo.value) {
-                          <label class="payment-option" [class.selected]="checkoutForm.get('metodoPago')?.value === metodo.value">
+                          <label class="relative cursor-pointer" [class]="checkoutForm.get('metodoPago')?.value === metodo.value ? 'selected' : ''">
                             <input
                               type="radio"
                               formControlName="metodoPago"
                               [value]="metodo.value"
-                              class="sr-only"
+                              class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0"
+                              style="clip: rect(0, 0, 0, 0);"
                               [attr.aria-describedby]="metodo.value + '-desc'">
-                            <div class="payment-option-content">
+                            <div [class]="'flex items-center justify-between p-4 border rounded-lg transition-all duration-200 ' + (checkoutForm.get('metodoPago')?.value === metodo.value ? 'border-agri-green-500 bg-white ' : 'border-agri-green-200 hover:border-agri-green-300 hover:bg-white ')">
                               <div class="flex items-center space-x-3">
                                 <span class="material-icons text-xl" [class]="metodo.iconClass">{{ metodo.icon }}</span>
                                 <div>
-                                  <div class="font-medium text-gray-900">{{ metodo.label }}</div>
-                                  <div id="{{ metodo.value }}-desc" class="text-sm text-gray-500">{{ metodo.description }}</div>
+                                  <div class="font-medium text-gray-800">{{ metodo.label }}</div>
+                                  <div id="{{ metodo.value }}-desc" class="text-sm text-slate-500">{{ metodo.description }}</div>
                                 </div>
                               </div>
-                              <div class="payment-option-radio">
-                                <div class="payment-option-radio-inner"></div>
+                              <div [class]="'w-5 h-5 border-2 rounded-full relative transition-all duration-200 ' + (checkoutForm.get('metodoPago')?.value === metodo.value ? 'border-agri-green-500' : 'border-agri-green-300 ')">
+                                <div [class]="'w-3 h-3 bg-agri-green-600 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 ' + (checkoutForm.get('metodoPago')?.value === metodo.value ? 'scale-100' : 'scale-0')"></div>
                               </div>
                             </div>
                           </label>
@@ -373,7 +381,7 @@ import type { OrderRequest } from '../../../core/services/order';
                       </div>
                     </fieldset>
                     @if (isFieldInvalid('metodoPago')) {
-                      <div class="form-error mt-2" role="alert">
+                      <div class="flex items-center space-x-1 text-sm text-red-600  mt-2" role="alert">
                         <span class="material-icons text-sm">error</span>
                         Selecciona un método de pago
                       </div>
@@ -382,50 +390,48 @@ import type { OrderRequest } from '../../../core/services/order';
                   
                   <!-- Credit Card Fields (shown when tarjeta is selected) -->
                   @if (checkoutForm.get('metodoPago')?.value === 'tarjeta') {
-                    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="mt-6 p-4 bg-white rounded-lg border border-agri-green-200">
                       <div class="flex items-start space-x-2 mb-4">
-                        <span class="material-icons text-blue-600 text-sm mt-0.5">info</span>
-                        <div class="text-sm text-blue-800">
+                        <span class="material-icons text-agri-green-600 text-sm mt-0.5">info</span>
+                        <div class="text-sm text-gray-800">
                           <p class="font-medium">Información Segura</p>
                           <p>No almacenamos información de tarjetas de crédito. Los datos se procesan de forma segura.</p>
                         </div>
                       </div>
                       
                       <div class="space-y-4">
-                        <div class="form-group">
-                          <label for="titular" class="form-label required">Nombre del Titular</label>
+                        <div class="space-y-2">
+                          <label for="titular" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Nombre del Titular</label>
                           <input
                             id="titular"
                             type="text"
                             formControlName="titular"
-                            class="form-input"
-                            [class.error]="isFieldInvalid('titular')"
+                            [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('titular') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                             placeholder="Como aparece en la tarjeta"
                             aria-describedby="titular-error"
                             autocomplete="cc-name">
                           @if (isFieldInvalid('titular')) {
-                            <div id="titular-error" class="form-error" role="alert">
+                            <div id="titular-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                               <span class="material-icons text-sm">error</span>
                               El nombre del titular es requerido
                             </div>
                           }
                         </div>
                         
-                        <div class="form-group">
-                          <label for="numeroTarjeta" class="form-label required">Número de Tarjeta</label>
+                        <div class="space-y-2">
+                          <label for="numeroTarjeta" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Número de Tarjeta</label>
                           <input
                             id="numeroTarjeta"
                             type="text"
                             formControlName="numeroTarjeta"
-                            class="form-input"
-                            [class.error]="isFieldInvalid('numeroTarjeta')"
+                            [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('numeroTarjeta') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                             placeholder="1234 5678 9012 3456"
                             aria-describedby="numeroTarjeta-error"
                             autocomplete="cc-number"
                             maxlength="19"
                             (input)="onCardNumberInput($event)">
                           @if (isFieldInvalid('numeroTarjeta')) {
-                            <div id="numeroTarjeta-error" class="form-error" role="alert">
+                            <div id="numeroTarjeta-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                               <span class="material-icons text-sm">error</span>
                               @if (checkoutForm.get('numeroTarjeta')?.hasError('required')) {
                                 El número de tarjeta es requerido
@@ -437,21 +443,20 @@ import type { OrderRequest } from '../../../core/services/order';
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
-                          <div class="form-group">
-                            <label for="fechaVencimiento" class="form-label required">Fecha de Vencimiento</label>
+                          <div class="space-y-2">
+                            <label for="fechaVencimiento" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Fecha de Vencimiento</label>
                             <input
                               id="fechaVencimiento"
                               type="text"
                               formControlName="fechaVencimiento"
-                              class="form-input"
-                              [class.error]="isFieldInvalid('fechaVencimiento')"
+                              [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('fechaVencimiento') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                               placeholder="MM/YY"
                               aria-describedby="fechaVencimiento-error"
                               autocomplete="cc-exp"
                               maxlength="5"
                               (input)="onExpiryInput($event)">
                             @if (isFieldInvalid('fechaVencimiento')) {
-                              <div id="fechaVencimiento-error" class="form-error" role="alert">
+                              <div id="fechaVencimiento-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                                 <span class="material-icons text-sm">error</span>
                                 @if (checkoutForm.get('fechaVencimiento')?.hasError('required')) {
                                   La fecha es requerida
@@ -462,20 +467,19 @@ import type { OrderRequest } from '../../../core/services/order';
                             }
                           </div>
                           
-                          <div class="form-group">
-                            <label for="cvc" class="form-label required">CVC</label>
+                          <div class="space-y-2">
+                            <label for="cvc" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">CVC</label>
                             <input
                               id="cvc"
                               type="text"
                               formControlName="cvc"
-                              class="form-input"
-                              [class.error]="isFieldInvalid('cvc')"
+                              [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('cvc') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
                               placeholder="123"
                               aria-describedby="cvc-error"
                               autocomplete="cc-csc"
                               maxlength="4">
                             @if (isFieldInvalid('cvc')) {
-                              <div id="cvc-error" class="form-error" role="alert">
+                              <div id="cvc-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
                                 <span class="material-icons text-sm">error</span>
                                 @if (checkoutForm.get('cvc')?.hasError('required')) {
                                   El CVC es requerido
@@ -489,24 +493,25 @@ import type { OrderRequest } from '../../../core/services/order';
                       </div>
                     </div>
                   }
+                  </div>
                 </section>
                 
                 <!-- Submit Button -->
-                <div class="sticky bottom-0 bg-white border-t border-gray-200 p-6 -mx-6 -mb-6">
+                <div class="sticky bottom-0 bg-gradient-to-r from-white via-agri-green-50 to-emerald-50 border-t border-agri-green-100 p-6 -mx-6 -mb-6 shadow-lg">
                   <button
                     type="submit"
                     [disabled]="checkoutForm.invalid || isProcessing()"
-                    class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 
+                    class="w-full bg-gradient-to-r from-agri-green-600 to-emerald-600 hover:from-agri-green-700 hover:to-emerald-700 
                            disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed
-                           text-gray-900 font-bold py-4 px-6 rounded-lg transition-all duration-200 
-                           flex items-center justify-center space-x-2 hover:shadow-lg transform hover:scale-105
-                           disabled:transform-none disabled:shadow-none"
+                           text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 
+                           flex items-center justify-center space-x-2 hover:shadow-lg transform hover:scale-[1.02]
+                           disabled:transform-none disabled:shadow-none shadow-md"
                     [attr.aria-describedby]="checkoutForm.invalid ? 'form-errors' : null">
                     @if (isProcessing()) {
                       <span class="animate-spin material-icons text-lg">refresh</span>
                       <span>Procesando...</span>
                     } @else {
-                      <span class="material-icons text-lg">payment</span>
+                      <span class="material-icons text-lg">shopping_bag</span>
                       <span>Confirmar Pedido - \${{ cartSummary().total.toFixed(2) }}</span>
                     }
                   </button>
@@ -568,25 +573,80 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
       { codigo: 'quito', nombre: 'Quito' },
       { codigo: 'cayambe', nombre: 'Cayambe' },
       { codigo: 'mejia', nombre: 'Mejía' },
-      { codigo: 'rumiñahui', nombre: 'Rumiñahui' }
+      { codigo: 'rumiñahui', nombre: 'Rumiñahui' },
+      { codigo: 'pedro-moncayo', nombre: 'Pedro Moncayo' },
+      { codigo: 'san-miguel-de-los-bancos', nombre: 'San Miguel de los Bancos' }
     ],
     'guayas': [
       { codigo: 'guayaquil', nombre: 'Guayaquil' },
       { codigo: 'duran', nombre: 'Durán' },
       { codigo: 'milagro', nombre: 'Milagro' },
-      { codigo: 'daule', nombre: 'Daule' }
+      { codigo: 'daule', nombre: 'Daule' },
+      { codigo: 'samborondon', nombre: 'Samborondón' },
+      { codigo: 'la-libertad', nombre: 'La Libertad' },
+      { codigo: 'playas', nombre: 'Playas' },
+      { codigo: 'yaguachi', nombre: 'Yaguachi' }
     ],
     'azuay': [
       { codigo: 'cuenca', nombre: 'Cuenca' },
       { codigo: 'giron', nombre: 'Girón' },
-      { codigo: 'paute', nombre: 'Paute' }
+      { codigo: 'paute', nombre: 'Paute' },
+      { codigo: 'gualaceo', nombre: 'Gualaceo' },
+      { codigo: 'sigsig', nombre: 'Sígsig' }
+    ],
+    'manabi': [
+      { codigo: 'portoviejo', nombre: 'Portoviejo' },
+      { codigo: 'manta', nombre: 'Manta' },
+      { codigo: 'chone', nombre: 'Chone' },
+      { codigo: 'montecristi', nombre: 'Montecristi' },
+      { codigo: 'jipijapa', nombre: 'Jipijapa' },
+      { codigo: 'bahia-de-caraquez', nombre: 'Bahía de Caráquez' }
+    ],
+    'tungurahua': [
+      { codigo: 'ambato', nombre: 'Ambato' },
+      { codigo: 'banos', nombre: 'Baños de Agua Santa' },
+      { codigo: 'pelileo', nombre: 'Pelileo' },
+      { codigo: 'patate', nombre: 'Patate' },
+      { codigo: 'cevallos', nombre: 'Cevallos' }
+    ],
+    'el-oro': [
+      { codigo: 'machala', nombre: 'Machala' },
+      { codigo: 'pasaje', nombre: 'Pasaje' },
+      { codigo: 'santa-rosa', nombre: 'Santa Rosa' },
+      { codigo: 'el-guabo', nombre: 'El Guabo' },
+      { codigo: 'huaquillas', nombre: 'Huaquillas' }
+    ],
+    'los-rios': [
+      { codigo: 'babahoyo', nombre: 'Babahoyo' },
+      { codigo: 'quevedo', nombre: 'Quevedo' },
+      { codigo: 'ventanas', nombre: 'Ventanas' },
+      { codigo: 'vinces', nombre: 'Vinces' },
+      { codigo: 'buena-fe', nombre: 'Buena Fe' }
+    ],
+    'imbabura': [
+      { codigo: 'ibarra', nombre: 'Ibarra' },
+      { codigo: 'otavalo', nombre: 'Otavalo' },
+      { codigo: 'cotacachi', nombre: 'Cotacachi' },
+      { codigo: 'antonio-ante', nombre: 'Antonio Ante' },
+      { codigo: 'pimampiro', nombre: 'Pimampiro' }
+    ],
+    'esmeraldas': [
+      { codigo: 'esmeraldas', nombre: 'Esmeraldas' },
+      { codigo: 'atacames', nombre: 'Atacames' },
+      { codigo: 'quininde', nombre: 'Quinindé' },
+      { codigo: 'san-lorenzo', nombre: 'San Lorenzo' },
+      { codigo: 'muisne', nombre: 'Muisne' }
+    ],
+    'loja': [
+      { codigo: 'loja', nombre: 'Loja' },
+      { codigo: 'catamayo', nombre: 'Catamayo' },
+      { codigo: 'cariamanga', nombre: 'Cariamanga' },
+      { codigo: 'catacocha', nombre: 'Catacocha' },
+      { codigo: 'macara', nombre: 'Macará' }
     ]
   };
 
-  readonly ciudadesDisponibles = computed(() => {
-    const provinciaSeleccionada = this.checkoutForm?.get('provincia')?.value;
-    return this.ciudadesPorProvincia[provinciaSeleccionada] || [];
-  });
+  readonly ciudadesDisponibles = signal<Array<{codigo: string, nombre: string}>>([]);
 
   // Payment methods configuration
   readonly metodosPago = [
@@ -674,6 +734,14 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
     // Setup conditional validators for credit card fields
     this.checkoutForm.get('metodoPago')?.valueChanges.subscribe(metodo => {
       this.updatePaymentValidators(metodo);
+    });
+
+    // Setup provincia change listener for cities update
+    this.checkoutForm.get('provincia')?.valueChanges.subscribe(provincia => {
+      const ciudades = this.ciudadesPorProvincia[provincia] || [];
+      this.ciudadesDisponibles.set(ciudades);
+      this.checkoutForm.get('ciudad')?.setValue('');
+      console.log('Provincia cambiada a:', provincia, 'Ciudades:', ciudades);
     });
 
     // Auto-save form progress
@@ -933,7 +1001,17 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
    * Handle provincia change to update cities
    */
   onProvinciaChange(): void {
+    const provinciaSeleccionada = this.checkoutForm.get('provincia')?.value;
+    const ciudades = this.ciudadesPorProvincia[provinciaSeleccionada] || [];
+    
+    // Update cities signal
+    this.ciudadesDisponibles.set(ciudades);
+    
+    // Clear previously selected city
     this.checkoutForm.get('ciudad')?.setValue('');
+    
+    console.log('Provincia seleccionada:', provinciaSeleccionada);
+    console.log('Ciudades disponibles:', ciudades);
   }
 
   /**

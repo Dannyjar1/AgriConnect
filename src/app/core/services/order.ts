@@ -132,7 +132,7 @@ export class OrderService {
     // Simulate API call
     return of({
       orderId,
-      status: 'confirmed',
+      status: 'confirmed' as const,
       statusText: 'Pedido confirmado y en preparación',
       estimatedDelivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
       trackingNumber: `AGC${orderId.slice(-8).toUpperCase()}`,
@@ -333,7 +333,7 @@ export class OrderService {
       const orders = this.getLocalOrders();
       const newOrder: OrderStatus = {
         orderId: orderResponse.orderId!,
-        status: 'confirmed',
+        status: 'confirmed' as const,
         statusText: 'Pedido confirmado y en preparación',
         estimatedDelivery: orderResponse.estimatedDelivery,
         trackingNumber: orderResponse.trackingNumber,
