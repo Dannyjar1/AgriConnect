@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -11,16 +11,18 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
 })
-export class Login {
+export class Login implements OnInit {
   // Form and state management
   protected readonly loginForm: FormGroup;
   protected readonly isLoading = signal<boolean>(false);
   protected readonly isGoogleLoading = signal<boolean>(false);
   protected readonly errorMessage = signal<string>('');
+  protected readonly showSuccessMessage = signal<boolean>(false);
 
   // Services
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
 
   constructor() {
@@ -39,6 +41,20 @@ export class Login {
           Validators.minLength(8)
         ]
       ]
+    });
+  }
+
+  ngOnInit(): void {
+    // Detectar el parámetro success=true en la URL
+    this.route.queryParams.subscribe(params => {
+      if (params['success'] === 'true') {
+        this.showSuccessMessage.set(true);
+        
+        // Ocultar el mensaje después de 3 segundos
+        setTimeout(() => {
+          this.showSuccessMessage.set(false);
+        }, 3000);
+      }
     });
   }
 
