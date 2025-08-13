@@ -19,6 +19,7 @@ export class Register {
   // Form and state management
   protected readonly registerForm: FormGroup;
   protected readonly isLoading = signal<boolean>(false);
+  protected readonly isGoogleLoading = signal<boolean>(false);
   protected readonly errorMessage = signal<string>('');
 
   // Services
@@ -309,7 +310,15 @@ export class Register {
     try {
       const formValue = this.registerForm.value;
       
-      await this.authService.register(formValue.email, formValue.password).toPromise();
+      await this.authService.registerWithUserData(
+        formValue.email, 
+        formValue.password,
+        {
+          displayName: formValue.fullName,
+          phone: formValue.phone,
+          userType: formValue.userType
+        }
+      ).toPromise();
       
       // Registration successful - navigate to marketplace
       this.router.navigate(['/marketplace']);
@@ -381,5 +390,56 @@ export class Register {
   protected isFieldInvalid(controlName: string): boolean {
     const control = this.getControl(controlName);
     return !!(control?.invalid && (control.dirty || control.touched));
+  }
+
+  /**
+   * Handle Google registration
+   */
+  protected async registerWithGoogle(): Promise<void> {
+    // Prevent double submission
+    if (this.isGoogleLoading()) return;
+    
+    this.isGoogleLoading.set(true);
+    this.errorMessage.set('');
+    
+    try {
+      await this.authService.registerWithGoogle().toPromise();
+      this.router.navigate(['/marketplace']);
+      
+    } catch (error: any) {
+      console.error('Error during Google registration:', error);
+      
+      let errorMessage = 'Error al registrarse con Google. Por favor, intenta nuevamente.';
+      
+      if (error?.code) {
+        switch (error.code) {
+          case 'auth/popup-closed-by-user':
+            errorMessage = 'Registro cancelado. La ventana fue cerrada.';
+            break;
+          case 'auth/popup-blocked':
+            errorMessage = 'Popup bloqueado por el navegador. Permite ventanas emergentes para este sitio.';
+            break;
+          case 'auth/cancelled-popup-request':
+            errorMessage = 'Solicitud de registro cancelada.';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = 'Error de conexión. Verifica tu internet e intenta nuevamente.';
+            break;
+          case 'auth/account-exists-with-different-credential':
+            errorMessage = 'Ya existe una cuenta con este correo usando otro método de registro.';
+            break;
+          case 'auth/credential-already-in-use':
+            errorMessage = 'Esta cuenta de Google ya está vinculada a otro usuario.';
+            break;
+          default:
+            errorMessage = error.message || errorMessage;
+        }
+      }
+      
+      this.errorMessage.set(errorMessage);
+      
+    } finally {
+      this.isGoogleLoading.set(false);
+    }
   }
 }

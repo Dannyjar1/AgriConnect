@@ -22,7 +22,7 @@
             
             <!-- Avatar Section -->
             <div class="relative group">
-              <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all border-2 border-gray-200">
+              <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all border-2 border-gray-200 relative">
                 @if (currentUser()?.photoURL) {
                   <img 
                     [src]="currentUser()?.photoURL" 
@@ -31,6 +31,7 @@
                 } @else {
                   <span class="material-icons text-6xl text-gray-700">account_circle</span>
                 }
+                
               </div>
               
               <!-- Avatar Upload Button -->
@@ -52,9 +53,23 @@
 
             <!-- User Info -->
             <div class="text-center md:text-left flex-1">
-              <h1 class="text-4xl font-bold mb-3 font-epilogue text-black">
-                {{ currentUser()?.displayName || 'Usuario' }}
-              </h1>
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <h1 class="text-4xl font-bold mb-3 font-epilogue text-black">
+                  {{ currentUser()?.displayName || 'Usuario' }}
+                </h1>
+                
+                <!-- Logout Button -->
+                <button 
+                  type="button"
+                  (click)="onLogout()"
+                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 
+                         transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+                         text-sm font-medium"
+                  title="Cerrar sesión">
+                  <span class="material-icons text-lg">logout</span>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
               
               <div class="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-6 text-lg">
                 <!-- Badge Productor -->

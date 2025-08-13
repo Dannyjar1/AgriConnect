@@ -11,6 +11,10 @@ export { AuthHeaderComponent } from './components/auth-header/auth-header';
 export { AppFooterComponent } from './components/app-footer/app-footer';
 export { CheckoutOverlay } from './components/checkout-overlay/checkout-overlay';
 
+// Re-export with aliases for backward compatibility
+export { AuthHeaderComponent as AuthHeader } from './components/auth-header/auth-header';
+export { AppFooterComponent as AppFooter } from './components/app-footer/app-footer';
+
 // Add other shared components here as they are created
 // export { FooterComponent } from './components/footer/footer';
 // export { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner';

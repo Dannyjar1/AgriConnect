@@ -1,0 +1,125 @@
+/**
+ * BankTransferModal Styles - Angular 20 Bank Transfer Modal Component
+ * 
+ * Comprehensive styling for the bank transfer modal component including:
+ * - Modal overlay and backdrop styling
+ * - QR code display and actions
+ * - Form styling with validation states
+ * - Responsive design patterns
+ * - Accessibility enhancements
+ * - Animation and transitions
+ */
+
+// Tailwind CSS v4 integration - Use global styles from src/styles.scss
+// No local @import statements needed for Tailwind v4
+
+// Component-specific styles for bank transfer modal
+:host {
+  // Custom styles that cannot be replaced with Tailwind utility classes
+
+  // Animation classes
+  .animate-fade-in-scale {
+    animation: fadeInScale 0.3s ease-out;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // QR Code container enhancement
+  .qr-container {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  // Form input focus enhancements
+  input:focus, textarea:focus {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  }
+
+  // Custom scrollbar for textarea
+  textarea {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(156, 163, 175, 0.5);
+      border-radius: 3px;
+      
+      &:hover {
+        background-color: rgba(156, 163, 175, 0.7);
+      }
+    }
+  }
+
+  // Notification positioning
+  .notification {
+    z-index: 60;
+  }
+
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  // High contrast mode support
+  @media (prefers-contrast: high) {
+    .bg-gradient-to-br {
+      background: white !important;
+      border: 2px solid #000000 !important;
+    }
+    
+    button {
+      border: 2px solid #000000 !important;
+    }
+  }
+
+  // Mobile-specific enhancements
+  @media (max-width: 640px) {
+    .modal-content {
+      margin: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+  }
+}
+
+// Global utilities moved to global styles or replaced with inline classes
+// No @apply statements in component SCSS files for Tailwind CSS v4 compatibility
+
+// All color utilities are now defined in global styles.scss
+// This component relies on global Tailwind CSS v4 configuration

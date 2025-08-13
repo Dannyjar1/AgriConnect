@@ -1,7 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
-import { delay, map, catchError } from 'rxjs/operators';
+import { delay, map, catchError, switchMap } from 'rxjs/operators';
+import { Firestore, collection, addDoc, doc, setDoc, serverTimestamp } from '@angular/fire/firestore';
+import { AuthService } from './auth.service';
+import { EmailService, OrderConfirmationEmailData } from './email.service';
 import { CartService } from './cart';
 import type { CartState, CartSummary } from '../models/cart.model';
 
@@ -74,6 +77,9 @@ export class OrderService {
   // Injected services
   private readonly cartService = inject(CartService);
   private readonly router = inject(Router);
+  private readonly firestore = inject(Firestore);
+  private readonly authService = inject(AuthService);
+  private readonly emailService = inject(EmailService);
 
   // Configuration
   private readonly API_ENDPOINT = '/api/orders'; // In production, this would be the real API
@@ -94,20 +100,35 @@ export class OrderService {
       return throwError(() => new Error(validation.message));
     }
 
-    // Simulate API call with realistic timing
-    return this.simulateOrderPlacement(orderData).pipe(
-      delay(2000), // Simulate network delay
-      map(response => {
+    // Process order with Firebase integration
+    return this.processOrderWithFirebase(orderData).pipe(
+      delay(1000), // Simulate processing time
+      switchMap(response => {
         if (response.success) {
-          // Clear cart on successful order
-          this.cartService.clear();
-          
-          // Store order in local storage for tracking
-          this.storeOrderLocally(response);
-          
-          console.log('OrderService: Order placed successfully', response);
+          // Send confirmation email
+          return this.sendOrderConfirmationEmail(orderData, response).pipe(
+            map(emailResult => {
+              console.log('Email sent result:', emailResult);
+              
+              // Clear cart on successful order
+              this.cartService.clear();
+              
+              // Store order in local storage for tracking
+              this.storeOrderLocally(response);
+              
+              console.log('OrderService: Order placed successfully', response);
+              return response;
+            }),
+            catchError(emailError => {
+              console.warn('Email sending failed but order was successful:', emailError);
+              // Still return success even if email fails
+              this.cartService.clear();
+              this.storeOrderLocally(response);
+              return of(response);
+            })
+          );
         }
-        return response;
+        return of(response);
       }),
       catchError(error => {
         console.error('OrderService: Order placement failed', error);
@@ -278,12 +299,12 @@ export class OrderService {
   }
 
   /**
-   * Simulate order placement (replace with real API call)
+   * Process order with Firebase integration
    * 
    * @param orderData - Order data
-   * @returns Simulated API response
+   * @returns Observable with order response
    */
-  private simulateOrderPlacement(orderData: OrderRequest): Observable<OrderResponse> {
+  private processOrderWithFirebase(orderData: OrderRequest): Observable<OrderResponse> {
     // Generate unique order ID
     const orderId = this.generateOrderId();
     
@@ -294,20 +315,124 @@ export class OrderService {
     // Generate tracking number
     const trackingNumber = `AGC${orderId.slice(-8).toUpperCase()}`;
 
-    // Simulate occasional failures (5% chance)
-    const shouldFail = Math.random() < 0.05;
-    
-    if (shouldFail) {
-      return throwError(() => new Error('Error temporal del servidor. Por favor intenta nuevamente.'));
-    }
-
-    return of({
-      success: true,
+    // Prepare order document for Firestore
+    const orderDocument = {
       orderId,
-      message: '¡Pedido realizado exitosamente! Te hemos enviado un correo de confirmación.',
+      status: 'confirmed',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      customer: {
+        email: orderData.shipping.correo,
+        nombres: orderData.shipping.nombres,
+        apellidos: orderData.shipping.apellidos,
+        telefono: orderData.shipping.telefono
+      },
+      shipping: orderData.shipping,
+      payment: {
+        method: orderData.payment.metodo,
+        // Don't store sensitive payment data
+        processedAt: serverTimestamp()
+      },
+      items: orderData.cart.items.map(item => ({
+        id: item.id,
+        nombre: item.nombre,
+        precio: item.precio,
+        qty: item.qty,
+        total: item.precio * item.qty,
+        image: item.image
+      })),
+      summary: {
+        itemCount: orderData.summary.itemCount,
+        subtotal: orderData.summary.subtotal,
+        tax: orderData.summary.tax,
+        shipping: orderData.summary.shipping,
+        total: orderData.summary.total
+      },
       estimatedDelivery,
-      trackingNumber
+      trackingNumber,
+      notifications: {
+        emailSent: false,
+        smsSent: false
+      }
+    };
+
+    // Save to Firestore
+    return new Observable<OrderResponse>(observer => {
+      const ordersCollection = collection(this.firestore, 'orders');
+      
+      addDoc(ordersCollection, orderDocument)
+        .then(docRef => {
+          console.log('Order saved to Firestore with ID:', docRef.id);
+          
+          // Update document with Firestore document ID
+          setDoc(doc(this.firestore, 'orders', docRef.id), {
+            ...orderDocument,
+            firestoreId: docRef.id
+          }, { merge: true });
+          
+          observer.next({
+            success: true,
+            orderId,
+            message: '¡Pedido realizado exitosamente! Te hemos enviado un correo de confirmación.',
+            estimatedDelivery,
+            trackingNumber
+          });
+          observer.complete();
+        })
+        .catch(error => {
+          console.error('Error saving order to Firestore:', error);
+          observer.error(error);
+        });
     });
+  }
+
+  /**
+   * Send order confirmation email to customer
+   * 
+   * @param orderData - Order data
+   * @param orderResponse - Order response with ID
+   * @returns Observable with email result
+   */
+  private sendOrderConfirmationEmail(orderData: OrderRequest, orderResponse: OrderResponse): Observable<any> {
+    const emailData: OrderConfirmationEmailData = {
+      customerName: `${orderData.shipping.nombres} ${orderData.shipping.apellidos}`,
+      customerEmail: orderData.shipping.correo,
+      orderId: orderResponse.orderId!,
+      orderDate: new Date().toLocaleDateString('es-EC', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      items: orderData.cart.items.map(item => ({
+        name: item.nombre,
+        quantity: item.qty,
+        price: item.precio,
+        total: item.precio * item.qty
+      })),
+      subtotal: orderData.summary.subtotal,
+      tax: orderData.summary.tax,
+      shipping: orderData.summary.shipping,
+      total: orderData.summary.total,
+      paymentMethod: this.getPaymentMethodLabel(orderData.payment.metodo),
+      shippingAddress: {
+        nombres: orderData.shipping.nombres,
+        apellidos: orderData.shipping.apellidos,
+        direccion: orderData.shipping.direccion,
+        ciudad: orderData.shipping.ciudad,
+        provincia: orderData.shipping.provincia,
+        telefono: orderData.shipping.telefono
+      },
+      estimatedDelivery: orderResponse.estimatedDelivery?.toLocaleDateString('es-EC', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+      trackingNumber: orderResponse.trackingNumber
+    };
+
+    return this.emailService.sendOrderConfirmationEmail(emailData);
   }
 
   /**
@@ -375,6 +500,18 @@ export class OrderService {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('agri_connect_orders');
     }
+  }
+
+  /**
+   * Update order notification status in Firestore
+   * 
+   * @param orderId - Order ID
+   * @param notificationType - Type of notification (email, sms)
+   * @param sent - Whether notification was sent successfully
+   */
+  private updateNotificationStatus(orderId: string, notificationType: 'email' | 'sms', sent: boolean): void {
+    // In a real implementation, we would update the Firestore document
+    console.log(`Order ${orderId}: ${notificationType} notification ${sent ? 'sent' : 'failed'}`);
   }
 
   /**

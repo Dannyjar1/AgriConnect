@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, updateProfile } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { from, of, throwError } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
@@ -32,6 +32,34 @@ export class AuthService {
     );
   }
 
+  registerWithUserData(email: string, password: string, userData: { displayName?: string; phone?: string; userType?: string }): any {
+    return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+      switchMap(async ({ user }) => {
+        // Update Firebase Auth profile if displayName is provided
+        if (userData.displayName) {
+          await updateProfile(user, { displayName: userData.displayName });
+        }
+        
+        // Create user document in Firestore with additional data
+        const userDoc: User = {
+          uid: user.uid,
+          email: user.email!,
+          displayName: userData.displayName || '',
+          phone: userData.phone || '',
+          userType: (userData.userType as 'producer' | 'buyer' | 'institutional') || 'buyer',
+          createdAt: new Date(),
+          lastLogin: new Date()
+        };
+        
+        return setDoc(doc(this.firestore, 'users', user.uid), userDoc);
+      }),
+      catchError(error => {
+        console.error('Firebase registration with user data error:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   login(email: string, password: string): any {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       catchError(error => {
@@ -44,21 +72,32 @@ export class AuthService {
   loginWithGoogle(): any {
     const provider = new GoogleAuthProvider();
     return from(signInWithPopup(this.auth, provider)).pipe(
-      switchMap(({ user }) => {
+      switchMap(async ({ user }) => {
+        // Check if user document exists, if not create it
         const userDoc: User = {
           uid: user.uid,
           email: user.email!,
+          displayName: user.displayName || '',
+          photoURL: user.photoURL || '',
           userType: 'buyer', // Default to buyer
+          isVerified: user.emailVerified,
           createdAt: new Date(),
           lastLogin: new Date()
         };
-        return from(setDoc(doc(this.firestore, 'users', user.uid), userDoc));
+        
+        // Use merge: true to not overwrite existing data
+        return setDoc(doc(this.firestore, 'users', user.uid), userDoc, { merge: true });
       }),
       catchError(error => {
         console.error('Firebase Google sign-in error:', error);
         return throwError(() => error);
       })
     );
+  }
+
+  registerWithGoogle(): any {
+    // Same as loginWithGoogle since Google auth doesn't distinguish between login/register
+    return this.loginWithGoogle();
   }
 
   logout(): any {

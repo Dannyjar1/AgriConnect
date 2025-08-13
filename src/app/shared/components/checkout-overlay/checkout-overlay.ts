@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Subscription, fromEvent } from 'rxjs';
 import { CartService } from '../../../core/services/cart';
 import { OrderService } from '../../../core/services/order';
+import { BankTransferModal } from '../bank-transfer-modal/bank-transfer-modal';
+import { CreditCardModal } from '../credit-card-modal/credit-card-modal';
 import type { CartItem, CartSummary, CartState } from '../../../core/models/cart.model';
 import type { OrderRequest } from '../../../core/services/order';
 
@@ -31,7 +33,7 @@ import type { OrderRequest } from '../../../core/services/order';
 @Component({
   selector: 'app-checkout-overlay',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, BankTransferModal, CreditCardModal],
   template: `
     <!-- Overlay Backdrop -->
     @if (isOpen()) {
@@ -363,7 +365,8 @@ import type { OrderRequest } from '../../../core/services/order';
                               [value]="metodo.value"
                               class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0"
                               style="clip: rect(0, 0, 0, 0);"
-                              [attr.aria-describedby]="metodo.value + '-desc'">
+                              [attr.aria-describedby]="metodo.value + '-desc'"
+                              (change)="onPaymentMethodChange(metodo.value)">
                             <div [class]="'flex items-center justify-between p-4 border rounded-lg transition-all duration-200 ' + (checkoutForm.get('metodoPago')?.value === metodo.value ? 'border-agri-green-500 bg-white ' : 'border-agri-green-200 hover:border-agri-green-300 hover:bg-white ')">
                               <div class="flex items-center space-x-3">
                                 <span class="material-icons text-xl" [class]="metodo.iconClass">{{ metodo.icon }}</span>
@@ -388,111 +391,7 @@ import type { OrderRequest } from '../../../core/services/order';
                     }
                   </div>
                   
-                  <!-- Credit Card Fields (shown when tarjeta is selected) -->
-                  @if (checkoutForm.get('metodoPago')?.value === 'tarjeta') {
-                    <div class="mt-6 p-4 bg-white rounded-lg border border-agri-green-200">
-                      <div class="flex items-start space-x-2 mb-4">
-                        <span class="material-icons text-agri-green-600 text-sm mt-0.5">info</span>
-                        <div class="text-sm text-gray-800">
-                          <p class="font-medium">Información Segura</p>
-                          <p>No almacenamos información de tarjetas de crédito. Los datos se procesan de forma segura.</p>
-                        </div>
-                      </div>
-                      
-                      <div class="space-y-4">
-                        <div class="space-y-2">
-                          <label for="titular" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Nombre del Titular</label>
-                          <input
-                            id="titular"
-                            type="text"
-                            formControlName="titular"
-                            [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('titular') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
-                            placeholder="Como aparece en la tarjeta"
-                            aria-describedby="titular-error"
-                            autocomplete="cc-name">
-                          @if (isFieldInvalid('titular')) {
-                            <div id="titular-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
-                              <span class="material-icons text-sm">error</span>
-                              El nombre del titular es requerido
-                            </div>
-                          }
-                        </div>
-                        
-                        <div class="space-y-2">
-                          <label for="numeroTarjeta" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Número de Tarjeta</label>
-                          <input
-                            id="numeroTarjeta"
-                            type="text"
-                            formControlName="numeroTarjeta"
-                            [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('numeroTarjeta') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
-                            placeholder="1234 5678 9012 3456"
-                            aria-describedby="numeroTarjeta-error"
-                            autocomplete="cc-number"
-                            maxlength="19"
-                            (input)="onCardNumberInput($event)">
-                          @if (isFieldInvalid('numeroTarjeta')) {
-                            <div id="numeroTarjeta-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
-                              <span class="material-icons text-sm">error</span>
-                              @if (checkoutForm.get('numeroTarjeta')?.hasError('required')) {
-                                El número de tarjeta es requerido
-                              } @else if (checkoutForm.get('numeroTarjeta')?.hasError('luhn')) {
-                                Número de tarjeta inválido
-                              }
-                            </div>
-                          }
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                          <div class="space-y-2">
-                            <label for="fechaVencimiento" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">Fecha de Vencimiento</label>
-                            <input
-                              id="fechaVencimiento"
-                              type="text"
-                              formControlName="fechaVencimiento"
-                              [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('fechaVencimiento') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
-                              placeholder="MM/YY"
-                              aria-describedby="fechaVencimiento-error"
-                              autocomplete="cc-exp"
-                              maxlength="5"
-                              (input)="onExpiryInput($event)">
-                            @if (isFieldInvalid('fechaVencimiento')) {
-                              <div id="fechaVencimiento-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
-                                <span class="material-icons text-sm">error</span>
-                                @if (checkoutForm.get('fechaVencimiento')?.hasError('required')) {
-                                  La fecha es requerida
-                                } @else if (checkoutForm.get('fechaVencimiento')?.hasError('pattern')) {
-                                  Formato inválido (MM/YY)
-                                }
-                              </div>
-                            }
-                          </div>
-                          
-                          <div class="space-y-2">
-                            <label for="cvc" class="block text-sm font-medium text-gray-900  relative after:content-['*'] after:text-red-500 after:ml-1">CVC</label>
-                            <input
-                              id="cvc"
-                              type="text"
-                              formControlName="cvc"
-                              [class]="'block w-full px-4 py-3 text-sm border rounded-lg transition-all duration-200 ' + (isFieldInvalid('cvc') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20 bg-red-50 ' : 'border-agri-green-100 bg-white/70 placeholder-gray-500 focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20 text-gray-900')"
-                              placeholder="123"
-                              aria-describedby="cvc-error"
-                              autocomplete="cc-csc"
-                              maxlength="4">
-                            @if (isFieldInvalid('cvc')) {
-                              <div id="cvc-error" class="flex items-center space-x-1 text-sm text-red-600 " role="alert">
-                                <span class="material-icons text-sm">error</span>
-                                @if (checkoutForm.get('cvc')?.hasError('required')) {
-                                  El CVC es requerido
-                                } @else if (checkoutForm.get('cvc')?.hasError('pattern')) {
-                                  CVC inválido (3-4 dígitos)
-                                }
-                              </div>
-                            }
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
+                  <!-- Note: Credit card fields are now handled in a separate modal -->
                   </div>
                 </section>
                 
@@ -529,6 +428,18 @@ import type { OrderRequest } from '../../../core/services/order';
         </div>
       </div>
     }
+    
+    <!-- Bank Transfer Modal -->
+    <app-bank-transfer-modal 
+      #bankTransferModal
+      (transferConfirmed)="onBankTransferConfirmed($event)">
+    </app-bank-transfer-modal>
+    
+    <!-- Credit Card Modal -->
+    <app-credit-card-modal 
+      #creditCardModal
+      (cardConfirmed)="onCreditCardConfirmed($event)">
+    </app-credit-card-modal>
   `,
   styleUrls: ['./checkout-overlay.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -544,6 +455,8 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
   // ViewChild references for focus management
   @ViewChild('closeButton') closeButton!: ElementRef<HTMLButtonElement>;
   @ViewChild('overlayContainer') overlayContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('bankTransferModal') bankTransferModal!: BankTransferModal;
+  @ViewChild('creditCardModal') creditCardModal!: CreditCardModal;
 
   // Component state signals
   readonly isOpen = signal<boolean>(false);
@@ -553,6 +466,12 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
   // Form and validation
   checkoutForm!: FormGroup;
   private cartSubscription?: Subscription;
+  
+  // Bank transfer data
+  private bankTransferData: any = null;
+  
+  // Credit card data
+  private creditCardData: any = null;
 
   // Ecuador provinces and cities data
   readonly provincias = [
@@ -724,17 +643,10 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
       notas: ['', Validators.maxLength(500)],
       
       // Payment information
-      metodoPago: ['', Validators.required],
-      titular: [''],
-      numeroTarjeta: [''],
-      fechaVencimiento: [''],
-      cvc: ['']
+      metodoPago: ['contraentrega', Validators.required]
     });
 
-    // Setup conditional validators for credit card fields
-    this.checkoutForm.get('metodoPago')?.valueChanges.subscribe(metodo => {
-      this.updatePaymentValidators(metodo);
-    });
+    // Note: Credit card validation is now handled in the modal
 
     // Setup provincia change listener for cities update
     this.checkoutForm.get('provincia')?.valueChanges.subscribe(provincia => {
@@ -750,59 +662,7 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Update payment validators based on selected method
-   */
-  private updatePaymentValidators(metodo: string): void {
-    const titularControl = this.checkoutForm.get('titular');
-    const numeroTarjetaControl = this.checkoutForm.get('numeroTarjeta');
-    const fechaVencimientoControl = this.checkoutForm.get('fechaVencimiento');
-    const cvcControl = this.checkoutForm.get('cvc');
-
-    if (metodo === 'tarjeta') {
-      titularControl?.setValidators([Validators.required, Validators.minLength(3)]);
-      numeroTarjetaControl?.setValidators([Validators.required, this.luhnValidator]);
-      fechaVencimientoControl?.setValidators([Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/([0-9]{2})$/)]);
-      cvcControl?.setValidators([Validators.required, Validators.pattern(/^[0-9]{3,4}$/)]);
-    } else {
-      titularControl?.clearValidators();
-      numeroTarjetaControl?.clearValidators();
-      fechaVencimientoControl?.clearValidators();
-      cvcControl?.clearValidators();
-    }
-
-    titularControl?.updateValueAndValidity();
-    numeroTarjetaControl?.updateValueAndValidity();
-    fechaVencimientoControl?.updateValueAndValidity();
-    cvcControl?.updateValueAndValidity();
-  }
-
-  /**
-   * Luhn algorithm validator for credit card numbers
-   */
-  private luhnValidator(control: any) {
-    const value = control.value?.replace(/\s/g, '') || '';
-    if (!value) return null;
-    
-    let sum = 0;
-    let alternate = false;
-    
-    for (let i = value.length - 1; i >= 0; i--) {
-      let digit = parseInt(value.charAt(i));
-      
-      if (alternate) {
-        digit *= 2;
-        if (digit > 9) {
-          digit = (digit % 10) + 1;
-        }
-      }
-      
-      sum += digit;
-      alternate = !alternate;
-    }
-    
-    return (sum % 10 === 0) ? null : { luhn: true };
-  }
+  // Note: Payment validation functions moved to respective modal components
 
   /**
    * Subscribe to cart service updates
@@ -872,8 +732,51 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
    * Handle form submission with OrderService integration
    */
   onSubmit(): void {
+    // Check if bank transfer is selected but not configured
+    if (this.checkoutForm.value.metodoPago === 'transferencia' && !this.bankTransferData) {
+      alert('Por favor configure los datos de transferencia bancaria primero.');
+      return;
+    }
+
+    // Check if credit card is selected but not configured
+    if (this.checkoutForm.value.metodoPago === 'tarjeta' && !this.creditCardData) {
+      alert('Por favor configure los datos de la tarjeta de crédito primero.');
+      return;
+    }
+
     if (this.checkoutForm.valid) {
       this.isProcessing.set(true);
+      
+      // Prepare payment data based on method
+      let paymentData: any = {
+        metodo: this.checkoutForm.value.metodoPago
+      };
+
+      // Add specific data based on payment method
+      if (this.checkoutForm.value.metodoPago === 'tarjeta' && this.creditCardData) {
+        paymentData = {
+          ...paymentData,
+          creditCard: {
+            cardHolder: this.creditCardData.cardHolder,
+            cardNumber: this.creditCardData.cardNumber, // Already masked
+            expiryDate: this.creditCardData.expiryDate,
+            cardType: this.creditCardData.cardType,
+            saveCard: this.creditCardData.saveCard,
+            timestamp: this.creditCardData.timestamp
+          }
+        };
+      } else if (this.checkoutForm.value.metodoPago === 'transferencia' && this.bankTransferData) {
+        paymentData = {
+          ...paymentData,
+          bankTransfer: {
+            voucherNumber: this.bankTransferData.voucherNumber,
+            paymentLink: this.bankTransferData.paymentLink,
+            qrImagePath: this.bankTransferData.qrImagePath,
+            notes: this.bankTransferData.notes,
+            timestamp: this.bankTransferData.timestamp
+          }
+        };
+      }
       
       // Prepare order data for OrderService
       const orderData: OrderRequest = {
@@ -890,12 +793,7 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
           codigoPostal: this.checkoutForm.value.codigoPostal,
           notas: this.checkoutForm.value.notas
         },
-        payment: {
-          metodo: this.checkoutForm.value.metodoPago,
-          titular: this.checkoutForm.value.titular,
-          numeroTarjeta: this.checkoutForm.value.numeroTarjeta ? this.maskCardNumber(this.checkoutForm.value.numeroTarjeta) : undefined,
-          fechaVencimiento: this.checkoutForm.value.fechaVencimiento,
-        },
+        payment: paymentData,
         summary: this.cartSummary()
       };
 
@@ -910,7 +808,7 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
             this.closeOverlay();
             
             // Show success message with order details
-            const message = `¡Pedido realizado con éxito!\n\nID del pedido: ${response.orderId}\nTotal: $${this.cartSummary().total.toFixed(2)}\n\nTe hemos enviado un correo de confirmación.`;
+            const message = `🎉 ¡Pedido realizado con éxito!\n\n📦 ID del pedido: ${response.orderId}\n💰 Total: $${this.cartSummary().total.toFixed(2)}\n\n📧 Te hemos enviado un correo de confirmación a:\n${orderData.shipping.correo}\n\n🚚 Tiempo estimado de entrega: ${response.estimatedDelivery ? new Date(response.estimatedDelivery).toLocaleDateString('es-EC') : '2-3 días hábiles'}`;
             alert(message);
             
             // Reset form for next use
@@ -969,33 +867,7 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
     this.checkoutForm.get('telefono')?.setValue(value);
   }
 
-  /**
-   * Handle credit card number input formatting
-   */
-  onCardNumberInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\s/g, '').replace(/\D/g, '');
-    if (value.length > 16) {
-      value = value.substring(0, 16);
-    }
-    // Add spaces every 4 digits
-    value = value.replace(/(.{4})/g, '$1 ').trim();
-    input.value = value;
-    this.checkoutForm.get('numeroTarjeta')?.setValue(value);
-  }
-
-  /**
-   * Handle expiry date input formatting
-   */
-  onExpiryInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\D/g, '');
-    if (value.length >= 2) {
-      value = value.substring(0, 2) + '/' + value.substring(2, 4);
-    }
-    input.value = value;
-    this.checkoutForm.get('fechaVencimiento')?.setValue(value);
-  }
+  // Note: Credit card input formatting moved to CreditCardModal component
 
   /**
    * Handle provincia change to update cities
@@ -1072,5 +944,52 @@ export class CheckoutOverlay implements OnInit, OnDestroy {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('checkoutFormProgress');
     }
+  }
+
+  /**
+   * Handle payment method selection - open appropriate modal if selected
+   */
+  onPaymentMethodChange(metodo: string): void {
+    if (metodo === 'transferencia') {
+      // Open bank transfer modal
+      setTimeout(() => {
+        this.bankTransferModal?.openModal();
+      }, 100);
+      // Clear credit card data if switching methods
+      this.creditCardData = null;
+    } else if (metodo === 'tarjeta') {
+      // Open credit card modal
+      setTimeout(() => {
+        this.creditCardModal?.openModal();
+      }, 100);
+      // Clear bank transfer data if switching methods
+      this.bankTransferData = null;
+    } else {
+      // Clear all payment data if another method is selected
+      this.bankTransferData = null;
+      this.creditCardData = null;
+    }
+  }
+
+  /**
+   * Handle bank transfer confirmation from modal
+   */
+  onBankTransferConfirmed(transferData: any): void {
+    this.bankTransferData = transferData;
+    console.log('Bank transfer confirmed:', transferData);
+    
+    // Update form to indicate transfer is configured
+    // The normal checkout flow will continue with this data
+  }
+
+  /**
+   * Handle credit card confirmation from modal
+   */
+  onCreditCardConfirmed(cardData: any): void {
+    this.creditCardData = cardData;
+    console.log('Credit card confirmed:', cardData);
+    
+    // Update form to indicate card is configured
+    // The normal checkout flow will continue with this data
   }
 }
