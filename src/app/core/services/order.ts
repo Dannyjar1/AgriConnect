@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
-import { delay, map, catchError, switchMap } from 'rxjs/operators';
+import { delay, map, catchError, switchMap, take } from 'rxjs/operators';
 import { Firestore, collection, addDoc, doc, setDoc, serverTimestamp } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { EmailService, OrderConfirmationEmailData } from './email.service';
@@ -60,6 +60,23 @@ export interface OrderResponse {
   error?: string;
 }
 
+export interface OrderItem {
+  id: string;
+  nombre: string;
+  precio: number;
+  qty: number;
+  total: number;
+  image?: string;
+}
+
+export interface OrderSummary {
+  itemCount: number;
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+}
+
 export interface OrderStatus {
   orderId: string;
   status: 'pending' | 'confirmed' | 'preparing' | 'shipped' | 'delivered' | 'cancelled';
@@ -67,6 +84,18 @@ export interface OrderStatus {
   estimatedDelivery?: Date;
   trackingNumber?: string;
   lastUpdated: Date;
+  // Extended order details
+  items?: OrderItem[];
+  summary?: OrderSummary;
+  customer?: {
+    nombres: string;
+    apellidos: string;
+    correo: string;
+    telefono: string;
+  };
+  shipping?: ShippingInfo;
+  paymentMethod?: string;
+  orderDate?: Date;
 }
 
 @Injectable({
@@ -114,7 +143,7 @@ export class OrderService {
               this.cartService.clear();
               
               // Store order in local storage for tracking
-              this.storeOrderLocally(response);
+              this.storeOrderLocally(response, orderData);
               
               console.log('OrderService: Order placed successfully', response);
               return response;
@@ -123,7 +152,7 @@ export class OrderService {
               console.warn('Email sending failed but order was successful:', emailError);
               // Still return success even if email fails
               this.cartService.clear();
-              this.storeOrderLocally(response);
+              this.storeOrderLocally(response, orderData);
               return of(response);
             })
           );
@@ -170,13 +199,58 @@ export class OrderService {
    * @returns Observable with order list
    */
   getUserOrders(userId?: string): Observable<OrderStatus[]> {
-    console.log('OrderService: Getting user orders', userId);
+    console.log('📋 OrderService: Getting user orders', userId);
 
-    // Get orders from local storage (in production, this would be from API)
-    const localOrders = this.getLocalOrders();
-    
-    return of(localOrders).pipe(
-      delay(800)
+    if (userId) {
+      // Use provided userId
+      const userOrders = this.getUserOrdersFromStorage(userId);
+      console.log(`📦 Found ${userOrders.length} orders for user ${userId}`);
+      return of(userOrders).pipe(delay(800));
+    } else {
+      // Get current authenticated user's orders
+      return this.authService.authState$.pipe(
+        take(1), // Only take the first emission to avoid infinite loading
+        map(user => {
+          if (user) {
+            const userOrders = this.getUserOrdersFromStorage(user.uid);
+            console.log(`📦 Found ${userOrders.length} orders for current user ${user.uid}`);
+            return userOrders;
+          } else {
+            console.log('❌ No authenticated user found');
+            return [];
+          }
+        }),
+        delay(800)
+      );
+    }
+  }
+
+  /**
+   * Get detailed order information by ID
+   * 
+   * @param orderId - Order ID to get details for
+   * @returns Observable with complete order details
+   */
+  getOrderDetails(orderId: string): Observable<OrderStatus | null> {
+    console.log('📋 OrderService: Getting order details for', orderId);
+
+    return this.authService.authState$.pipe(
+      take(1),
+      map(user => {
+        if (user) {
+          const userOrders = this.getUserOrdersFromStorage(user.uid);
+          const order = userOrders.find(o => o.orderId === orderId);
+          console.log('📦 Order details found:', order ? 'Yes' : 'No');
+          if (order) {
+            console.log('📦 Order has items:', order.items?.length || 0);
+            console.log('📦 Order has summary:', order.summary ? 'Yes' : 'No');
+            console.log('📦 Full order object:', order);
+          }
+          return order || null;
+        }
+        return null;
+      }),
+      delay(500)
     );
   }
 
@@ -450,34 +524,123 @@ export class OrderService {
    * Store order locally for tracking (in production, this would be handled by backend)
    * 
    * @param orderResponse - Order response to store
+   * @param orderData - Original order data with complete details
    */
-  private storeOrderLocally(orderResponse: OrderResponse): void {
+  private storeOrderLocally(orderResponse: OrderResponse, orderData?: OrderRequest): void {
     if (typeof window === 'undefined') return;
 
     try {
-      const orders = this.getLocalOrders();
-      const newOrder: OrderStatus = {
-        orderId: orderResponse.orderId!,
-        status: 'confirmed' as const,
-        statusText: 'Pedido confirmado y en preparación',
-        estimatedDelivery: orderResponse.estimatedDelivery,
-        trackingNumber: orderResponse.trackingNumber,
-        lastUpdated: new Date()
-      };
+      // Get current user and store order
+      this.authService.authState$.pipe(
+        take(1), // Only take the first emission
+        map(user => {
+          if (user) {
+            const userOrders = this.getUserOrdersFromStorage(user.uid);
+            
+            // Create complete order record with all details
+            const newOrder: OrderStatus = {
+              orderId: orderResponse.orderId!,
+              status: 'confirmed' as const,
+              statusText: 'Pedido confirmado y en preparación',
+              estimatedDelivery: orderResponse.estimatedDelivery,
+              trackingNumber: orderResponse.trackingNumber,
+              lastUpdated: new Date(),
+              orderDate: new Date()
+            };
 
-      orders.unshift(newOrder); // Add to beginning
-      
-      // Keep only last 20 orders
-      const ordersToStore = orders.slice(0, 20);
-      
-      localStorage.setItem('agri_connect_orders', JSON.stringify(ordersToStore));
+            // Add complete order details if orderData is provided
+            if (orderData) {
+              newOrder.items = orderData.cart.items.map(item => ({
+                id: item.id,
+                nombre: item.nombre,
+                precio: item.precio,
+                qty: item.qty,
+                total: item.precio * item.qty,
+                image: item.image
+              }));
+              
+              newOrder.summary = {
+                itemCount: orderData.summary.itemCount,
+                subtotal: orderData.summary.subtotal,
+                tax: orderData.summary.tax,
+                shipping: orderData.summary.shipping,
+                total: orderData.summary.total
+              };
+              
+              newOrder.customer = {
+                nombres: orderData.shipping.nombres,
+                apellidos: orderData.shipping.apellidos,
+                correo: orderData.shipping.correo,
+                telefono: orderData.shipping.telefono
+              };
+              
+              newOrder.shipping = orderData.shipping;
+              newOrder.paymentMethod = this.getPaymentMethodLabel(orderData.payment.metodo);
+            }
+
+            userOrders.unshift(newOrder); // Add to beginning
+            
+            // Keep only last 50 orders per user
+            const ordersToStore = userOrders.slice(0, 50);
+            
+            localStorage.setItem(`agri_connect_orders_${user.uid}`, JSON.stringify(ordersToStore));
+            console.log(`✅ Order stored for user ${user.uid}:`, newOrder.orderId);
+            console.log('📦 Order data provided:', orderData ? 'Yes' : 'No');
+            console.log('📦 Items saved:', newOrder.items?.length || 0);
+            console.log('📦 Summary saved:', newOrder.summary ? 'Yes' : 'No');
+            console.log('📦 Complete order details:', newOrder);
+            console.log('📦 Orders in storage:', ordersToStore.length);
+            return true;
+          } else {
+            console.warn('❌ No authenticated user found when storing order');
+            return false;
+          }
+        })
+      ).subscribe();
     } catch (error) {
-      console.warn('OrderService: Could not store order locally', error);
+      console.error('OrderService: Could not store order locally', error);
     }
   }
 
   /**
-   * Get orders from local storage
+   * Get orders from local storage for specific user
+   * 
+   * @param userId - User ID to get orders for
+   * @returns Array of user's orders
+   */
+  private getUserOrdersFromStorage(userId: string): OrderStatus[] {
+    if (typeof window === 'undefined') {
+      console.log('🚫 Window undefined, returning empty orders');
+      return [];
+    }
+
+    try {
+      const key = `agri_connect_orders_${userId}`;
+      const stored = localStorage.getItem(key);
+      
+      console.log(`🔍 Looking for orders with key: ${key}`);
+      console.log(`📄 Stored data:`, stored ? 'Found' : 'Not found');
+      
+      if (stored) {
+        const orders = JSON.parse(stored);
+        console.log(`✅ Parsed ${orders.length} orders for user ${userId}`);
+        if (orders.length > 0) {
+          console.log('📦 First order details:', orders[0]);
+          console.log('📦 First order has items:', orders[0].items?.length || 0);
+        }
+        return orders;
+      } else {
+        console.log(`📭 No orders found for user ${userId}`);
+        return [];
+      }
+    } catch (error) {
+      console.error('❌ OrderService: Could not retrieve user orders', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get orders from local storage (legacy method - for backward compatibility)
    * 
    * @returns Array of local orders
    */
@@ -499,6 +662,17 @@ export class OrderService {
   clearLocalOrders(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('agri_connect_orders');
+    }
+  }
+
+  /**
+   * Clear user-specific order storage
+   * 
+   * @param userId - User ID to clear orders for
+   */
+  clearUserOrders(userId: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(`agri_connect_orders_${userId}`);
     }
   }
 

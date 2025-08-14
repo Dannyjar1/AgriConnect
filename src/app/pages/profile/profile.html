@@ -357,21 +357,115 @@
 
           <!-- Historial de Compras Tab -->
           @if (activeTab() === 'history') {
-            <div role="tabpanel" aria-labelledby="history-tab">
-              <div class="text-center py-16">
-                <div class="text-6xl mb-6 opacity-60">📦</div>
-                <h3 class="text-2xl font-bold text-gray-700 mb-4 font-epilogue">Historial de Compras</h3>
-                <p class="text-gray-600 mb-8 max-w-md mx-auto">
-                  Revisa tus pedidos anteriores, rastrea envíos y descarga facturas
-                </p>
-                <button 
-                  type="button"
-                  (click)="navigateToOrderHistory()"
-                  class="btn-primary flex items-center space-x-2 mx-auto">
-                  <span class="material-icons">receipt_long</span>
-                  <span>Ver Historial</span>
-                </button>
+            <div role="tabpanel" aria-labelledby="history-tab" class="space-y-6">
+              <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-900 font-epilogue">Historial de Compras</h2>
+                <div class="text-sm text-gray-600">
+                  Total de compras: {{ userOrders().length }}
+                </div>
               </div>
+
+              @if (isLoadingOrders()) {
+                <!-- Loading State -->
+                <div class="text-center py-12">
+                  <div class="w-8 h-8 border-4 border-gray-200 border-t-agri-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+                  <p class="text-lg text-gray-600">Cargando historial de compras...</p>
+                </div>
+              } @else if (userOrders().length === 0) {
+                <!-- Empty State -->
+                <div class="text-center py-16">
+                  <div class="text-6xl mb-6 opacity-60">🛒</div>
+                  <h3 class="text-2xl font-bold text-gray-700 mb-4 font-epilogue">No tienes compras aún</h3>
+                  <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                    Cuando realices tu primera compra, aparecerá aquí tu historial completo
+                  </p>
+                  <button 
+                    type="button"
+                    (click)="navigateToShopping()"
+                    class="btn-primary flex items-center space-x-2 mx-auto">
+                    <span class="material-icons">shopping_cart</span>
+                    <span>Ir a Comprar</span>
+                  </button>
+                </div>
+              } @else {
+                <!-- Orders List -->
+                <div class="space-y-4">
+                  @for (order of userOrders(); track order.orderId) {
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                        
+                        <!-- Order Info -->
+                        <div class="flex-1">
+                          <div class="flex items-center space-x-3 mb-2">
+                            <h3 class="text-lg font-semibold text-gray-900 font-epilogue">
+                              Pedido #{{ order.orderId }}
+                            </h3>
+                            <span 
+                              [class]="getStatusBadgeClass(order.status)"
+                              class="px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
+                              <span class="material-icons text-sm">{{ getStatusIcon(order.status) }}</span>
+                              <span>{{ order.statusText }}</span>
+                            </span>
+                          </div>
+                          
+                          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                            <div class="flex items-center space-x-2">
+                              <span class="material-icons text-lg text-gray-500">event</span>
+                              <span>{{ formatDate(order.lastUpdated) }}</span>
+                            </div>
+                            
+                            @if (order.trackingNumber) {
+                              <div class="flex items-center space-x-2">
+                                <span class="material-icons text-lg text-gray-500">local_shipping</span>
+                                <span>{{ order.trackingNumber }}</span>
+                              </div>
+                            }
+                            
+                            @if (order.estimatedDelivery) {
+                              <div class="flex items-center space-x-2">
+                                <span class="material-icons text-lg text-gray-500">schedule</span>
+                                <span>Entrega: {{ formatDate(order.estimatedDelivery) }}</span>
+                              </div>
+                            }
+                          </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex items-center space-x-3">
+                          @if (order.trackingNumber) {
+                            <button 
+                              type="button"
+                              (click)="trackOrder(order.orderId)"
+                              class="bg-agri-green-600 hover:bg-agri-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 text-sm transition-colors">
+                              <span class="material-icons text-lg">track_changes</span>
+                              <span>Rastrear</span>
+                            </button>
+                          }
+                          
+                          <button 
+                            type="button"
+                            (click)="showOrderDetails(order.orderId)"
+                            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 text-sm transition-colors">
+                            <span class="material-icons text-lg">receipt</span>
+                            <span>Detalles</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <!-- Pagination Placeholder -->
+                @if (userOrders().length >= 10) {
+                  <div class="text-center pt-6">
+                    <button 
+                      type="button"
+                      class="text-agri-green-600 hover:text-agri-green-700 font-medium text-sm">
+                      Ver más pedidos
+                    </button>
+                  </div>
+                }
+              }
             </div>
           }
 
@@ -462,10 +556,239 @@
   </main>
 </div>
 
+<!-- Order Details Modal -->
+@if (isOrderDetailsOpen()) {
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+      
+      <!-- Modal Header -->
+      <div class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6 rounded-t-2xl">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-agri-green-100 rounded-xl">
+              <span class="material-icons text-2xl text-agri-green-600">receipt_long</span>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900 font-epilogue">Detalles del Pedido</h2>
+              @if (selectedOrder()) {
+                <p class="text-gray-600 mt-1">Pedido #{{ selectedOrder()!.orderId }}</p>
+              }
+            </div>
+          </div>
+          <button 
+            type="button"
+            (click)="closeOrderDetails()"
+            class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <span class="material-icons text-2xl text-gray-600">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6">
+        @if (isLoadingOrderDetails()) {
+          <!-- Loading State -->
+          <div class="text-center py-12">
+            <div class="w-8 h-8 border-4 border-gray-200 border-t-agri-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-lg text-gray-600">Cargando detalles del pedido...</p>
+          </div>
+        } @else if (selectedOrder()) {
+          <!-- Order Details Content -->
+          <div class="space-y-6">
+            
+            <!-- Order Status -->
+            <div class="bg-gray-50 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 font-epilogue">Estado del Pedido</h3>
+              <div class="flex items-center space-x-4">
+                <span 
+                  [class]="getStatusBadgeClass(selectedOrder()!.status)"
+                  class="px-4 py-2 rounded-full text-sm font-medium flex items-center space-x-2">
+                  <span class="material-icons text-lg">{{ getStatusIcon(selectedOrder()!.status) }}</span>
+                  <span>{{ selectedOrder()!.statusText }}</span>
+                </span>
+                <div class="text-sm text-gray-600">
+                  <div>Fecha: {{ formatDate(selectedOrder()!.orderDate) }}</div>
+                  @if (selectedOrder()!.estimatedDelivery) {
+                    <div>Entrega estimada: {{ formatDate(selectedOrder()!.estimatedDelivery) }}</div>
+                  }
+                  @if (selectedOrder()!.trackingNumber) {
+                    <div>Tracking: {{ selectedOrder()!.trackingNumber }}</div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Items -->
+            @if (selectedOrder()!.items && selectedOrder()!.items!.length > 0) {
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 font-epilogue">Productos Pedidos</h3>
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                  <div class="divide-y divide-gray-200">
+                    @for (item of selectedOrder()!.items!; track item.id) {
+                      <div class="p-4 flex items-center space-x-4">
+                        @if (item.image) {
+                          <img 
+                            [src]="item.image" 
+                            [alt]="item.nombre"
+                            class="w-16 h-16 object-cover rounded-lg bg-gray-100">
+                        } @else {
+                          <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <span class="material-icons text-gray-400">shopping_bag</span>
+                          </div>
+                        }
+                        
+                        <div class="flex-1">
+                          <h4 class="font-medium text-gray-900">{{ item.nombre }}</h4>
+                          <div class="text-sm text-gray-600 mt-1">
+                            <div>Cantidad: {{ item.qty }}</div>
+                            <div>Precio unitario: ${{ item.precio.toFixed(2) }}</div>
+                          </div>
+                        </div>
+                        
+                        <div class="text-right">
+                          <div class="text-lg font-semibold text-gray-900">
+                            ${{ item.total.toFixed(2) }}
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Order Summary -->
+            @if (selectedOrder()!.summary) {
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 font-epilogue">Resumen del Pedido</h3>
+                <div class="bg-gray-50 rounded-xl p-6">
+                  <div class="space-y-3">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">Subtotal ({{ selectedOrder()!.summary!.itemCount }} artículos):</span>
+                      <span class="font-medium">${{ selectedOrder()!.summary!.subtotal.toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">IVA (12%):</span>
+                      <span class="font-medium">${{ selectedOrder()!.summary!.tax.toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">Envío:</span>
+                      <span class="font-medium">
+                        {{ selectedOrder()!.summary!.shipping === 0 ? 'Gratis' : '$' + selectedOrder()!.summary!.shipping.toFixed(2) }}
+                      </span>
+                    </div>
+                    <hr class="border-gray-300">
+                    <div class="flex justify-between text-lg font-bold">
+                      <span>Total:</span>
+                      <span class="text-agri-green-600">${{ selectedOrder()!.summary!.total.toFixed(2) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Shipping & Payment Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <!-- Shipping Address -->
+              @if (selectedOrder()!.shipping) {
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4 font-epilogue">Dirección de Entrega</h3>
+                  <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+                    <div><strong>{{ selectedOrder()!.shipping!.nombres }} {{ selectedOrder()!.shipping!.apellidos }}</strong></div>
+                    <div>{{ selectedOrder()!.shipping!.direccion }}</div>
+                    <div>{{ selectedOrder()!.shipping!.ciudad }}, {{ selectedOrder()!.shipping!.provincia }}</div>
+                    <div>📞 {{ selectedOrder()!.shipping!.telefono }}</div>
+                    <div>📧 {{ selectedOrder()!.shipping!.correo }}</div>
+                    @if (selectedOrder()!.shipping!.referencia) {
+                      <div class="text-gray-600">Ref: {{ selectedOrder()!.shipping!.referencia }}</div>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Payment Method -->
+              @if (selectedOrder()!.paymentMethod) {
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4 font-epilogue">Método de Pago</h3>
+                  <div class="bg-gray-50 rounded-xl p-4">
+                    <div class="flex items-center space-x-2">
+                      <span class="material-icons text-agri-green-600">payment</span>
+                      <span class="font-medium">{{ selectedOrder()!.paymentMethod }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+          </div>
+        }
+      </div>
+
+      <!-- Modal Footer -->
+      @if (selectedOrder() && !isLoadingOrderDetails()) {
+        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 rounded-b-2xl">
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+              Pedido realizado el {{ formatDate(selectedOrder()!.orderDate) }}
+            </div>
+            <div class="flex space-x-3">
+              @if (selectedOrder()!.trackingNumber) {
+                <button 
+                  type="button"
+                  (click)="trackOrder(selectedOrder()!.orderId)"
+                  class="bg-agri-green-600 hover:bg-agri-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 text-sm transition-colors">
+                  <span class="material-icons text-lg">track_changes</span>
+                  <span>Rastrear Pedido</span>
+                </button>
+              }
+              <button 
+                type="button"
+                (click)="closeOrderDetails()"
+                class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
+
 <!-- Hidden logo styles (reusing from marketplace) -->
 <style>
 .logo-image {
   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="%2322c55e"/><path d="M12 20c0-8 6-12 12-12s8 4 8 12c0 4-2 6-4 8-2-2-4-4-4-8 0-4-2-6-4-6s-4 2-4 6c-2-2-4-4-4 0z" fill="white" opacity="0.9"/></svg>') no-repeat center center;
   background-size: contain;
+}
+
+/* Modal animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
 }
 </style>

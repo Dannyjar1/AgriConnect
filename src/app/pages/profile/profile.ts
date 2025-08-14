@@ -6,6 +6,7 @@ import { User } from '../../core/models/user.model';
 import { Product } from '../../core/models/product.model';
 import { SharedHeaderComponent } from '../../shared/components/shared-header/shared-header.component';
 import { AuthService } from '../../core/services/auth.service';
+import { OrderService, OrderStatus } from '../../core/services/order';
 import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -39,6 +40,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly orderService = inject(OrderService);
   private readonly firestore = inject(Firestore);
   private readonly destroy$ = new Subject<void>();
 
@@ -48,6 +50,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   readonly isUploadingAvatar = signal<boolean>(false);
   readonly currentUser = signal<User | null>(null);
   readonly userProducts = signal<Product[]>([]);
+  readonly userOrders = signal<OrderStatus[]>([]);
+  readonly isLoadingOrders = signal<boolean>(false);
+  readonly selectedOrder = signal<OrderStatus | null>(null);
+  readonly isOrderDetailsOpen = signal<boolean>(false);
+  readonly isLoadingOrderDetails = signal<boolean>(false);
   readonly profileStats = signal<ProfileStats>({
     productsListed: 0,
     totalSales: 0,
@@ -121,6 +128,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadUserProfile();
     this.loadUserStats();
+    this.loadUserOrders();
   }
 
   ngOnDestroy(): void {
@@ -207,15 +215,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private loadUserStats(): void {
-    // Simulación de estadísticas del usuario
-    const mockStats: ProfileStats = {
-      productsListed: 12,
-      totalSales: 1850,
-      purchasesMade: 23,
-      averageRating: 4.8
+    // Update stats based on actual user orders
+    const orders = this.userOrders();
+    const purchasesMade = orders.length;
+    const totalSpent = orders.reduce((sum, order) => {
+      // Extract total from order ID for simulation (in production, this would be stored)
+      return sum + 45.50; // Average order value for demonstration
+    }, 0);
+
+    const stats: ProfileStats = {
+      productsListed: 12, // Mock data - would come from user's listed products
+      totalSales: 1850, // Mock data - would come from user's sales if they're a producer
+      purchasesMade: purchasesMade,
+      averageRating: 4.8 // Mock data - would come from user's reviews
     };
 
-    this.profileStats.set(mockStats);
+    this.profileStats.set(stats);
   }
 
   private populateForm(user: User): void {
@@ -342,6 +357,125 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   navigateToOrderHistory(): void {
     this.router.navigate(['/buyer/orders']);
+  }
+
+  /**
+   * Load user's order history
+   */
+  private loadUserOrders(): void {
+    this.isLoadingOrders.set(true);
+    
+    this.orderService.getUserOrders()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (orders) => {
+          console.log('Loaded user orders:', orders);
+          this.userOrders.set(orders);
+          this.loadUserStats(); // Update stats after loading orders
+          this.isLoadingOrders.set(false);
+        },
+        error: (error) => {
+          console.error('Error loading user orders:', error);
+          this.userOrders.set([]);
+          this.isLoadingOrders.set(false);
+        }
+      });
+  }
+
+  /**
+   * Get status badge class for order status
+   */
+  getStatusBadgeClass(status: string): string {
+    const statusClasses: Record<string, string> = {
+      'confirmed': 'bg-blue-100 text-blue-800',
+      'preparing': 'bg-yellow-100 text-yellow-800',
+      'shipped': 'bg-purple-100 text-purple-800',
+      'delivered': 'bg-green-100 text-green-800',
+      'cancelled': 'bg-red-100 text-red-800',
+      'pending': 'bg-gray-100 text-gray-800'
+    };
+    
+    return statusClasses[status] || statusClasses['pending'];
+  }
+
+  /**
+   * Get status icon for order status
+   */
+  getStatusIcon(status: string): string {
+    const statusIcons: Record<string, string> = {
+      'confirmed': 'check_circle',
+      'preparing': 'schedule',
+      'shipped': 'local_shipping',
+      'delivered': 'done_all',
+      'cancelled': 'cancel',
+      'pending': 'hourglass_empty'
+    };
+    
+    return statusIcons[status] || statusIcons['pending'];
+  }
+
+  /**
+   * Format date for display
+   */
+  formatDate(date: Date | string | undefined): string {
+    if (!date) return 'No disponible';
+    
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('es-EC', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  /**
+   * Track order (navigate to tracking page)
+   */
+  trackOrder(orderId: string): void {
+    this.orderService.navigateToOrderTracking(orderId);
+  }
+
+  /**
+   * Navigate to shopping cart
+   */
+  navigateToShopping(): void {
+    this.router.navigate(['/carrito']);
+  }
+
+  /**
+   * Show order details modal
+   */
+  showOrderDetails(orderId: string): void {
+    this.isLoadingOrderDetails.set(true);
+    this.isOrderDetailsOpen.set(true);
+
+    this.orderService.getOrderDetails(orderId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (order) => {
+          if (order) {
+            this.selectedOrder.set(order);
+            console.log('📦 Order details loaded:', order);
+          } else {
+            console.warn('❌ Order not found:', orderId);
+            this.closeOrderDetails();
+          }
+          this.isLoadingOrderDetails.set(false);
+        },
+        error: (error) => {
+          console.error('Error loading order details:', error);
+          this.isLoadingOrderDetails.set(false);
+          this.closeOrderDetails();
+        }
+      });
+  }
+
+  /**
+   * Close order details modal
+   */
+  closeOrderDetails(): void {
+    this.isOrderDetailsOpen.set(false);
+    this.selectedOrder.set(null);
   }
 
   /**
