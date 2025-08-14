@@ -62,14 +62,33 @@ export class ProfileComponent implements OnInit, OnDestroy {
     averageRating: 0
   });
 
-  // Control de pestañas
+  // Control de pestañas - dinámico según rol
   readonly activeTab = signal<string>('personal');
-  readonly profileTabs = signal<ProfileTab[]>([
-    { id: 'personal', label: 'Información Personal', icon: 'person', active: true },
-    { id: 'products', label: 'Mis Productos', icon: 'inventory', active: false },
-    { id: 'history', label: 'Historial de Compras', icon: 'history', active: false },
-    { id: 'settings', label: 'Configuración', icon: 'settings', active: false }
-  ]);
+  readonly profileTabs = computed<ProfileTab[]>(() => {
+    const user = this.currentUser();
+    if (!user) return [];
+
+    const baseTabs = [
+      { id: 'personal', label: 'Información Personal', icon: 'person', active: this.activeTab() === 'personal' }
+    ];
+
+    if (user.userType === 'producer') {
+      return [
+        ...baseTabs,
+        { id: 'products', label: 'Mis Productos', icon: 'inventory', active: this.activeTab() === 'products' },
+        { id: 'sales', label: 'Historial de Ventas', icon: 'sell', active: this.activeTab() === 'sales' },
+        { id: 'settings', label: 'Configuración', icon: 'settings', active: this.activeTab() === 'settings' }
+      ];
+    } else {
+      // buyer o institutional
+      return [
+        ...baseTabs,
+        { id: 'purchases', label: 'Historial de Compras', icon: 'shopping_bag', active: this.activeTab() === 'purchases' },
+        { id: 'favorites', label: 'Favoritos', icon: 'favorite', active: this.activeTab() === 'favorites' },
+        { id: 'settings', label: 'Configuración', icon: 'settings', active: this.activeTab() === 'settings' }
+      ];
+    }
+  });
 
   // Formulario reactivo para información personal
   readonly profileForm: FormGroup = this.fb.group({
@@ -251,13 +270,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   onTabSelect(tabId: string): void {
     this.activeTab.set(tabId);
-    
-    // Actualizar estado activo de las pestañas
-    const updatedTabs = this.profileTabs().map(tab => ({
-      ...tab,
-      active: tab.id === tabId
-    }));
-    this.profileTabs.set(updatedTabs);
   }
 
   onEditProfile(): void {
@@ -352,11 +364,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   navigateToProductManagement(): void {
-    this.router.navigate(['/producer/products']);
+    const user = this.currentUser();
+    if (user?.userType === 'producer') {
+      this.router.navigate(['/producer/products']);
+    }
   }
 
   navigateToOrderHistory(): void {
-    this.router.navigate(['/buyer/orders']);
+    const user = this.currentUser();
+    if (user?.userType === 'buyer' || user?.userType === 'institutional') {
+      this.router.navigate(['/buyer/orders']);
+    } else if (user?.userType === 'producer') {
+      this.router.navigate(['/producer/orders']);
+    }
+  }
+
+  navigateToFavorites(): void {
+    const user = this.currentUser();
+    if (user?.userType === 'buyer' || user?.userType === 'institutional') {
+      this.router.navigate(['/buyer/favorites']);
+    }
   }
 
   /**

@@ -320,8 +320,8 @@ export class Register {
         }
       ).toPromise();
       
-      // Registration successful - navigate to marketplace
-      this.router.navigate(['/marketplace']);
+      // Registration successful - navigate to login page with success parameter
+      this.router.navigate(['/auth/login'], { queryParams: { success: 'true' } });
       
     } catch (error: any) {
       console.error('Error during registration:', error);
@@ -404,7 +404,7 @@ export class Register {
     
     try {
       await this.authService.registerWithGoogle().toPromise();
-      this.router.navigate(['/marketplace']);
+      this.router.navigate(['/auth/login'], { queryParams: { success: 'true' } });
       
     } catch (error: any) {
       console.error('Error during Google registration:', error);

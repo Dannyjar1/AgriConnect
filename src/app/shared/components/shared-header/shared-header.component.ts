@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../../core/services/cart'; // Integración carrito unificado
+import { RoleService } from '../../../core/services/role.service';
 import type { CartState } from '../../../core/models/cart.model';
 
 /**
@@ -33,6 +34,7 @@ import type { CartState } from '../../../core/models/cart.model';
 export class SharedHeaderComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService); // Integración carrito unificado
+  private readonly roleService = inject(RoleService);
 
   /**
    * Página actual para highlighting de navegación
@@ -57,21 +59,35 @@ export class SharedHeaderComponent implements OnInit, OnDestroy {
   protected readonly cartCount = signal<number>(0);
 
   /**
-   * Subscription to cart service
+   * Indica si el usuario puede acceder al carrito
+   */
+  protected readonly canAccessCart = signal<boolean>(true);
+
+  /**
+   * Subscriptions
    */
   private cartSubscription?: Subscription;
+  private roleSubscription?: Subscription;
 
   ngOnInit(): void {
     // Subscribe to cart$ for real-time updates
     this.cartSubscription = this.cartService.cart$.subscribe((cartState: CartState) => {
       this.cartCount.set(cartState.count);
     });
+
+    // Subscribe to role permissions
+    this.roleSubscription = this.roleService.canAccessCart().subscribe(canAccess => {
+      this.canAccessCart.set(canAccess);
+    });
   }
 
   ngOnDestroy(): void {
-    // Clean up subscription
+    // Clean up subscriptions
     if (this.cartSubscription) {
       this.cartSubscription.unsubscribe();
+    }
+    if (this.roleSubscription) {
+      this.roleSubscription.unsubscribe();
     }
   }
 

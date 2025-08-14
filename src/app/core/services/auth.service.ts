@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, updateProfile } from '@angular/fire/auth';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
-import { from, of, throwError } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { from, of, throwError, Observable, combineLatest } from 'rxjs';
+import { switchMap, catchError, map, shareReplay } from 'rxjs/operators';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -12,6 +12,17 @@ export class AuthService {
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
   authState$ = authState(this.auth);
+
+  // Observable que combina datos de Firebase Auth con Firestore
+  currentUser$ = this.authState$.pipe(
+    switchMap(firebaseUser => {
+      if (!firebaseUser) {
+        return of(null);
+      }
+      return this.getUserFromFirestore(firebaseUser.uid);
+    }),
+    shareReplay(1)
+  );
 
   register(email: string, password: string): any {
     return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
@@ -115,6 +126,42 @@ export class AuthService {
         console.error('Firebase password reset error:', error);
         return throwError(() => error);
       })
+    );
+  }
+
+  /**
+   * Obtiene datos del usuario desde Firestore
+   */
+  private getUserFromFirestore(uid: string): Observable<User | null> {
+    return from(getDoc(doc(this.firestore, 'users', uid))).pipe(
+      map(docSnapshot => {
+        if (docSnapshot.exists()) {
+          return docSnapshot.data() as User;
+        }
+        return null;
+      }),
+      catchError(error => {
+        console.error('Error getting user from Firestore:', error);
+        return of(null);
+      })
+    );
+  }
+
+  /**
+   * Verifica si el usuario actual tiene un rol específico
+   */
+  hasRole(role: 'producer' | 'buyer' | 'institutional'): Observable<boolean> {
+    return this.currentUser$.pipe(
+      map(user => user?.userType === role)
+    );
+  }
+
+  /**
+   * Obtiene el rol del usuario actual
+   */
+  getUserRole(): Observable<'producer' | 'buyer' | 'institutional' | null> {
+    return this.currentUser$.pipe(
+      map(user => user?.userType || null)
     );
   }
 }
