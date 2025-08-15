@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { ShepherdService } from 'angular-shepherd';
 import { environment } from '../environments/environment'; // Asumiendo que tienes un archivo de environment
 import { routes } from './app.routes';
 
@@ -14,5 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
+    // Angular Shepherd configuration
+    ShepherdService,
   ],
 };
