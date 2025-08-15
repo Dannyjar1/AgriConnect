@@ -1,13 +1,14 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { RoleSelectionModal } from '../../../shared/components/role-selection-modal/role-selection-modal';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, RoleSelectionModal],
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
 })
@@ -24,6 +25,9 @@ export class Login implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+
+  // ViewChild reference for role selection modal
+  @ViewChild(RoleSelectionModal) roleSelectionModal!: RoleSelectionModal;
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -140,8 +144,8 @@ export class Login implements OnInit {
       // Use the AuthService login method
       await this.authService.login(formValue.email, formValue.password).toPromise();
       
-      // Login successful - navigate to marketplace
-      this.router.navigate(['/marketplace']);
+      // Login successful - redirect based on user role
+      this.redirectBasedOnUserRole();
       
     } catch (error: any) {
       console.error('Error during login:', error);
@@ -205,8 +209,22 @@ export class Login implements OnInit {
     this.errorMessage.set('');
     
     try {
-      await this.authService.loginWithGoogle().toPromise();
-      this.router.navigate(['/marketplace']);
+      const result = await this.authService.loginWithGoogle().toPromise();
+      
+      if (result.isNewUser) {
+        // New user - show role selection modal
+        const userInfo = {
+          uid: result.user.uid,
+          email: result.user.email!,
+          displayName: result.user.displayName || '',
+          photoURL: result.user.photoURL || ''
+        };
+        
+        this.roleSelectionModal.openModal(userInfo);
+      } else {
+        // Existing user - redirect based on their role
+        this.redirectBasedOnUserRole();
+      }
       
     } catch (error: any) {
       console.error('Error during Google login:', error);
@@ -242,6 +260,64 @@ export class Login implements OnInit {
       
     } finally {
       this.isGoogleLoading.set(false);
+    }
+  }
+
+  /**
+   * Handle role selection from modal
+   */
+  protected async onRoleSelected(event: { role: 'buyer' | 'producer'; userInfo: any }): Promise<void> {
+    try {
+      // Create user document with selected role
+      await this.authService.createUserWithRole(event.userInfo, event.role).toPromise();
+      
+      // Redirect based on selected role
+      this.redirectToRoleBasedDashboard(event.role);
+      
+    } catch (error) {
+      console.error('Error creating user with role:', error);
+      this.errorMessage.set('Error al configurar tu perfil. Por favor, intenta nuevamente.');
+    }
+  }
+
+  /**
+   * Handle modal close
+   */
+  protected onModalClosed(): void {
+    // If modal is closed without role selection, sign out the user
+    this.authService.logout().subscribe();
+  }
+
+  /**
+   * Redirect user based on their role
+   */
+  private async redirectBasedOnUserRole(): Promise<void> {
+    try {
+      const userRole = await this.authService.getUserRole().toPromise();
+      this.redirectToRoleBasedDashboard(userRole || null);
+    } catch (error) {
+      console.error('Error getting user role:', error);
+      this.router.navigate(['/marketplace']);
+    }
+  }
+
+  /**
+   * Redirect to role-based dashboard
+   */
+  private redirectToRoleBasedDashboard(role: 'buyer' | 'producer' | 'institutional' | null): void {
+    switch (role) {
+      case 'producer':
+        this.router.navigate(['/producer/dashboard']);
+        break;
+      case 'buyer':
+        this.router.navigate(['/buyer/dashboard']);
+        break;
+      case 'institutional':
+        this.router.navigate(['/buyer/dashboard']); // Institutional users use buyer dashboard
+        break;
+      default:
+        this.router.navigate(['/marketplace']);
+        break;
     }
   }
 

@@ -25,3 +25,6 @@ export { ProductCard } from './product-card/product-card';
 export { CheckoutOverlay } from './checkout-overlay/checkout-overlay';
 export { BankTransferModal } from './bank-transfer-modal/bank-transfer-modal';
 export { CreditCardModal } from './credit-card-modal/credit-card-modal';
+
+// Modal components
+export { RoleSelectionModal } from './role-selection-modal/role-selection-modal';

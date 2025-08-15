@@ -242,3 +242,9 @@
     </div>
   </div>
 </div>
+
+<!-- Role Selection Modal -->
+<app-role-selection-modal 
+  (roleSelected)="onRoleSelected($event)"
+  (modalClosed)="onModalClosed()">
+</app-role-selection-modal>

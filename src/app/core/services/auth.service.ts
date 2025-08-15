@@ -84,26 +84,46 @@ export class AuthService {
     const provider = new GoogleAuthProvider();
     return from(signInWithPopup(this.auth, provider)).pipe(
       switchMap(async ({ user }) => {
-        // Check if user document exists, if not create it
-        const userDoc: User = {
-          uid: user.uid,
-          email: user.email!,
-          displayName: user.displayName || '',
-          photoURL: user.photoURL || '',
-          userType: 'buyer', // Default to buyer
-          isVerified: user.emailVerified,
-          createdAt: new Date(),
-          lastLogin: new Date()
-        };
+        // Check if user document already exists
+        const userDocRef = doc(this.firestore, 'users', user.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
         
-        // Use merge: true to not overwrite existing data
-        return setDoc(doc(this.firestore, 'users', user.uid), userDoc, { merge: true });
+        if (userDocSnapshot.exists()) {
+          // User exists, just update last login
+          await setDoc(userDocRef, { 
+            lastLogin: new Date(),
+            displayName: user.displayName || '',
+            photoURL: user.photoURL || ''
+          }, { merge: true });
+          return { isNewUser: false, user };
+        } else {
+          // New user, return user info for role selection
+          return { isNewUser: true, user };
+        }
       }),
       catchError(error => {
         console.error('Firebase Google sign-in error:', error);
         return throwError(() => error);
       })
     );
+  }
+
+  /**
+   * Create user document in Firestore with selected role
+   */
+  createUserWithRole(firebaseUser: any, userType: 'buyer' | 'producer' | 'institutional'): Observable<void> {
+    const userDoc: User = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email!,
+      displayName: firebaseUser.displayName || '',
+      photoURL: firebaseUser.photoURL || '',
+      userType: userType,
+      isVerified: firebaseUser.emailVerified,
+      createdAt: new Date(),
+      lastLogin: new Date()
+    };
+    
+    return from(setDoc(doc(this.firestore, 'users', firebaseUser.uid), userDoc));
   }
 
   registerWithGoogle(): any {
