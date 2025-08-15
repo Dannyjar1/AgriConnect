@@ -1,6 +1,7 @@
 export interface Product {
     id: string;
     producerId: string; // ID del productor
+    producerName?: string; // Nombre del productor (opcional para conveniencia)
     name: string;
     category: string;
     description: string;

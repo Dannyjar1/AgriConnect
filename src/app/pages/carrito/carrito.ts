@@ -154,6 +154,12 @@ import type { CartItem, CartSummary, CartState } from '../../core/models/cart.mo
                           <h3 class="text-lg font-semibold text-gray-900 font-epilogue group-hover:text-agri-green-700 transition-colors">
                             {{ item.nombre }}
                           </h3>
+                          @if (item.product?.producerName) {
+                            <p class="text-agri-green-600 text-sm font-medium mb-1">
+                              <span class="material-icons text-xs mr-1">store</span>
+                              {{ item.product?.producerName }}
+                            </p>
+                          }
                           <p class="text-gray-600 font-noto-sans text-sm line-clamp-2">
                             {{ item.product?.description || '-' }}
                           </p>

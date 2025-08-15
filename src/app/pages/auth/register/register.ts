@@ -491,7 +491,7 @@ export class Register {
 
       console.log('Usuario creado exitosamente, redirigiendo...');
       // Navigate to appropriate dashboard based on role
-      const redirectPath = event.role === 'superadmin' ? '/admin/dashboard' : '/buyer/dashboard';
+      const redirectPath = event.role === 'superadmin' ? '/admin/dashboard' : '/marketplace';
       this.router.navigate([redirectPath]);
 
     } catch (error: any) {

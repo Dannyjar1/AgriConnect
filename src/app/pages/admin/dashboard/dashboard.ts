@@ -12,6 +12,7 @@ import { RegisterProducerModal } from '../../../shared/components/register-produ
 import { RegisterProductModal } from '../../../shared/components/register-product-modal/register-product-modal';
 import { InventoryEntryModal } from '../../../shared/components/inventory-entry-modal/inventory-entry-modal';
 import { SeedButtonComponent } from '../../../shared/components/seed-button/seed-button.component';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,7 +22,8 @@ import { SeedButtonComponent } from '../../../shared/components/seed-button/seed
     RegisterProducerModal,
     RegisterProductModal,
     InventoryEntryModal,
-    SeedButtonComponent
+    SeedButtonComponent,
+    AdminHeaderComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'

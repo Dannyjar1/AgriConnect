@@ -194,6 +194,7 @@ export class SeedService {
     const sampleProducts = [
       {
         producerId: producerIds[0], // Finca La Esperanza
+        producerName: "Finca La Esperanza",
         name: "Banano Orgánico Premium",
         category: "Frutas",
         description: "Bananos orgánicos cultivados sin pesticidas, con certificación internacional. Ideal para exportación y consumo local.",
@@ -214,6 +215,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[0], // Finca La Esperanza
+        producerName: "Finca La Esperanza",
         name: "Maracuyá Premium",
         category: "Frutas",
         description: "Maracuyá de primera calidad, con alto contenido de pulpa. Perfecto para jugos y postres.",
@@ -234,6 +236,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[1], // Cooperativa San Miguel
+        producerName: "Cooperativa San Miguel",
         name: "Quinua Real Premium",
         category: "Granos, Legumbres y Cereales",
         description: "Quinua real de los páramos ecuatorianos, rica en proteínas y aminoácidos esenciales. Producto de comercio justo.",
@@ -254,6 +257,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[2], // Don Carlos Pérez
+        producerName: "Don Carlos Pérez",
         name: "Lechuga Hidropónica",
         category: "Verduras y Hortalizas",
         description: "Lechuga cultivada en sistema hidropónico, libre de tierra y pesticidas. Frescura garantizada.",
@@ -274,6 +278,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[2], // Don Carlos Pérez
+        producerName: "Don Carlos Pérez",
         name: "Tomate Riñón",
         category: "Verduras y Hortalizas",
         description: "Tomates riñón de invernadero, perfectos para ensaladas y preparaciones culinarias.",
@@ -294,6 +299,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[3], // Lácteos Andinos
+        producerName: "Lácteos Andinos",
         name: "Queso Fresco Artesanal",
         category: "Lácteos",
         description: "Queso fresco elaborado artesanalmente con leche de vacas de pastoreo libre. Sabor tradicional ecuatoriano.",
@@ -314,6 +320,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[3], // Lácteos Andinos
+        producerName: "Lácteos Andinos",
         name: "Yogurt Natural",
         category: "Lácteos",
         description: "Yogurt natural sin azúcar añadida, rico en probióticos. Elaborado con leche fresca de la sierra.",
@@ -334,6 +341,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[4], // Granja Avícola El Roble
+        producerName: "Granja Avícola El Roble",
         name: "Pollo de Campo",
         category: "Carne y Aves",
         description: "Pollos criados al aire libre con alimentación natural. Carne tierna y sabrosa.",
@@ -354,6 +362,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[5], // Hierbas del Ecuador
+        producerName: "Hierbas del Ecuador",
         name: "Manzanilla Deshidratada",
         category: "Hierbas, Especias y Condimentos",
         description: "Flores de manzanilla deshidratadas naturalmente. Perfecta para infusiones relajantes.",
@@ -374,6 +383,7 @@ export class SeedService {
       },
       {
         producerId: producerIds[5], // Hierbas del Ecuador
+        producerName: "Hierbas del Ecuador",
         name: "Orégano Seco",
         category: "Hierbas, Especias y Condimentos",
         description: "Orégano ecuatoriano secado al sol, con aroma y sabor intensos. Ideal para condimentar.",

@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, of, BehaviorSubject, from, combineLatest } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject, from, combineLatest, forkJoin } from 'rxjs';
+import { map, switchMap, mergeMap } from 'rxjs/operators';
 import { Firestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc } from '@angular/fire/firestore';
 import { Product, InventoryEntry } from '../models/product.model';
 import { Producer } from '../models/user.model';
@@ -89,7 +89,7 @@ export class ProductService {
   }
 
   /**
-   * Obtener todos los productos activos
+   * Obtener todos los productos activos con información del productor
    */
   getProducts(): Observable<Product[]> {
     const q = query(
@@ -99,12 +99,36 @@ export class ProductService {
     );
 
     return from(getDocs(q)).pipe(
-      map(snapshot => 
-        snapshot.docs.map(doc => ({
+      switchMap(snapshot => {
+        const products = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        } as Product))
-      )
+        } as Product));
+
+        // Si no hay productos, devolver array vacío
+        if (products.length === 0) {
+          return of([]);
+        }
+
+        // Obtener información de productores para cada producto
+        const producersPromises = products.map(product => {
+          if (!product.producerId) {
+            return of({ ...product, producerName: 'Productor no especificado' });
+          }
+          
+          return from(getDoc(doc(this.firestore, 'producers', product.producerId))).pipe(
+            map(producerDoc => {
+              const producerData = producerDoc.exists() ? producerDoc.data() as Producer : null;
+              return {
+                ...product,
+                producerName: producerData?.name || producerData?.displayName || 'Productor no encontrado'
+              };
+            })
+          );
+        });
+
+        return forkJoin(producersPromises);
+      })
     );
   }
 

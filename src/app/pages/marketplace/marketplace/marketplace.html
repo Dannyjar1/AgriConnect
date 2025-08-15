@@ -139,6 +139,12 @@
                   
                   <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-2 font-epilogue leading-tight">{{ product.name }}</h3>
+                    @if (product.producerName) {
+                      <p class="text-agri-green-600 text-sm font-medium mb-2">
+                        <span class="material-icons text-xs mr-1">store</span>
+                        {{ product.producerName }}
+                      </p>
+                    }
                     <p class="text-gray-600 mb-4 line-clamp-2">{{ product.description }}</p>
                     
                     <div class="flex justify-between items-center mb-6">

@@ -107,9 +107,9 @@ export class AutoRedirect implements OnInit, OnDestroy {
         message = 'Redirigiendo al panel de administración...';
         break;
       case 'buyer':
-        console.log('🛒 Redirigiendo a dashboard de comprador');
-        redirectPath = '/buyer/dashboard';
-        message = 'Redirigiendo al panel de comprador...';
+        console.log('🛒 Redirigiendo al marketplace para compradores');
+        redirectPath = '/marketplace';
+        message = 'Redirigiendo al marketplace...';
         break;
       default:
         console.log('🏪 Redirigiendo a marketplace por defecto');

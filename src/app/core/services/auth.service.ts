@@ -176,8 +176,8 @@ export class AuthService {
         console.log('👨‍💼 Redirigiendo a dashboard de administrador');
         return '/admin/dashboard';
       case 'buyer':
-        console.log('🛒 Redirigiendo a dashboard de comprador');
-        return '/buyer/dashboard';
+        console.log('🛒 Redirigiendo al marketplace para compradores');
+        return '/marketplace';
       default:
         console.log('🏪 Redirigiendo a marketplace por defecto');
         return '/marketplace';

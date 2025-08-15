@@ -1,110 +1,130 @@
-<div class="p-8 max-w-7xl mx-auto bg-slate-50 min-h-screen">
+<!-- Admin Header -->
+<app-admin-header></app-admin-header>
+
+<div class="p-8 max-w-7xl mx-auto bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 min-h-screen">
     <!-- Header -->
     <div class="mb-8">
-        <div class="bg-gradient-purple text-white p-8 rounded-xl shadow-md">
-            <h1 class="text-3xl font-bold mb-2">Panel de Administración - Bodegero</h1>
-            <p class="text-lg opacity-90">Gestión completa del inventario y productores</p>
+        <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 text-white p-8 rounded-xl shadow-xl border border-indigo-200">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <i class="fas fa-chart-line text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold mb-2 tracking-tight">Panel de Administración</h1>
+                    <p class="text-xl opacity-90">Gestión completa del inventario y productores</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div
-            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
-            <div class="w-15 h-15 bg-gradient-emerald rounded-xl flex items-center justify-center text-white text-2xl">
+            class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 hover:border-emerald-300">
+            <div class="w-16 h-16 bg-gradient-emerald rounded-xl flex items-center justify-center text-white text-2xl shadow-md">
                 <i class="fas fa-boxes"></i>
             </div>
             <div>
                 <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalProducts() }}</h3>
-                <p class="text-gray-500 text-sm">Productos Registrados</p>
+                <p class="text-gray-600 text-sm font-medium">Productos Registrados</p>
             </div>
         </div>
 
         <div
-            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
-            <div class="w-15 h-15 bg-gradient-blue rounded-xl flex items-center justify-center text-white text-2xl">
+            class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 hover:border-blue-300">
+            <div class="w-16 h-16 bg-gradient-blue rounded-xl flex items-center justify-center text-white text-2xl shadow-md">
                 <i class="fas fa-users"></i>
             </div>
             <div>
                 <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalProducers() }}</h3>
-                <p class="text-gray-500 text-sm">Productores Activos</p>
+                <p class="text-gray-600 text-sm font-medium">Productores Activos</p>
             </div>
         </div>
 
         <div
-            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
-            <div class="w-15 h-15 bg-gradient-amber rounded-xl flex items-center justify-center text-white text-2xl">
+            class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 hover:border-amber-300">
+            <div class="w-16 h-16 bg-gradient-amber rounded-xl flex items-center justify-center text-white text-2xl shadow-md">
                 <i class="fas fa-warehouse"></i>
             </div>
             <div>
                 <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalInventoryEntries() }}</h3>
-                <p class="text-gray-500 text-sm">Entradas de Inventario</p>
+                <p class="text-gray-600 text-sm font-medium">Entradas de Inventario</p>
             </div>
         </div>
 
         <div
-            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
-            <div class="w-15 h-15 bg-gradient-red rounded-xl flex items-center justify-center text-white text-2xl">
+            class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 hover:border-red-300">
+            <div class="w-16 h-16 bg-gradient-red rounded-xl flex items-center justify-center text-white text-2xl shadow-md">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div>
                 <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ lowStockProducts() }}</h3>
-                <p class="text-gray-500 text-sm">Productos Bajo Stock</p>
+                <p class="text-gray-600 text-sm font-medium">Productos Bajo Stock</p>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
     <div class="mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Acciones Rápidas</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center space-x-3">
+            <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <i class="fas fa-bolt text-white text-sm"></i>
+            </div>
+            <span>Acciones Rápidas</span>
+        </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <button
-                class="bg-gradient-indigo text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-3 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border border-indigo-300"
                 (click)="navigateToProducers()">
-                <i class="fas fa-users text-2xl"></i>
-                <span>Gestionar Productores</span>
+                <i class="fas fa-users text-3xl"></i>
+                <span class="text-sm">Gestionar Productores</span>
             </button>
 
             <button
-                class="bg-gradient-gray text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                class="bg-gradient-to-r from-gray-500 to-gray-600 text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-3 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border border-gray-300"
                 (click)="navigateToProducts()">
-                <i class="fas fa-box text-2xl"></i>
-                <span>Gestionar Productos</span>
+                <i class="fas fa-box text-3xl"></i>
+                <span class="text-sm">Gestionar Productos</span>
             </button>
 
             <button
-                class="bg-gradient-emerald text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-3 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border border-emerald-300"
                 (click)="navigateToInventory()">
-                <i class="fas fa-warehouse text-2xl"></i>
-                <span>Gestionar Inventario</span>
+                <i class="fas fa-warehouse text-3xl"></i>
+                <span class="text-sm">Gestionar Inventario</span>
             </button>
 
             <button
-                class="bg-gradient-blue text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-3 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border border-blue-300"
                 (click)="navigateToReports()">
-                <i class="fas fa-chart-bar text-2xl"></i>
-                <span>Ver Reportes</span>
+                <i class="fas fa-chart-bar text-3xl"></i>
+                <span class="text-sm">Ver Reportes</span>
             </button>
         </div>
     </div>
 
     <!-- Recent Activities -->
     <div class="mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Actividades Recientes</h2>
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center space-x-3">
+            <div class="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                <i class="fas fa-clock text-white text-sm"></i>
+            </div>
+            <span>Actividades Recientes</span>
+        </h2>
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             @for (activity of recentActivities(); track activity.id) {
-            <div class="flex items-center gap-4 p-4 border-b border-gray-100 last:border-b-0">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white text-base" [ngClass]="{
-                 'bg-gradient-blue': activity.type === 'producer',
-                 'bg-gradient-emerald': activity.type === 'product',
-                 'bg-gradient-amber': activity.type === 'inventory',
-                 'bg-gradient-red': activity.type === 'order'
+            <div class="flex items-center gap-4 p-5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors duration-200">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg shadow-md" [ngClass]="{
+                 'bg-gradient-to-r from-blue-500 to-blue-600': activity.type === 'producer',
+                 'bg-gradient-to-r from-emerald-500 to-emerald-600': activity.type === 'product',
+                 'bg-gradient-to-r from-amber-500 to-amber-600': activity.type === 'inventory',
+                 'bg-gradient-to-r from-red-500 to-red-600': activity.type === 'order'
                }">
                     <i [class]="activity.icon"></i>
                 </div>
                 <div class="flex-1">
-                    <p class="text-gray-800 font-medium mb-1">{{ activity.description }}</p>
-                    <span class="text-gray-500 text-sm">{{ activity.timestamp | date:'short' }}</span>
+                    <p class="text-gray-800 font-semibold mb-1">{{ activity.description }}</p>
+                    <span class="text-gray-600 text-sm font-medium">{{ activity.timestamp | date:'short' }}</span>
                 </div>
             </div>
             }
@@ -113,14 +133,16 @@
 
     <!-- Low Stock Alert -->
     @if (lowStockProducts() > 0) {
-    <div class="mb-4">
-        <div class="bg-amber-50 text-amber-800 border-l-4 border-amber-400 p-4 rounded-xl flex items-center gap-4">
-            <i class="fas fa-exclamation-triangle text-2xl"></i>
+    <div class="mb-6">
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900 border border-amber-200 p-6 rounded-xl flex items-center gap-4 shadow-lg">
+            <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white shadow-md">
+                <i class="fas fa-exclamation-triangle text-2xl"></i>
+            </div>
             <div class="flex-1">
-                <h3 class="font-semibold text-lg mb-1">Alerta de Stock Bajo</h3>
-                <p class="mb-0">Hay {{ lowStockProducts() }} productos con stock bajo. <a
-                        class="underline font-semibold cursor-pointer hover:no-underline"
-                        (click)="viewLowStockProducts()">Ver detalles</a></p>
+                <h3 class="font-bold text-xl mb-2">⚠️ Alerta de Stock Bajo</h3>
+                <p class="text-amber-800 font-medium">Hay {{ lowStockProducts() }} productos con stock bajo. <a
+                        class="text-amber-900 underline font-bold cursor-pointer hover:no-underline hover:text-amber-700 transition-colors"
+                        (click)="viewLowStockProducts()">Ver detalles →</a></p>
             </div>
         </div>
     </div>
@@ -128,14 +150,16 @@
 
     <!-- Expiring Products Alert -->
     @if (expiringProducts() > 0) {
-    <div class="mb-4">
-        <div class="bg-red-50 text-red-800 border-l-4 border-red-400 p-4 rounded-xl flex items-center gap-4">
-            <i class="fas fa-clock text-2xl"></i>
+    <div class="mb-6">
+        <div class="bg-gradient-to-r from-red-50 to-pink-50 text-red-900 border border-red-200 p-6 rounded-xl flex items-center gap-4 shadow-lg">
+            <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center text-white shadow-md">
+                <i class="fas fa-clock text-2xl"></i>
+            </div>
             <div class="flex-1">
-                <h3 class="font-semibold text-lg mb-1">Productos Próximos a Vencer</h3>
-                <p class="mb-0">Hay {{ expiringProducts() }} productos que vencen en los próximos 7 días. <a
-                        class="underline font-semibold cursor-pointer hover:no-underline"
-                        (click)="viewExpiringProducts()">Ver detalles</a></p>
+                <h3 class="font-bold text-xl mb-2">⏰ Productos Próximos a Vencer</h3>
+                <p class="text-red-800 font-medium">Hay {{ expiringProducts() }} productos que vencen en los próximos 7 días. <a
+                        class="text-red-900 underline font-bold cursor-pointer hover:no-underline hover:text-red-700 transition-colors"
+                        (click)="viewExpiringProducts()">Ver detalles →</a></p>
             </div>
         </div>
     </div>
@@ -144,7 +168,12 @@
 
 <!-- Seed Database Section -->
 <div class="mb-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Herramientas de Desarrollo</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center space-x-3">
+        <div class="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-cogs text-white text-sm"></i>
+        </div>
+        <span>Herramientas de Desarrollo</span>
+    </h2>
     <app-seed-button></app-seed-button>
 </div>
 

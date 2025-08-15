@@ -67,7 +67,7 @@ export class RoleService {
           case 'superadmin':
             return '/admin/dashboard';
           case 'buyer':
-            return '/buyer/dashboard';
+            return '/marketplace';
           default:
             return '/marketplace';
         }

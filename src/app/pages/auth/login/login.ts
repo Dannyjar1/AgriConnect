@@ -338,9 +338,9 @@ export class Login implements OnInit {
         });
         break;
       case 'buyer':
-        console.log('Navegando a buyer dashboard');
-        this.router.navigate(['/buyer/dashboard']).then(success => {
-          console.log('Navegación a buyer dashboard:', success ? 'exitosa' : 'falló');
+        console.log('Navegando al marketplace para compradores');
+        this.router.navigate(['/marketplace']).then(success => {
+          console.log('Navegación a marketplace:', success ? 'exitosa' : 'falló');
         });
         break;
       default:
