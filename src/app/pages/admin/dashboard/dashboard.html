@@ -1,1 +1,161 @@
-<p>dashboard works!</p>
+<div class="p-8 max-w-7xl mx-auto bg-slate-50 min-h-screen">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="bg-gradient-purple text-white p-8 rounded-xl shadow-md">
+            <h1 class="text-3xl font-bold mb-2">Panel de Administración - Bodegero</h1>
+            <p class="text-lg opacity-90">Gestión completa del inventario y productores</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div class="w-15 h-15 bg-gradient-emerald rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalProducts() }}</h3>
+                <p class="text-gray-500 text-sm">Productos Registrados</p>
+            </div>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div class="w-15 h-15 bg-gradient-blue rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-users"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalProducers() }}</h3>
+                <p class="text-gray-500 text-sm">Productores Activos</p>
+            </div>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div class="w-15 h-15 bg-gradient-amber rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-warehouse"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalInventoryEntries() }}</h3>
+                <p class="text-gray-500 text-sm">Entradas de Inventario</p>
+            </div>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div class="w-15 h-15 bg-gradient-red rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ lowStockProducts() }}</h3>
+                <p class="text-gray-500 text-sm">Productos Bajo Stock</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Acciones Rápidas</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+                class="bg-gradient-indigo text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                (click)="navigateToProducers()">
+                <i class="fas fa-users text-2xl"></i>
+                <span>Gestionar Productores</span>
+            </button>
+
+            <button
+                class="bg-gradient-gray text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                (click)="navigateToProducts()">
+                <i class="fas fa-box text-2xl"></i>
+                <span>Gestionar Productos</span>
+            </button>
+
+            <button
+                class="bg-gradient-emerald text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                (click)="navigateToInventory()">
+                <i class="fas fa-warehouse text-2xl"></i>
+                <span>Gestionar Inventario</span>
+            </button>
+
+            <button
+                class="bg-gradient-blue text-white p-6 rounded-xl font-semibold flex flex-col items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200"
+                (click)="navigateToReports()">
+                <i class="fas fa-chart-bar text-2xl"></i>
+                <span>Ver Reportes</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Actividades Recientes</h2>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            @for (activity of recentActivities(); track activity.id) {
+            <div class="flex items-center gap-4 p-4 border-b border-gray-100 last:border-b-0">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white text-base" [ngClass]="{
+                 'bg-gradient-blue': activity.type === 'producer',
+                 'bg-gradient-emerald': activity.type === 'product',
+                 'bg-gradient-amber': activity.type === 'inventory',
+                 'bg-gradient-red': activity.type === 'order'
+               }">
+                    <i [class]="activity.icon"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-gray-800 font-medium mb-1">{{ activity.description }}</p>
+                    <span class="text-gray-500 text-sm">{{ activity.timestamp | date:'short' }}</span>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Low Stock Alert -->
+    @if (lowStockProducts() > 0) {
+    <div class="mb-4">
+        <div class="bg-amber-50 text-amber-800 border-l-4 border-amber-400 p-4 rounded-xl flex items-center gap-4">
+            <i class="fas fa-exclamation-triangle text-2xl"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-lg mb-1">Alerta de Stock Bajo</h3>
+                <p class="mb-0">Hay {{ lowStockProducts() }} productos con stock bajo. <a
+                        class="underline font-semibold cursor-pointer hover:no-underline"
+                        (click)="viewLowStockProducts()">Ver detalles</a></p>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Expiring Products Alert -->
+    @if (expiringProducts() > 0) {
+    <div class="mb-4">
+        <div class="bg-red-50 text-red-800 border-l-4 border-red-400 p-4 rounded-xl flex items-center gap-4">
+            <i class="fas fa-clock text-2xl"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-lg mb-1">Productos Próximos a Vencer</h3>
+                <p class="mb-0">Hay {{ expiringProducts() }} productos que vencen en los próximos 7 días. <a
+                        class="underline font-semibold cursor-pointer hover:no-underline"
+                        (click)="viewExpiringProducts()">Ver detalles</a></p>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+<!-- Modals -->
+@if (showRegisterProducerModal()) {
+<app-register-producer-modal (onClose)="closeRegisterProducerModal()"
+    (onProducerRegistered)="onProducerRegistered($event)">
+</app-register-producer-modal>
+}
+
+@if (showRegisterProductModal()) {
+<app-register-product-modal (onClose)="closeRegisterProductModal()" (onProductRegistered)="onProductRegistered($event)">
+</app-register-product-modal>
+}
+
+@if (showInventoryEntryModal()) {
+<app-inventory-entry-modal (onClose)="closeInventoryEntryModal()"
+    (onInventoryRegistered)="onInventoryRegistered($event)">
+</app-inventory-entry-modal>
+}

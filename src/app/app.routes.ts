@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { authGuard } from './core/guards/auth.guard';
 import { cartGuard } from './core/guards/cart.guard';
+import { authInitGuard } from './core/guards/auth-init.guard';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,10 @@ export const routes: Routes = [
     path: 'carrito',
     loadComponent: () => import('./pages/carrito/carrito').then(m => m.CarritoComponent),
     canActivate: [cartGuard]
+  },
+  {
+    path: 'redirect',
+    loadComponent: () => import('./shared/components/auto-redirect/auto-redirect').then(m => m.AutoRedirect)
   },
   {
     path: '',

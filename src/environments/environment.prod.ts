@@ -1,12 +1,11 @@
 export const environment = {
   production: true,
   firebase: {
-    apiKey: 'YOUR_API_KEY',
-    authDomain: 'YOUR_AUTH_DOMAIN',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    appId: 'YOUR_APP_ID',
-    measurementId: 'YOUR_MEASUREMENT_ID' // Opcional, si usas Analytics
+    apiKey: "AIzaSyAyUZhaT6chE5m_kUQfMMhyMrWYBCJ0eDM",
+    authDomain: "agriconnect-6f074.firebaseapp.com",
+    projectId: "agriconnect-6f074",
+    storageBucket: "agriconnect-6f074.firebasestorage.app",
+    messagingSenderId: "516989396690",
+    appId: "1:516989396690:web:eb73c4f06aa59adf1a6f0b"
   }
 };

@@ -10,10 +10,10 @@ export class RoleService {
   private authService = inject(AuthService);
 
   /**
-   * Verifica si el usuario actual es un productor
+   * Verifica si el usuario actual es un superadmin (bodegero)
    */
-  isProducer(): Observable<boolean> {
-    return this.authService.hasRole('producer');
+  isSuperAdmin(): Observable<boolean> {
+    return this.authService.hasRole('superadmin');
   }
 
   /**
@@ -24,28 +24,37 @@ export class RoleService {
   }
 
   /**
-   * Verifica si el usuario actual es institucional
-   */
-  isInstitutional(): Observable<boolean> {
-    return this.authService.hasRole('institutional');
-  }
-
-  /**
    * Verifica si el usuario actual puede acceder al carrito
-   * Solo compradores e institucionales pueden acceder
+   * Solo compradores pueden acceder
    */
   canAccessCart(): Observable<boolean> {
     return this.authService.currentUser$.pipe(
-      map(user => user?.userType !== 'producer')
+      map(user => user?.userType === 'buyer')
     );
   }
 
   /**
    * Verifica si el usuario actual puede gestionar productos
-   * Solo productores pueden gestionar productos
+   * Solo superadmin puede gestionar productos
    */
   canManageProducts(): Observable<boolean> {
-    return this.isProducer();
+    return this.isSuperAdmin();
+  }
+
+  /**
+   * Verifica si el usuario actual puede gestionar productores
+   * Solo superadmin puede gestionar productores
+   */
+  canManageProducers(): Observable<boolean> {
+    return this.isSuperAdmin();
+  }
+
+  /**
+   * Verifica si el usuario actual puede gestionar inventario
+   * Solo superadmin puede gestionar inventario
+   */
+  canManageInventory(): Observable<boolean> {
+    return this.isSuperAdmin();
   }
 
   /**
@@ -55,10 +64,9 @@ export class RoleService {
     return this.authService.currentUser$.pipe(
       map(user => {
         switch (user?.userType) {
-          case 'producer':
-            return '/producer/dashboard';
+          case 'superadmin':
+            return '/admin/dashboard';
           case 'buyer':
-          case 'institutional':
             return '/buyer/dashboard';
           default:
             return '/marketplace';

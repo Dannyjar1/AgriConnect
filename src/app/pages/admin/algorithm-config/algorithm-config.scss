@@ -1,0 +1,328 @@
+/* Configuración de Algoritmos - Admin Panel Styles */
+
+/* Estilos para el slider personalizado */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  outline: none;
+  transition: background 0.3s;
+}
+
+.slider:hover {
+  background: #d1d5db;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para el toggle switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e7eb;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.3);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+/* Estilos para las cards de configuración */
+.config-card {
+  @apply bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200;
+}
+
+.config-header {
+  @apply flex items-start gap-4 mb-4;
+}
+
+.config-icon {
+  @apply w-10 h-10 rounded-lg flex items-center justify-center text-white;
+}
+
+.config-title {
+  @apply text-lg font-semibold text-gray-900 mb-1;
+}
+
+.config-description {
+  @apply text-sm text-gray-600;
+}
+
+.config-input {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200;
+}
+
+.config-input:focus {
+  @apply outline-none;
+}
+
+.config-input:disabled {
+  @apply bg-gray-50 cursor-not-allowed;
+}
+
+/* Estilos para los botones de categoría */
+.category-button {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2;
+}
+
+.category-button-active {
+  @apply bg-purple-600 text-white shadow-md;
+}
+
+.category-button-inactive {
+  @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+/* Estilos para los botones de acción */
+.action-button {
+  @apply px-6 py-3 font-semibold rounded-xl transition-all duration-200;
+}
+
+.action-button-primary {
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+}
+
+.action-button-secondary {
+  @apply border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400;
+}
+
+.action-button:disabled {
+  @apply from-gray-300 to-gray-400 cursor-not-allowed transform-none;
+}
+
+/* Estilos para la sección de ayuda */
+.help-section {
+  @apply bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6;
+}
+
+.help-icon {
+  @apply w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white flex-shrink-0;
+}
+
+.help-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.help-content {
+  @apply text-sm text-gray-700 space-y-2;
+}
+
+/* Animaciones personalizadas */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.4s ease-out;
+}
+
+/* Estilos para validación */
+.validation-error {
+  @apply text-red-600 text-sm;
+}
+
+.input-error {
+  @apply border-red-300 focus:border-red-500 focus:ring-red-200;
+}
+
+.input-success {
+  @apply border-green-300 focus:border-green-500 focus:ring-green-200;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .grid-cols-1.lg\:grid-cols-2 {
+    @apply grid-cols-1;
+  }
+  
+  .flex-col.lg\:flex-row {
+    @apply flex-col;
+  }
+}
+
+@media (max-width: 768px) {
+  .p-8 {
+    @apply p-4;
+  }
+  
+  .flex-col.sm\:flex-row {
+    @apply flex-col;
+  }
+  
+  .text-3xl {
+    @apply text-2xl;
+  }
+  
+  .text-xl {
+    @apply text-lg;
+  }
+  
+  .config-header {
+    @apply flex-col gap-2;
+  }
+  
+  .config-icon {
+    @apply w-8 h-8;
+  }
+}
+
+/* Estados de carga */
+.loading-container {
+  @apply bg-white rounded-xl shadow-sm p-12;
+}
+
+.loading-content {
+  @apply text-center;
+}
+
+.loading-spinner {
+  @apply inline-flex items-center gap-3 text-gray-500;
+}
+
+.loading-text {
+  @apply text-lg;
+}
+
+/* Utilidades adicionales */
+.section-header {
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white p-8 rounded-xl shadow-md;
+}
+
+.section-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.section-subtitle {
+  @apply text-lg opacity-90;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-sm;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.card-body {
+  @apply p-6;
+}
+
+/* Gradientes de colores para categorías */
+.gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.gradient-amber {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.gradient-red {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.gradient-gray {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}

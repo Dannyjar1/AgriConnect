@@ -28,3 +28,6 @@ export { CreditCardModal } from './credit-card-modal/credit-card-modal';
 
 // Modal components
 export { RoleSelectionModal } from './role-selection-modal/role-selection-modal';
+
+// Utility components
+export { AutoRedirect } from './auto-redirect/auto-redirect';

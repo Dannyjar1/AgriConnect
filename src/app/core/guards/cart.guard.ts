@@ -5,9 +5,9 @@ import { map, take } from 'rxjs/operators';
 
 /**
  * Guard que permite acceso al carrito solo a compradores
- * Los productores no pueden acceder al carrito
+ * Los superadmin no pueden acceder al carrito (no compran, administran)
  */
-export const cartGuard: CanActivateFn = (route, state) => {
+export const cartGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -19,16 +19,16 @@ export const cartGuard: CanActivateFn = (route, state) => {
         router.navigate(['/auth/login']);
         return false;
       }
-      
-      if (user.userType === 'producer') {
-        // Los productores no pueden acceder al carrito
-        console.warn('Acceso denegado: los productores no pueden acceder al carrito');
-        router.navigate(['/producer/dashboard']);
+
+      if (user.userType === 'superadmin') {
+        // Los superadmin no pueden acceder al carrito
+        console.warn('Acceso denegado: los administradores no pueden acceder al carrito');
+        router.navigate(['/admin/dashboard']);
         return false;
       }
-      
-      // Compradores y usuarios institucionales pueden acceder
-      return true;
+
+      // Solo compradores pueden acceder al carrito
+      return user.userType === 'buyer';
     })
   );
 };

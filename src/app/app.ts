@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthHeaderComponent } from './shared/components/auth-header/auth-header';
 import { AppFooterComponent } from './shared/components/app-footer/app-footer';
 import { AuthService } from './core/services/auth.service';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -16,6 +16,8 @@ import { Subject } from 'rxjs';
 export class App implements OnInit, OnDestroy {
   protected readonly title = signal('AgriConnect');
   protected readonly showHeader = signal<boolean>(true);
+  protected readonly isAuthLoading = signal<boolean>(true);
+  protected readonly currentUser = signal<any>(null);
   
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
@@ -34,6 +36,26 @@ export class App implements OnInit, OnDestroy {
       .subscribe((event: NavigationEnd) => {
         this.updateHeaderVisibility(event.urlAfterRedirects);
       });
+
+    // Escuchar cambios en el estado de autenticación
+    this.authService.currentUser$
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe(user => {
+        this.currentUser.set(user);
+        this.isAuthLoading.set(false);
+        
+        // Log para debugging
+        if (user) {
+          console.log('Usuario persistido:', user.email, user.userType);
+        }
+      });
+
+    // Timeout para el loading en caso de que Firebase tarde mucho
+    setTimeout(() => {
+      this.isAuthLoading.set(false);
+    }, 3000);
 
     // Verificar ruta inicial
     this.updateHeaderVisibility(this.router.url);
@@ -69,8 +91,8 @@ export class App implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe((user: any) => {
       if (user) {
-        // Usuario autenticado - ir a marketplace
-        this.router.navigate(['/marketplace']);
+        // Usuario autenticado - usar auto-redirect para ir al dashboard apropiado
+        this.router.navigate(['/redirect']);
       } else {
         // Usuario no autenticado - ir a login
         this.router.navigate(['/auth/login']);

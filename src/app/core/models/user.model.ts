@@ -3,7 +3,7 @@ export interface User {
     email: string;
     displayName?: string;
     photoURL?: string;
-    userType: 'producer' | 'buyer' | 'institutional';
+    userType: 'buyer' | 'superadmin';
     phone?: string;
     address?: string;
     isVerified?: boolean;
@@ -14,4 +14,19 @@ export interface User {
     };
     createdAt: any; // Firestore timestamp
     lastLogin: any; // Firestore timestamp
+}
+
+// Modelo para productores (manejados por superadmin)
+export interface Producer {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+    address: string;
+    province: string;
+    certifications: string[];
+    registeredBy: string; // UID del superadmin que lo registró
+    registeredAt: any; // Firestore timestamp
+    isActive: boolean;
+    products?: string[]; // IDs de productos
 }

@@ -1,25 +1,29 @@
 import { Routes } from '@angular/router';
-import { producerGuard } from '../../core/guards/producer.guard';
+import { superadminGuard } from '../../core/guards/superadmin.guard';
 
+/**
+ * Rutas de productor - ahora redirigen a funcionalidades de admin
+ * Los productores son ahora manejados por el superadmin (bodegero)
+ */
 export const PRODUCER_ROUTES: Routes = [
   {
     path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard),
-    canActivate: [producerGuard]
+    redirectTo: '/admin/dashboard',
+    pathMatch: 'full'
   },
   {
     path: 'products',
-    loadChildren: () => import('./products/products.routes').then(m => m.PRODUCTS_ROUTES),
-    canActivate: [producerGuard]
+    redirectTo: '/admin/products',
+    pathMatch: 'full'
   },
   {
     path: 'orders',
-    loadChildren: () => import('./orders/orders.routes').then(m => m.ORDERS_ROUTES),
-    canActivate: [producerGuard]
+    redirectTo: '/admin/orders',
+    pathMatch: 'full'
   },
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: '/admin/dashboard',
     pathMatch: 'full'
   }
 ];

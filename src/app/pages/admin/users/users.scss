@@ -1,0 +1,196 @@
+/* Gestión de Usuarios - Admin Panel Styles */
+
+/* Gradientes personalizados */
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.bg-gradient-amber {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.bg-gradient-red {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Animaciones personalizadas */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Hover effects para las cards */
+.hover-lift {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Estilos para la tabla responsive */
+@media (max-width: 1024px) {
+  .grid-cols-12 {
+    display: block;
+  }
+  
+  .col-span-3,
+  .col-span-2,
+  .col-span-1 {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .col-span-1 {
+    text-align: left;
+  }
+}
+
+/* Estilos para los badges */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-admin {
+  @apply bg-purple-100 text-purple-800;
+}
+
+.badge-buyer {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.badge-verified {
+  @apply bg-green-100 text-green-800;
+}
+
+.badge-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+/* Estilos para botones de acción */
+.action-btn {
+  @apply p-2 rounded-lg transition-colors duration-150;
+}
+
+.action-btn-edit {
+  @apply text-blue-600 hover:bg-blue-50;
+}
+
+.action-btn-verify {
+  @apply text-green-600 hover:bg-green-50;
+}
+
+.action-btn-unverify {
+  @apply text-yellow-600 hover:bg-yellow-50;
+}
+
+.action-btn-delete {
+  @apply text-red-600 hover:bg-red-50;
+}
+
+/* Estilos para el modal */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+}
+
+/* Estilos para formularios */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+}
+
+.form-input:disabled {
+  @apply bg-gray-50 cursor-not-allowed;
+}
+
+.form-label {
+  @apply block text-sm font-semibold text-gray-700 mb-2;
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+}
+
+/* Estilos para estados de carga */
+.loading-spinner {
+  @apply animate-spin h-6 w-6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .p-8 {
+    @apply p-4;
+  }
+  
+  .grid-cols-1.md\:grid-cols-3 {
+    @apply grid-cols-1;
+  }
+  
+  .flex-col.lg\:flex-row {
+    @apply flex-col;
+  }
+  
+  .max-w-md {
+    @apply max-w-full;
+  }
+}
+
+/* Dark mode support (opcional) */
+@media (prefers-color-scheme: dark) {
+  .bg-slate-50 {
+    @apply bg-gray-900;
+  }
+  
+  .bg-white {
+    @apply bg-gray-800;
+  }
+  
+  .text-gray-900 {
+    @apply text-gray-100;
+  }
+  
+  .text-gray-700 {
+    @apply text-gray-300;
+  }
+  
+  .text-gray-500 {
+    @apply text-gray-400;
+  }
+  
+  .border-gray-200 {
+    @apply border-gray-700;
+  }
+}

@@ -10,6 +10,18 @@ interface ProductsByCategory {
   products: Product[];
 }
 
+interface PartialProduct {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  price: { perUnit: number; unit: string };
+  availability: number;
+  certifications: string[];
+  images: string[];
+  province: string;
+}
+
 @Component({
   selector: 'app-productos',
   standalone: true,
@@ -24,10 +36,10 @@ export class Productos implements OnInit {
   // Señales reactivas
   readonly isLoading = signal<boolean>(false);
   readonly selectedCategory = signal<string>('');
-  
+
   // Nueva señal para la imagen de multifrutas
   readonly multifruitImage = signal<string>('assets/images/multifrutas.webp');
-  
+
   // Productos organizados por categorías - Datos completos
   readonly productsByCategory = signal<ProductsByCategory[]>([]);
 
@@ -44,8 +56,8 @@ export class Productos implements OnInit {
 
   // Computed para determinar si una categoría es de frutas para mostrar la imagen decorativa
   readonly isFruitCategory = computed(() => (categoryName: string) => {
-    return categoryName.toLowerCase().includes('fruta') || 
-           categoryName.toLowerCase().includes('fruit');
+    return categoryName.toLowerCase().includes('fruta') ||
+      categoryName.toLowerCase().includes('fruit');
   });
 
   ngOnInit(): void {
@@ -54,8 +66,18 @@ export class Productos implements OnInit {
 
   private loadAllProducts(): void {
     this.isLoading.set(true);
-    
-    const productsData: ProductsByCategory[] = [
+
+    // Helper function to add required properties to mock products
+    const addRequiredProperties = (product: PartialProduct, categoryIndex: number, productIndex: number): Product => ({
+      ...product,
+      producerId: `producer-${String(categoryIndex + 1).padStart(2, '0')}-${String(productIndex + 1).padStart(3, '0')}`,
+      registeredBy: 'admin-001',
+      createdAt: new Date('2024-01-15'),
+      updatedAt: new Date('2024-01-15'),
+      isActive: true
+    });
+
+    const productsData: { category: string; products: PartialProduct[] }[] = [
       {
         category: 'Frutas',
         products: [
@@ -817,7 +839,13 @@ export class Productos implements OnInit {
       }
     ];
 
-    this.productsByCategory.set(productsData);
+    // Apply required properties to all products
+    const processedData = productsData.map((category, categoryIndex) => ({
+      ...category,
+      products: category.products.map((product, productIndex) => addRequiredProperties(product, categoryIndex, productIndex))
+    }));
+
+    this.productsByCategory.set(processedData);
     this.isLoading.set(false);
   }
 
@@ -850,7 +878,7 @@ export class Productos implements OnInit {
     // Conectar "Agregar" buttons al CartService.add(product)
     this.cartService.add(product, 1);
     console.log('Producto agregado al carrito:', product.name);
-    
+
     // Opcional: Mostrar feedback visual (toast, notification, etc.)
     // Para este ejemplo, usamos console.log
   }

@@ -1,0 +1,235 @@
+/* Métricas y Analytics - Admin Panel Styles */
+
+/* Gradientes personalizados para métricas */
+.metric-card {
+  @apply bg-white p-6 rounded-xl shadow-sm hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200;
+}
+
+.metric-icon {
+  @apply w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl;
+}
+
+.metric-value {
+  @apply text-3xl font-bold text-gray-900 mb-1;
+}
+
+.metric-title {
+  @apply text-sm font-semibold text-gray-700;
+}
+
+.metric-description {
+  @apply text-xs text-gray-500;
+}
+
+/* Indicadores de cambio */
+.change-indicator {
+  @apply flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.change-positive {
+  @apply bg-green-100 text-green-800;
+}
+
+.change-negative {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Estilos para gráficos */
+.chart-container {
+  @apply bg-white p-6 rounded-xl shadow-sm;
+}
+
+.chart-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+.chart-title {
+  @apply text-xl font-bold text-gray-900;
+}
+
+.chart-legend {
+  @apply flex items-center gap-2 text-sm text-gray-500;
+}
+
+.chart-placeholder {
+  @apply h-64 rounded-lg flex items-center justify-center;
+}
+
+/* Estilos para la lista de productos top */
+.top-products {
+  @apply bg-white rounded-xl shadow-sm overflow-hidden;
+}
+
+.product-item {
+  @apply flex items-center justify-between p-4 bg-gray-50 rounded-lg;
+}
+
+.product-rank {
+  @apply w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-sm;
+}
+
+.product-info {
+  @apply flex items-center gap-4;
+}
+
+.product-name {
+  @apply font-semibold text-gray-900;
+}
+
+.product-sales {
+  @apply text-sm text-gray-500;
+}
+
+.product-revenue {
+  @apply font-bold text-gray-900;
+}
+
+.product-growth {
+  @apply flex items-center gap-1 text-xs font-medium;
+}
+
+.growth-positive {
+  @apply text-green-600;
+}
+
+.growth-negative {
+  @apply text-red-600;
+}
+
+/* Estilos para actividad reciente */
+.activity-item {
+  @apply flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-150;
+}
+
+.activity-icon {
+  @apply w-10 h-10 rounded-full flex items-center justify-center text-white;
+}
+
+.activity-message {
+  @apply text-sm font-medium text-gray-900;
+}
+
+.activity-time {
+  @apply text-xs text-gray-500;
+}
+
+/* Selector de período */
+.period-selector {
+  @apply flex gap-2;
+}
+
+.period-button {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+.period-button-active {
+  @apply bg-indigo-600 text-white shadow-md;
+}
+
+.period-button-inactive {
+  @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+/* Animaciones personalizadas */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.4s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .p-8 {
+    @apply p-4;
+  }
+  
+  .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+    @apply grid-cols-1;
+  }
+  
+  .grid-cols-1.lg\:grid-cols-2 {
+    @apply grid-cols-1;
+  }
+  
+  .flex-col.sm\:flex-row {
+    @apply flex-col;
+  }
+  
+  .text-3xl {
+    @apply text-2xl;
+  }
+  
+  .text-xl {
+    @apply text-lg;
+  }
+}
+
+/* Estados de carga */
+.loading-container {
+  @apply bg-white rounded-xl shadow-sm p-12;
+}
+
+.loading-content {
+  @apply text-center;
+}
+
+.loading-spinner {
+  @apply inline-flex items-center gap-3 text-gray-500;
+}
+
+.loading-text {
+  @apply text-lg;
+}
+
+/* Utilidades adicionales */
+.section-header {
+  @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 rounded-xl shadow-md;
+}
+
+.section-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.section-subtitle {
+  @apply text-lg opacity-90;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-sm;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.card-body {
+  @apply p-6;
+}
+
+.hover-lift {
+  @apply hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200;
+}

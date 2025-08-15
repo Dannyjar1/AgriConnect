@@ -129,62 +129,62 @@ import { Subscription, fromEvent } from 'rxjs';
                   </button>
                 </div>
                 
-                <!-- Producer Role Card -->
+                <!-- SuperAdmin Role Card -->
                 <div class="group">
                   <button
                     type="button"
-                    (click)="selectRole('producer')"
-                    [class]="'w-full p-6 rounded-xl border-2 transition-all duration-300 text-left hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-200 ' + 
-                             (selectedRole() === 'producer' ? 'border-agri-green-500 bg-agri-green-50 shadow-lg scale-105' : 'border-gray-200 bg-white hover:border-agri-green-300')"
+                    (click)="selectRole('superadmin')"
+                    [class]="'w-full p-6 rounded-xl border-2 transition-all duration-300 text-left hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-200 ' + 
+                             (selectedRole() === 'superadmin' ? 'border-purple-500 bg-purple-50 shadow-lg scale-105' : 'border-gray-200 bg-white hover:border-purple-300')"
                     aria-pressed="false"
-                    #producerButton>
+                    #superadminButton>
                     
-                    <!-- Producer Icon -->
-                    <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-agri-green-500 to-agri-green-600 rounded-lg mb-4 group-hover:shadow-md transition-shadow duration-300">
+                    <!-- SuperAdmin Icon -->
+                    <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg mb-4 group-hover:shadow-md transition-shadow duration-300">
                       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                       </svg>
                     </div>
                     
-                    <!-- Producer Content -->
+                    <!-- SuperAdmin Content -->
                     <div class="space-y-3">
                       <h3 class="text-lg font-bold text-gray-900 font-epilogue flex items-center">
-                        Productor
-                        @if (selectedRole() === 'producer') {
-                          <svg class="w-5 h-5 text-agri-green-600 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        Administrador (Bodegero)
+                        @if (selectedRole() === 'superadmin') {
+                          <svg class="w-5 h-5 text-purple-600 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                           </svg>
                         }
                       </h3>
                       
                       <p class="text-sm text-gray-600 font-noto-sans leading-relaxed">
-                        Vende tus productos agrícolas directamente a consumidores con distribución equitativa
+                        Gestiona el inventario, registra productores y supervisa todas las operaciones de la bodega
                       </p>
                       
                       <ul class="text-xs text-gray-500 space-y-1 font-noto-sans">
                         <li class="flex items-center">
-                          <svg class="w-3 h-3 text-agri-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="w-3 h-3 text-purple-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                           </svg>
-                          Gestión completa de productos
+                          Registro y gestión de productores
                         </li>
                         <li class="flex items-center">
-                          <svg class="w-3 h-3 text-agri-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="w-3 h-3 text-purple-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                           </svg>
-                          Asignación automática de pedidos
+                          Control completo del inventario
                         </li>
                         <li class="flex items-center">
-                          <svg class="w-3 h-3 text-agri-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="w-3 h-3 text-purple-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                           </svg>
-                          Panel analítico con métricas
+                          Registro de entregas de productos
                         </li>
                         <li class="flex items-center">
-                          <svg class="w-3 h-3 text-agri-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="w-3 h-3 text-purple-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                           </svg>
-                          Sistema de trazabilidad completa
+                          Panel administrativo completo
                         </li>
                       </ul>
                     </div>
@@ -284,7 +284,7 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
   @ViewChild('modalContainer') modalContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('confirmButton') confirmButton!: ElementRef<HTMLButtonElement>;
   @ViewChild('buyerButton') buyerButton!: ElementRef<HTMLButtonElement>;
-  @ViewChild('producerButton') producerButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('superadminButton') superadminButton!: ElementRef<HTMLButtonElement>;
 
   // Component state signals
   readonly isOpen = signal<boolean>(false);
@@ -293,7 +293,7 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
   readonly showError = signal<boolean>(false);
   readonly successMessage = signal<string>('');
   readonly errorMessage = signal<string>('');
-  readonly selectedRole = signal<'buyer' | 'producer' | null>(null);
+  readonly selectedRole = signal<'buyer' | 'superadmin' | null>(null);
 
   // User information
   readonly userInfo = signal<{
@@ -308,7 +308,7 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
 
   // Output events
   readonly roleSelected = output<{
-    role: 'buyer' | 'producer';
+    role: 'buyer' | 'superadmin';
     userInfo: {
       uid: string;
       email: string;
@@ -379,13 +379,13 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
     const currentElement = document.activeElement;
     
     if (event.key === 'ArrowLeft') {
-      if (currentElement === this.producerButton?.nativeElement) {
+      if (currentElement === this.superadminButton?.nativeElement) {
         this.buyerButton?.nativeElement?.focus();
         event.preventDefault();
       }
     } else if (event.key === 'ArrowRight') {
       if (currentElement === this.buyerButton?.nativeElement) {
-        this.producerButton?.nativeElement?.focus();
+        this.superadminButton?.nativeElement?.focus();
         event.preventDefault();
       }
     }
@@ -400,8 +400,8 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
     if (currentElement === this.buyerButton?.nativeElement) {
       this.selectRole('buyer');
       event.preventDefault();
-    } else if (currentElement === this.producerButton?.nativeElement) {
-      this.selectRole('producer');
+    } else if (currentElement === this.superadminButton?.nativeElement) {
+      this.selectRole('superadmin');
       event.preventDefault();
     }
   }
@@ -433,15 +433,15 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
   /**
    * Select a user role
    */
-  selectRole(role: 'buyer' | 'producer'): void {
+  selectRole(role: 'buyer' | 'superadmin'): void {
     this.selectedRole.set(role);
     
     // Update aria-pressed attributes
     if (this.buyerButton?.nativeElement) {
       this.buyerButton.nativeElement.setAttribute('aria-pressed', role === 'buyer' ? 'true' : 'false');
     }
-    if (this.producerButton?.nativeElement) {
-      this.producerButton.nativeElement.setAttribute('aria-pressed', role === 'producer' ? 'true' : 'false');
+    if (this.superadminButton?.nativeElement) {
+      this.superadminButton.nativeElement.setAttribute('aria-pressed', role === 'superadmin' ? 'true' : 'false');
     }
   }
 
@@ -468,7 +468,7 @@ export class RoleSelectionModal implements OnInit, OnDestroy {
       });
       
       this.isProcessing.set(false);
-      this.showSuccessMessage(`Perfil de ${role === 'buyer' ? 'Comprador' : 'Productor'} configurado correctamente`);
+      this.showSuccessMessage(`Perfil de ${role === 'buyer' ? 'Comprador' : 'Administrador'} configurado correctamente`);
       
       // Close modal after success
       setTimeout(() => {

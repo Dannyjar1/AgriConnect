@@ -1,1 +1,330 @@
-<p>users works!</p>
+<!-- Gestión de Usuarios - Admin Panel -->
+<div class="p-8 max-w-7xl mx-auto bg-slate-50 min-h-screen">
+
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-xl shadow-md">
+            <h1 class="text-3xl font-bold mb-2 font-epilogue">Gestión de Usuarios</h1>
+            <p class="text-lg opacity-90 font-noto-sans">Administra compradores y otros administradores del sistema</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div
+                class="w-15 h-15 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-users"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalUsers }}</h3>
+                <p class="text-gray-500 text-sm">Total Usuarios</p>
+            </div>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div
+                class="w-15 h-15 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ verifiedUsers }}</h3>
+                <p class="text-gray-500 text-sm">Usuarios Verificados</p>
+            </div>
+        </div>
+
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+            <div
+                class="w-15 h-15 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-2xl">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalAdmins }}</h3>
+                <p class="text-gray-500 text-sm">Administradores</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+        <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Buscar usuarios..." (input)="updateSearch($event)"
+                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-noto-sans">
+                </div>
+            </div>
+
+            <!-- Filter Dropdown -->
+            <div class="flex gap-4 items-center">
+                <select (change)="updateFilter($event)"
+                    class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-noto-sans">
+                    @for (option of userTypeOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                    }
+                </select>
+
+                <!-- Create User Button -->
+                <button (click)="openCreateModal()"
+                    class="btn-primary flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+                    <i class="fas fa-plus"></i>
+                    <span>Nuevo Usuario</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        @if (isLoading()) {
+        <!-- Loading State -->
+        <div class="p-12 text-center">
+            <div class="inline-flex items-center gap-3 text-gray-500">
+                <svg class="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <span class="font-noto-sans">Cargando usuarios...</span>
+            </div>
+        </div>
+        } @else if (filteredUsers.length === 0) {
+        <!-- Empty State -->
+        <div class="p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-users text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2 font-epilogue">No se encontraron usuarios</h3>
+            <p class="text-gray-500 font-noto-sans">Intenta ajustar los filtros de búsqueda</p>
+        </div>
+        } @else {
+        <!-- Table Header -->
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <div class="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-gray-700 font-noto-sans">
+                <div class="col-span-3">Usuario</div>
+                <div class="col-span-2">Tipo</div>
+                <div class="col-span-2">Estado</div>
+                <div class="col-span-2">Creado</div>
+                <div class="col-span-2">Último Acceso</div>
+                <div class="col-span-1 text-center">Acciones</div>
+            </div>
+        </div>
+
+        <!-- Table Body -->
+        <div class="divide-y divide-gray-200">
+            @for (user of filteredUsers; track user.uid) {
+            <div class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150">
+                <div class="grid grid-cols-12 gap-4 items-center">
+
+                    <!-- User Info -->
+                    <div class="col-span-3">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                {{ user.displayName?.charAt(0) || user.email.charAt(0) }}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900 font-noto-sans">{{ user.displayName || 'Sin
+                                    nombre' }}</p>
+                                <p class="text-sm text-gray-500">{{ user.email }}</p>
+                                @if (user.phone) {
+                                <p class="text-xs text-gray-400">{{ user.phone }}</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Type -->
+                    <div class="col-span-2">
+                        <span
+                            [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + getUserTypeBadge(user.userType).class">
+                            {{ getUserTypeBadge(user.userType).label }}
+                        </span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-span-2">
+                        <div class="flex items-center gap-2">
+                            @if (user.isVerified) {
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle"></i>
+                                Verificado
+                            </span>
+                            } @else {
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-clock"></i>
+                                Pendiente
+                            </span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Created Date -->
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-600 font-noto-sans">{{ formatDate(user.createdAt) }}</p>
+                    </div>
+
+                    <!-- Last Login -->
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-600 font-noto-sans">{{ formatDate(user.lastLogin) }}</p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="col-span-1">
+                        <div class="flex items-center justify-center gap-2">
+                            <!-- Edit Button -->
+                            <button (click)="openEditModal(user)"
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-150"
+                                title="Editar usuario">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <!-- Toggle Verification -->
+                            <button (click)="toggleUserVerification(user)"
+                                [class]="'p-2 rounded-lg transition-colors duration-150 ' + (user.isVerified ? 'text-yellow-600 hover:bg-yellow-50' : 'text-green-600 hover:bg-green-50')"
+                                [title]="user.isVerified ? 'Desverificar usuario' : 'Verificar usuario'">
+                                <i [class]="user.isVerified ? 'fas fa-user-times' : 'fas fa-user-check'"></i>
+                            </button>
+
+                            <!-- Delete Button -->
+                            @if (user.userType !== 'superadmin') {
+                            <button (click)="deleteUser(user)"
+                                class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-150"
+                                title="Eliminar usuario">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>
+
+<!-- Modal for Create/Edit User -->
+@if (showModal()) {
+<div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity duration-300" (click)="closeModal()">
+    </div>
+
+    <!-- Modal Panel -->
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative transform overflow-hidden rounded-xl bg-white shadow-2xl transition-all w-full max-w-lg">
+
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-white font-epilogue">
+                        {{ editingUser() ? 'Editar Usuario' : 'Nuevo Usuario' }}
+                    </h3>
+                    <button (click)="closeModal()"
+                        class="text-white hover:text-gray-200 transition-colors duration-150">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="p-6 space-y-6">
+
+                <!-- Display Name -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 font-noto-sans">
+                        Nombre Completo *
+                    </label>
+                    <input type="text" formControlName="displayName"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-noto-sans"
+                        placeholder="Ingresa el nombre completo">
+                    @if (userForm.get('displayName')?.invalid && userForm.get('displayName')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">El nombre es requerido (mínimo 2 caracteres)</p>
+                    }
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 font-noto-sans">
+                        Correo Electrónico *
+                    </label>
+                    <input type="email" formControlName="email" [disabled]="!!editingUser()"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-noto-sans disabled:bg-gray-50"
+                        placeholder="correo@ejemplo.com">
+                    @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">Ingresa un correo electrónico válido</p>
+                    }
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 font-noto-sans">
+                        Teléfono
+                    </label>
+                    <input type="tel" formControlName="phone"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-noto-sans"
+                        placeholder="0991234567">
+                </div>
+
+                <!-- User Type -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 font-noto-sans">
+                        Tipo de Usuario *
+                    </label>
+                    <select formControlName="userType"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-noto-sans">
+                        <option value="buyer">Comprador</option>
+                        <option value="superadmin">Administrador</option>
+                    </select>
+                </div>
+
+                <!-- Verification Status -->
+                @if (editingUser()) {
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="isVerified" formControlName="isVerified"
+                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <label for="isVerified" class="text-sm font-semibold text-gray-700 font-noto-sans">
+                        Usuario verificado
+                    </label>
+                </div>
+                }
+
+                <!-- Modal Actions -->
+                <div class="flex gap-4 pt-4">
+                    <button type="button" (click)="closeModal()"
+                        class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-noto-sans">
+                        Cancelar
+                    </button>
+                    <button type="submit" [disabled]="userForm.invalid || isLoading()"
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none transition-all duration-200 font-noto-sans">
+                        @if (isLoading()) {
+                        <span class="flex items-center justify-center gap-2">
+                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Guardando...
+                        </span>
+                        } @else {
+                        {{ editingUser() ? 'Actualizar' : 'Crear' }} Usuario
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}

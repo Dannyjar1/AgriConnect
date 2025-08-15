@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "agriconnect-6f074"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

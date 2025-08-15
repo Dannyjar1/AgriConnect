@@ -172,40 +172,121 @@
           }
         </div>
 
-        <!-- User Type Field -->
-        <div class="space-y-2">
-          <label for="userType" class="block text-sm font-semibold text-gray-700 font-noto-sans">
+        <!-- User Type Field - Card Selection -->
+        <div class="space-y-3">
+          <label class="block text-sm font-semibold text-gray-700 font-noto-sans">
             Tipo de usuario
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-              </svg>
-            </div>
-            <select 
-              id="userType" 
-              formControlName="userType"
-              [class]="'input-field pl-12 pr-10 py-3.5 w-full text-gray-900 font-noto-sans appearance-none bg-white focus-ring-agri ' + 
-                       (isFieldValid('userType') ? 'border-green-300 focus:border-green-500 focus:ring-green-200' : '') +
-                       (isFieldInvalid('userType') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : '')">
-              <option value="" disabled class="text-gray-500">Selecciona un tipo</option>
-              @for (option of userTypeOptions; track option.value) {
-                <option [value]="option.value" class="text-gray-900">{{ option.label }}</option>
-              }
-            </select>
+          
+          <!-- Role Selection Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
-            <!-- Custom Dropdown Arrow -->
-            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-              @if (isFieldValid('userType')) {
-                <svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-              } @else {
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              }
+            <!-- Buyer Card -->
+            <div class="group">
+              <input 
+                type="radio" 
+                id="buyer" 
+                name="userType" 
+                value="buyer" 
+                formControlName="userType"
+                class="sr-only">
+              <label 
+                for="buyer" 
+                [class]="'cursor-pointer block p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-md transform hover:scale-[1.02] ' + 
+                         (getControl('userType')?.value === 'buyer' ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]' : 'border-gray-200 bg-white hover:border-blue-300')">
+                
+                <!-- Buyer Icon -->
+                <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mb-3 group-hover:shadow-md transition-shadow duration-300">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                  </svg>
+                </div>
+                
+                <!-- Buyer Content -->
+                <div class="space-y-2">
+                  <h3 class="text-base font-bold text-gray-900 font-epilogue flex items-center">
+                    Comprador
+                    @if (getControl('userType')?.value === 'buyer') {
+                      <svg class="w-4 h-4 text-blue-600 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    }
+                  </h3>
+                  
+                  <p class="text-xs text-gray-600 font-noto-sans leading-relaxed">
+                    Encuentra productos agrícolas frescos directamente de los productores
+                  </p>
+                  
+                  <ul class="text-xs text-gray-500 space-y-1 font-noto-sans">
+                    <li class="flex items-center">
+                      <svg class="w-3 h-3 text-blue-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      Acceso al marketplace
+                    </li>
+                    <li class="flex items-center">
+                      <svg class="w-3 h-3 text-blue-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      Carrito y favoritos
+                    </li>
+                  </ul>
+                </div>
+              </label>
+            </div>
+            
+            <!-- SuperAdmin Card -->
+            <div class="group">
+              <input 
+                type="radio" 
+                id="superadmin" 
+                name="userType" 
+                value="superadmin" 
+                formControlName="userType"
+                class="sr-only">
+              <label 
+                for="superadmin" 
+                [class]="'cursor-pointer block p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-md transform hover:scale-[1.02] ' + 
+                         (getControl('userType')?.value === 'superadmin' ? 'border-agri-green-500 bg-agri-green-50 shadow-md scale-[1.02]' : 'border-gray-200 bg-white hover:border-agri-green-300')">
+                
+                <!-- SuperAdmin Icon -->
+                <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-agri-green-500 to-agri-green-600 rounded-lg mb-3 group-hover:shadow-md transition-shadow duration-300">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                </div>
+                
+                <!-- SuperAdmin Content -->
+                <div class="space-y-2">
+                  <h3 class="text-base font-bold text-gray-900 font-epilogue flex items-center">
+                    Administrador (Bodegero)
+                    @if (getControl('userType')?.value === 'superadmin') {
+                      <svg class="w-4 h-4 text-agri-green-600 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    }
+                  </h3>
+                  
+                  <p class="text-xs text-gray-600 font-noto-sans leading-relaxed">
+                    Gestiona productores, inventario y administra la plataforma
+                  </p>
+                  
+                  <ul class="text-xs text-gray-500 space-y-1 font-noto-sans">
+                    <li class="flex items-center">
+                      <svg class="w-3 h-3 text-agri-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      Control de inventario
+                    </li>
+                    <li class="flex items-center">
+                      <svg class="w-3 h-3 text-agri-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      Gestión de productores
+                    </li>
+                  </ul>
+                </div>
+              </label>
             </div>
           </div>
 
@@ -448,3 +529,9 @@
     </div>
   </div>
 </main>
+
+<!-- Role Selection Modal -->
+<app-role-selection-modal 
+  (roleSelected)="onRoleSelected($event)"
+  (modalClosed)="onModalClosed()">
+</app-role-selection-modal>

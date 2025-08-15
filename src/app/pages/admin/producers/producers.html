@@ -1,0 +1,211 @@
+<!-- Gestión de Productores - Admin Panel -->
+<div class="p-8 max-w-7xl mx-auto bg-slate-50 min-h-screen">
+
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-8 rounded-xl shadow-md">
+      <h1 class="text-3xl font-bold mb-2 font-epilogue">Gestión de Productores</h1>
+      <p class="text-lg opacity-90 font-noto-sans">Administra los productores registrados en la plataforma</p>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div
+      class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+      <div
+        class="w-15 h-15 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white text-2xl">
+        <i class="fas fa-users"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ totalProducers }}</h3>
+        <p class="text-gray-500 text-sm">Total Productores</p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+      <div
+        class="w-15 h-15 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white text-2xl">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ activeProducers }}</h3>
+        <p class="text-gray-500 text-sm">Productores Activos</p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+      <div
+        class="w-15 h-15 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center text-white text-2xl">
+        <i class="fas fa-pause-circle"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ inactiveProducers }}</h3>
+        <p class="text-gray-500 text-sm">Productores Inactivos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Actions -->
+  <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+    <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-md">
+        <div class="relative">
+          <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <input type="text" placeholder="Buscar productores..." (input)="updateSearch($event)"
+            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 font-noto-sans">
+        </div>
+      </div>
+
+      <!-- Filter Dropdown -->
+      <div class="flex gap-4 items-center">
+        <select (change)="updateStatusFilter($event)"
+          class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 font-noto-sans">
+          @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+
+        <!-- Create Producer Button -->
+        <button (click)="openCreateModal()"
+          class="btn-primary flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+          <i class="fas fa-plus"></i>
+          <span>Nuevo Productor</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Producers Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @if (isLoading()) {
+    <!-- Loading State -->
+    @for (i of [1,2,3,4,5,6]; track i) {
+    <div class="bg-white p-6 rounded-xl shadow-sm animate-pulse">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-16 h-16 bg-gray-200 rounded-full"></div>
+        <div class="flex-1">
+          <div class="h-4 bg-gray-200 rounded mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="h-3 bg-gray-200 rounded"></div>
+        <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+      </div>
+    </div>
+    }
+    } @else if (filteredProducers.length === 0) {
+    <!-- Empty State -->
+    <div class="col-span-full bg-white p-12 rounded-xl shadow-sm text-center">
+      <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-users text-2xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2 font-epilogue">No se encontraron productores</h3>
+      <p class="text-gray-500 font-noto-sans mb-4">Intenta ajustar los filtros de búsqueda</p>
+      <button (click)="openCreateModal()"
+        class="btn-primary px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl">
+        Crear Primer Productor
+      </button>
+    </div>
+    } @else {
+    <!-- Producer Cards -->
+    @for (producer of filteredProducers; track producer.id) {
+    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+
+      <!-- Producer Header -->
+      <div class="flex items-center gap-4 mb-4">
+        <div
+          class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+          {{ producer.name.charAt(0) }}
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-gray-900 font-epilogue">{{ producer.name }}</h3>
+          <p class="text-sm text-gray-500">{{ producer.email }}</p>
+        </div>
+
+        <!-- Status Badge -->
+        <div [class]="'px-3 py-1 rounded-full text-xs font-medium ' + 
+                         (producer.isActive 
+                           ? 'bg-green-100 text-green-800' 
+                           : 'bg-gray-100 text-gray-800')">
+          {{ producer.isActive ? 'Activo' : 'Inactivo' }}
+        </div>
+      </div>
+
+      <!-- Producer Info -->
+      <div class="space-y-2 mb-4">
+        @if (producer.phone) {
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-phone w-4"></i>
+          <span>{{ producer.phone }}</span>
+        </div>
+        }
+
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-map-marker-alt w-4"></i>
+          <span>{{ producer.address }}</span>
+        </div>
+
+        @if (producer.province) {
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-map w-4"></i>
+          <span>{{ producer.province }}</span>
+        </div>
+        }
+
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-calendar w-4"></i>
+          <span>Registrado: {{ formatDate(producer.registeredAt) }}</span>
+        </div>
+      </div>
+
+      <!-- Producer Certifications -->
+      @if (producer.certifications && producer.certifications.length > 0) {
+      <div class="mb-4">
+        <p class="text-xs text-gray-500 mb-2">Certificaciones:</p>
+        <div class="flex flex-wrap gap-1">
+          @for (cert of producer.certifications; track cert) {
+          <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">{{ cert }}</span>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex gap-2">
+        <button (click)="openEditModal(producer)"
+          class="flex-1 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-150 text-sm font-medium">
+          <i class="fas fa-edit mr-2"></i>
+          Editar
+        </button>
+
+        <button (click)="toggleProducerStatus(producer)" [class]="'flex-1 px-4 py-2 rounded-lg transition-colors duration-150 text-sm font-medium ' + 
+                       (producer.isActive 
+                         ? 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100' 
+                         : 'bg-green-50 text-green-700 hover:bg-green-100')">
+          <i [class]="(producer.isActive ? 'fas fa-pause' : 'fas fa-play') + ' mr-2'"></i>
+          {{ producer.isActive ? 'Desactivar' : 'Activar' }}
+        </button>
+
+        <button (click)="deleteProducer(producer)"
+          class="px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors duration-150 text-sm font-medium">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+    }
+    }
+  </div>
+</div>
+
+<!-- Modal for Create/Edit Producer -->
+@if (showModal()) {
+<app-register-producer-modal [editingProducer]="editingProducer()" (onClose)="closeModal()"
+  (onProducerRegistered)="onProducerRegistered($event)">
+</app-register-producer-modal>
+}

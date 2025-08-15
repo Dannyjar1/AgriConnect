@@ -1,0 +1,319 @@
+/* 
+  Gestión de Inventario - Admin Panel Styles
+  Enhanced with modern Tailwind CSS v4 patterns and AgriConnect brand
+*/
+
+/* Enhanced gradient backgrounds with better contrast */
+.bg-gradient-agri-primary {
+  background: linear-gradient(135deg, var(--color-agri-green-600) 0%, var(--color-agri-green-700) 100%);
+}
+
+.bg-gradient-agri-light {
+  background: linear-gradient(135deg, var(--color-agri-green-50) 0%, #ffffff 50%, #f0fdf4 100%);
+}
+
+/* Custom status badge styles with proper contrast */
+.status-fresh {
+  @apply bg-emerald-50 text-emerald-800 border border-emerald-200;
+}
+
+.status-expiring {
+  @apply bg-amber-50 text-amber-800 border border-amber-200;
+}
+
+.status-expired {
+  @apply bg-red-50 text-red-800 border border-red-200;
+}
+
+.status-unknown {
+  @apply bg-gray-50 text-gray-700 border border-gray-200;
+}
+
+/* Enhanced card hover effects */
+.inventory-card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100;
+  @apply hover:shadow-lg hover:-translate-y-1;
+  @apply transition-all duration-300 ease-out;
+}
+
+.inventory-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
+
+/* Stats card enhancements */
+.stats-card {
+  @apply inventory-card p-6;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-agri-green-500), var(--color-agri-green-600));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stats-card:hover::before {
+  opacity: 1;
+}
+
+/* Enhanced table styles */
+.inventory-table {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
+}
+
+.table-header {
+  @apply bg-gray-50/80 backdrop-blur-sm;
+  border-bottom: 1px solid rgb(229 231 235);
+}
+
+.table-row {
+  @apply border-b border-gray-100 last:border-b-0;
+  @apply hover:bg-gray-50/80 transition-colors duration-200;
+  @apply focus-within:bg-gray-50/80 focus-within:ring-2 focus-within:ring-agri-green-100;
+}
+
+.table-row:hover {
+  background-color: rgba(249, 250, 251, 0.8);
+}
+
+/* Enhanced form controls */
+.form-input-enhanced {
+  @apply w-full px-4 py-3 rounded-xl border border-gray-200;
+  @apply bg-white text-gray-900 placeholder-gray-400;
+  @apply focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-100;
+  @apply transition-all duration-200 ease-out;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.form-input-enhanced:focus {
+  box-shadow: 
+    0 0 0 2px var(--color-agri-green-100),
+    0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+/* Enhanced buttons */
+.btn-enhanced {
+  @apply px-6 py-3 rounded-xl font-semibold;
+  @apply transition-all duration-200 ease-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-enhanced {
+  @apply btn-enhanced bg-gradient-to-r from-agri-green-600 to-agri-green-700;
+  @apply hover:from-agri-green-700 hover:to-agri-green-800;
+  @apply text-white shadow-lg hover:shadow-xl;
+  @apply focus:ring-agri-green-300;
+  @apply transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.btn-secondary-enhanced {
+  @apply btn-enhanced bg-white border border-gray-300;
+  @apply text-gray-700 hover:bg-gray-50 hover:border-gray-400;
+  @apply focus:ring-gray-300;
+}
+
+/* Loading state enhancements */
+.loading-container {
+  @apply flex items-center justify-center p-12;
+}
+
+.loading-spinner {
+  @apply animate-spin h-8 w-8 text-agri-green-500;
+}
+
+/* Empty state enhancements */
+.empty-state {
+  @apply text-center p-12;
+}
+
+.empty-state-icon {
+  @apply w-20 h-20 bg-gray-100 rounded-2xl;
+  @apply flex items-center justify-center mx-auto mb-6;
+  @apply text-3xl text-gray-400;
+}
+
+/* Status badge animations */
+@keyframes pulse-success {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes pulse-error {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+}
+
+.status-badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5;
+  @apply rounded-full text-xs font-semibold;
+  @apply transition-all duration-200;
+}
+
+.status-badge.fresh {
+  @apply status-fresh;
+  animation: pulse-success 2s ease-in-out infinite;
+}
+
+.status-badge.expiring {
+  @apply status-expiring;
+  animation: pulse-warning 1.5s ease-in-out infinite;
+}
+
+.status-badge.expired {
+  @apply status-expired;
+  animation: pulse-error 1s ease-in-out infinite;
+}
+
+/* Responsive enhancements */
+@media (max-width: 640px) {
+  .inventory-page {
+    @apply px-4;
+  }
+  
+  .stats-grid {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .table-container {
+    @apply overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table-row {
+    @apply text-sm;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    @apply grid-cols-2;
+  }
+  
+  .filters-container {
+    @apply flex-col items-stretch;
+  }
+  
+  .search-input {
+    @apply mb-4 max-w-none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    @apply grid-cols-3;
+  }
+}
+
+/* Print styles */
+@media print {
+  .inventory-page {
+    @apply bg-white text-black;
+  }
+  
+  .btn-primary-enhanced,
+  .btn-secondary-enhanced {
+    @apply hidden;
+  }
+  
+  .inventory-card,
+  .inventory-table {
+    @apply shadow-none border border-gray-300;
+  }
+  
+  .table-row:hover {
+    @apply bg-transparent;
+  }
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+  .inventory-card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .table-header {
+    @apply bg-gray-900/50;
+  }
+  
+  .table-row {
+    @apply hover:bg-gray-700/50;
+  }
+  
+  .form-input-enhanced {
+    @apply bg-gray-800 border-gray-600 text-white;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .inventory-card,
+  .inventory-table,
+  .form-input-enhanced {
+    @apply border-2 border-black;
+  }
+  
+  .btn-primary-enhanced {
+    @apply bg-black text-white border-2 border-black;
+  }
+  
+  .status-badge {
+    @apply border-2;
+  }
+  
+  .status-fresh {
+    @apply border-green-800;
+  }
+  
+  .status-expiring {
+    @apply border-yellow-800;
+  }
+  
+  .status-expired {
+    @apply border-red-800;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .inventory-card,
+  .btn-enhanced,
+  .table-row,
+  .form-input-enhanced {
+    @apply transition-none;
+  }
+  
+  .inventory-card:hover {
+    @apply transform-none;
+  }
+  
+  .btn-primary-enhanced:hover {
+    @apply transform-none;
+  }
+  
+  .status-badge.fresh,
+  .status-badge.expiring,
+  .status-badge.expired {
+    animation: none;
+  }
+  
+  .loading-spinner {
+    @apply animate-none;
+  }
+}

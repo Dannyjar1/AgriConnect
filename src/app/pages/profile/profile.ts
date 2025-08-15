@@ -72,15 +72,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
       { id: 'personal', label: 'Información Personal', icon: 'person', active: this.activeTab() === 'personal' }
     ];
 
-    if (user.userType === 'producer') {
+    if (user.userType === 'superadmin') {
       return [
         ...baseTabs,
-        { id: 'products', label: 'Mis Productos', icon: 'inventory', active: this.activeTab() === 'products' },
-        { id: 'sales', label: 'Historial de Ventas', icon: 'sell', active: this.activeTab() === 'sales' },
+        { id: 'admin', label: 'Panel Administrativo', icon: 'admin_panel_settings', active: this.activeTab() === 'admin' },
+        { id: 'producers', label: 'Gestión de Productores', icon: 'group', active: this.activeTab() === 'producers' },
+        { id: 'inventory', label: 'Gestión de Inventario', icon: 'inventory', active: this.activeTab() === 'inventory' },
         { id: 'settings', label: 'Configuración', icon: 'settings', active: this.activeTab() === 'settings' }
       ];
     } else {
-      // buyer o institutional
+      // buyer
       return [
         ...baseTabs,
         { id: 'purchases', label: 'Historial de Compras', icon: 'shopping_bag', active: this.activeTab() === 'purchases' },
@@ -112,9 +113,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (!user) return '';
     
     switch (user.userType) {
-      case 'producer': return 'Productor';
+      case 'superadmin': return 'Administrador (Bodegero)';
       case 'buyer': return 'Comprador';
-      case 'institutional': return 'Cliente Institucional';
       default: return 'Usuario';
     }
   });
@@ -182,7 +182,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 photoURL: firebaseUser.photoURL || '',
                 userType: 'buyer', // Default
                 phone: firebaseUser.phoneNumber || '',
-                isVerified: firebaseUser.emailVerified,
+                isVerified: firebaseUser.emailVerified || false,
                 preferences: {
                   notifications: true,
                   language: 'es',
@@ -196,7 +196,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             // Actualizar con datos más recientes de Firebase Auth
             userData.displayName = firebaseUser.displayName || userData.displayName;
             userData.photoURL = firebaseUser.photoURL || userData.photoURL;
-            userData.isVerified = firebaseUser.emailVerified;
+            userData.isVerified = firebaseUser.emailVerified || false;
             userData.lastLogin = new Date();
             
             this.currentUser.set(userData);
@@ -211,7 +211,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
               displayName: firebaseUser.displayName || '',
               photoURL: firebaseUser.photoURL || '',
               userType: 'buyer',
-              isVerified: firebaseUser.emailVerified,
+              isVerified: firebaseUser.emailVerified || false,
               preferences: {
                 notifications: true,
                 language: 'es',
@@ -363,26 +363,49 @@ export class ProfileComponent implements OnInit, OnDestroy {
     input.value = '';
   }
 
-  navigateToProductManagement(): void {
+  navigateToAdminDashboard(): void {
     const user = this.currentUser();
-    if (user?.userType === 'producer') {
-      this.router.navigate(['/producer/products']);
+    if (user?.userType === 'superadmin') {
+      this.router.navigate(['/admin/dashboard']);
     }
   }
 
   navigateToOrderHistory(): void {
     const user = this.currentUser();
-    if (user?.userType === 'buyer' || user?.userType === 'institutional') {
+    if (user?.userType === 'buyer') {
       this.router.navigate(['/buyer/orders']);
-    } else if (user?.userType === 'producer') {
-      this.router.navigate(['/producer/orders']);
+    } else if (user?.userType === 'superadmin') {
+      this.router.navigate(['/admin/orders']);
     }
   }
 
   navigateToFavorites(): void {
     const user = this.currentUser();
-    if (user?.userType === 'buyer' || user?.userType === 'institutional') {
+    if (user?.userType === 'buyer') {
       this.router.navigate(['/buyer/favorites']);
+    }
+  }
+
+  navigateToProducerManagement(): void {
+    const user = this.currentUser();
+    if (user?.userType === 'superadmin') {
+      this.router.navigate(['/admin/producers']);
+    }
+  }
+
+  navigateToProductManagement(): void {
+    const user = this.currentUser();
+    if (user?.userType === 'superadmin') {
+      this.router.navigate(['/admin/products']);
+    } else if (user?.userType === 'buyer') {
+      this.router.navigate(['/marketplace']);
+    }
+  }
+
+  navigateToInventoryManagement(): void {
+    const user = this.currentUser();
+    if (user?.userType === 'superadmin') {
+      this.router.navigate(['/admin/inventory']);
     }
   }
 

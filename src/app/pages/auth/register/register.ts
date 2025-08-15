@@ -1,16 +1,18 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { RoleSelectionModal } from '../../../shared/components/role-selection-modal/role-selection-modal';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    RouterModule
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    RoleSelectionModal
   ],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
@@ -27,10 +29,13 @@ export class Register {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
+  // ViewChild for role selection modal
+  @ViewChild(RoleSelectionModal) roleSelectionModal!: RoleSelectionModal;
+
   // User type options
   protected readonly userTypeOptions = [
-    { value: 'producer', label: 'Productor' },
-    { value: 'buyer', label: 'Comprador' }
+    { value: 'buyer', label: 'Comprador' },
+    { value: 'superadmin', label: 'Administrador (Bodegero)' }
   ] as const;
 
   constructor() {
@@ -83,7 +88,7 @@ export class Register {
    */
   private nameValidator(control: AbstractControl): ValidationErrors | null {
     const namePattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
-    
+
     if (!control.value) {
       return null; // Let required validator handle empty values
     }
@@ -111,7 +116,7 @@ export class Register {
    */
   private ecuadorianPhoneValidator(control: AbstractControl): ValidationErrors | null {
     const phonePattern = /^09\d{8}$/;
-    
+
     if (!control.value) {
       return null; // Let required validator handle empty values
     }
@@ -132,7 +137,7 @@ export class Register {
    */
   private passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.value;
-    
+
     if (!password) {
       return null; // Let required validator handle empty values
     }
@@ -197,7 +202,7 @@ export class Register {
   protected hasPasswordMismatch(): boolean {
     const form = this.registerForm;
     const confirmPasswordControl = this.getControl('confirmPassword');
-    
+
     return !!(
       form.errors?.['passwordMismatch'] &&
       confirmPasswordControl?.dirty &&
@@ -210,7 +215,7 @@ export class Register {
    */
   protected getErrorMessage(controlName: string): string {
     const control = this.getControl(controlName);
-    
+
     if (!control?.errors || (!control.dirty && !control.touched)) {
       return '';
     }
@@ -263,7 +268,7 @@ export class Register {
   protected getPasswordStrength(): { level: number; label: string; color: string } {
     const passwordControl = this.getControl('password');
     const password = passwordControl?.value || '';
-    
+
     if (!password) {
       return { level: 0, label: '', color: '' };
     }
@@ -306,15 +311,15 @@ export class Register {
 
     this.isLoading.set(true);
     this.errorMessage.set('');
-    
+
     // Disable form controls during loading
     this.registerForm.disable();
 
     try {
       const formValue = this.registerForm.value;
-      
+
       await this.authService.registerWithUserData(
-        formValue.email, 
+        formValue.email,
         formValue.password,
         {
           displayName: formValue.fullName,
@@ -322,16 +327,16 @@ export class Register {
           userType: formValue.userType
         }
       ).toPromise();
-      
+
       // Registration successful - navigate to login page with success parameter
       this.router.navigate(['/auth/login'], { queryParams: { success: 'true' } });
-      
+
     } catch (error: any) {
       console.error('Error during registration:', error);
-      
+
       // Handle specific Firebase errors
       let errorMessage = 'Ocurrió un error durante el registro. Por favor, intenta nuevamente.';
-      
+
       if (error?.code) {
         switch (error.code) {
           case 'auth/email-already-in-use':
@@ -350,9 +355,9 @@ export class Register {
             errorMessage = `Error: ${error.message}`;
         }
       }
-      
+
       this.errorMessage.set(errorMessage);
-      
+
     } finally {
       this.isLoading.set(false);
       // Re-enable form controls
@@ -366,15 +371,15 @@ export class Register {
   protected formatPhoneNumber(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\D/g, ''); // Remove non-digits
-    
+
     // Limit to 10 digits
     if (value.length > 10) {
       value = value.substring(0, 10);
     }
-    
+
     // Update form control value
     this.getControl('phone')?.setValue(value, { emitEvent: false });
-    
+
     // Update display value with formatting (optional)
     if (value.length >= 2) {
       input.value = value.replace(/(\d{2})(\d{0,4})(\d{0,4})/, '$1 $2 $3').trim();
@@ -410,22 +415,37 @@ export class Register {
   protected async registerWithGoogle(): Promise<void> {
     // Prevent double submission
     if (this.isGoogleLoading()) return;
-    
+
     this.isGoogleLoading.set(true);
     this.errorMessage.set('');
-    
+
     // Disable form controls during Google registration
     this.registerForm.disable();
-    
+
     try {
-      await this.authService.registerWithGoogle().toPromise();
-      this.router.navigate(['/auth/login'], { queryParams: { success: 'true' } });
-      
+      const result = await this.authService.registerWithGoogle().toPromise();
+      console.log('Google registration result:', result);
+
+      if (result.isNewUser) {
+        console.log('Nuevo usuario detectado, mostrando modal de selección de rol');
+        // New user - show role selection modal
+        this.roleSelectionModal.openModal({
+          uid: result.user.uid,
+          email: result.user.email,
+          displayName: result.user.displayName || '',
+          photoURL: result.user.photoURL || ''
+        });
+      } else {
+        console.log('Usuario existente, redirigiendo a login');
+        // Existing user - redirect to login
+        this.router.navigate(['/auth/login'], { queryParams: { success: 'true' } });
+      }
+
     } catch (error: any) {
       console.error('Error during Google registration:', error);
-      
+
       let errorMessage = 'Error al registrarse con Google. Por favor, intenta nuevamente.';
-      
+
       if (error?.code) {
         switch (error.code) {
           case 'auth/popup-closed-by-user':
@@ -450,13 +470,48 @@ export class Register {
             errorMessage = error.message || errorMessage;
         }
       }
-      
+
       this.errorMessage.set(errorMessage);
-      
+
     } finally {
       this.isGoogleLoading.set(false);
       // Re-enable form controls
       this.registerForm.enable();
     }
+  }
+
+  /**
+   * Handle role selection from modal
+   */
+  protected async onRoleSelected(event: { role: 'buyer' | 'superadmin'; userInfo: any }): Promise<void> {
+    try {
+      console.log('Creando usuario con rol:', event.role);
+      // Create user document with selected role
+      await this.authService.createUserWithRole(event.userInfo, event.role).toPromise();
+
+      console.log('Usuario creado exitosamente, redirigiendo...');
+      // Navigate to appropriate dashboard based on role
+      const redirectPath = event.role === 'superadmin' ? '/admin/dashboard' : '/buyer/dashboard';
+      this.router.navigate([redirectPath]);
+
+    } catch (error: any) {
+      console.error('Error creating user with role:', error);
+      this.errorMessage.set('Error al configurar el perfil. Por favor, intenta nuevamente.');
+    }
+  }
+
+  /**
+   * Handle modal close
+   */
+  protected onModalClosed(): void {
+    // If modal is closed without selecting role, sign out the user
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('User signed out after modal close');
+      },
+      error: (error: any) => {
+        console.error('Error signing out user:', error);
+      }
+    });
   }
 }
