@@ -11,6 +11,7 @@ import { Producer } from '../../../core/models/user.model';
 import { RegisterProducerModal } from '../../../shared/components/register-producer-modal/register-producer-modal';
 import { RegisterProductModal } from '../../../shared/components/register-product-modal/register-product-modal';
 import { InventoryEntryModal } from '../../../shared/components/inventory-entry-modal/inventory-entry-modal';
+import { SeedButtonComponent } from '../../../shared/components/seed-button/seed-button.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,8 @@ import { InventoryEntryModal } from '../../../shared/components/inventory-entry-
     CommonModule,
     RegisterProducerModal,
     RegisterProductModal,
-    InventoryEntryModal
+    InventoryEntryModal,
+    SeedButtonComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
