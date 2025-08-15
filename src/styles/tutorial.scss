@@ -1,148 +1,331 @@
 /**
- * Custom Shepherd.js styles for AgriConnect tutorials
+ * Enhanced Shepherd.js Tutorial Styles for AgriConnect
  * 
- * Personaliza los estilos de los tours para que coincidan con el diseño
- * de AgriConnect usando Tailwind CSS y variables personalizadas.
+ * Modern UI/UX implementation with Tailwind CSS v4, glassmorphism effects,
+ * premium animations, and seamless integration with AgriConnect design system.
+ * 
+ * Features:
+ * - Modern glassmorphism design
+ * - Smooth micro-interactions
+ * - Accessibility-first approach
+ * - Responsive mobile design
+ * - AgriConnect brand integration
+ * - Premium visual effects
+ * 
+ * @version 2.0.0
+ * @author AgriConnect Team
  */
 
-// Variables para personalización del tema
+/* ===== CSS Custom Properties (Tailwind v4 Compatible) ===== */
 :root {
-  --tutorial-primary: theme('colors.green.600');
-  --tutorial-secondary: theme('colors.gray.600');
-  --tutorial-success: theme('colors.green.700');
-  --tutorial-danger: theme('colors.red.600');
-  --tutorial-background: theme('colors.white');
-  --tutorial-text: theme('colors.gray.800');
-  --tutorial-border: theme('colors.gray.200');
-  --tutorial-shadow: theme('boxShadow.lg');
-  --tutorial-border-radius: theme('borderRadius.lg');
-  --tutorial-font-family: theme('fontFamily.sans');
-  --tutorial-overlay: rgba(0, 0, 0, 0.75);
+  /* AgriConnect Brand Colors */
+  --tutorial-primary: var(--color-agri-green-600);
+  --tutorial-primary-hover: var(--color-agri-green-700);
+  --tutorial-primary-light: var(--color-agri-green-100);
+  --tutorial-primary-ultra-light: var(--color-agri-green-50);
+  
+  /* Neutral Colors */
+  --tutorial-background: rgba(255, 255, 255, 0.95);
+  --tutorial-background-glass: rgba(255, 255, 255, 0.8);
+  --tutorial-text: rgb(17, 24, 39);
+  --tutorial-text-muted: rgb(75, 85, 99);
+  --tutorial-text-light: rgb(156, 163, 175);
+  
+  /* Border & Shadow */
+  --tutorial-border: rgba(229, 231, 235, 0.8);
+  --tutorial-border-glass: rgba(255, 255, 255, 0.3);
+  --tutorial-shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --tutorial-shadow-floating: 0 32px 64px -12px rgba(22, 163, 74, 0.15);
+  --tutorial-shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.08);
+  
+  /* Effects */
+  --tutorial-backdrop-blur: blur(20px);
+  --tutorial-border-radius: 1rem;
+  --tutorial-border-radius-lg: 1.5rem;
+  --tutorial-overlay: rgba(0, 0, 0, 0.4);
+  --tutorial-overlay-glass: rgba(0, 0, 0, 0.2);
+  
+  /* Animation Timing */
+  --tutorial-transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --tutorial-transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --tutorial-transition-bouncy: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Typography */
+  --tutorial-font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+  --tutorial-font-family-heading: 'Epilogue', system-ui, -apple-system, sans-serif;
+  --tutorial-font-size-xs: 0.75rem;
+  --tutorial-font-size-sm: 0.875rem;
+  --tutorial-font-size-base: 1rem;
+  --tutorial-font-size-lg: 1.125rem;
+  --tutorial-font-size-xl: 1.25rem;
 }
 
-// Estilos base del tour
+/* ===== Enhanced Shepherd Element ===== */
 .shepherd-element {
-  background: var(--tutorial-background);
-  border: 1px solid var(--tutorial-border);
-  border-radius: var(--tutorial-border-radius);
-  box-shadow: var(--tutorial-shadow);
+  background: var(--tutorial-background-glass);
+  backdrop-filter: var(--tutorial-backdrop-blur);
+  -webkit-backdrop-filter: var(--tutorial-backdrop-blur);
+  border: 1px solid var(--tutorial-border-glass);
+  border-radius: var(--tutorial-border-radius-lg);
+  box-shadow: var(--tutorial-shadow-premium);
   color: var(--tutorial-text);
   font-family: var(--tutorial-font-family);
-  font-size: theme('fontSize.base');
+  font-size: var(--tutorial-font-size-base);
   max-width: 420px;
-  z-index: 9999;
+  min-width: 320px;
+  z-index: 10000;
+  position: relative;
+  overflow: hidden;
+  
+  /* Premium glassmorphism enhancement */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--tutorial-border-glass),
+      transparent
+    );
+    opacity: 0.6;
+  }
+  
+  /* Entrance animation */
+  animation: shepherdSlideInScale var(--tutorial-transition-bouncy) ease-out;
   
   .shepherd-content {
-    padding: theme('spacing.6');
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
   }
 
+  /* Enhanced arrow with glassmorphism */
   .shepherd-arrow {
     &:before {
-      background: var(--tutorial-background);
-      border: 1px solid var(--tutorial-border);
+      background: var(--tutorial-background-glass);
+      backdrop-filter: var(--tutorial-backdrop-blur);
+      -webkit-backdrop-filter: var(--tutorial-backdrop-blur);
+      border: 1px solid var(--tutorial-border-glass);
+      box-shadow: var(--tutorial-shadow-soft);
     }
   }
 }
 
-// Header del tutorial
+/* ===== Premium Header Design ===== */
 .shepherd-header {
   align-items: center;
   border-bottom: 1px solid var(--tutorial-border);
   display: flex;
   justify-content: space-between;
-  margin-bottom: theme('spacing.4');
-  padding-bottom: theme('spacing.4');
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  position: relative;
+  
+  /* Subtle gradient line */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--tutorial-primary-ultra-light),
+      var(--tutorial-primary-light),
+      var(--tutorial-primary-ultra-light)
+    );
+  }
 
   .shepherd-title {
     color: var(--tutorial-primary);
-    font-size: theme('fontSize.lg');
-    font-weight: theme('fontWeight.semibold');
+    font-family: var(--tutorial-font-family-heading);
+    font-size: var(--tutorial-font-size-xl);
+    font-weight: 700;
     margin: 0;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    
+    /* Subtle text shadow for premium feel */
+    text-shadow: 0 1px 2px rgba(22, 163, 74, 0.1);
   }
 
   .shepherd-cancel-icon {
-    background: transparent;
+    background: rgba(var(--tutorial-text-muted), 0.1);
     border: none;
-    color: var(--tutorial-secondary);
+    border-radius: 0.5rem;
+    color: var(--tutorial-text-muted);
     cursor: pointer;
-    font-size: theme('fontSize.xl');
-    padding: theme('spacing.2');
-    transition: color 0.2s ease;
+    font-size: var(--tutorial-font-size-lg);
+    padding: 0.5rem;
+    transition: all var(--tutorial-transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
 
     &:hover {
-      color: var(--tutorial-danger);
+      background: rgba(239, 68, 68, 0.1);
+      color: rgb(239, 68, 68);
+      transform: scale(1.05);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--tutorial-primary-light);
     }
   }
 }
 
-// Contenido del tutorial
+/* ===== Enhanced Content Area ===== */
 .shepherd-text {
-  font-size: theme('fontSize.base');
-  line-height: theme('lineHeight.relaxed');
-  margin: 0 0 theme('spacing.6') 0;
+  font-size: var(--tutorial-font-size-base);
+  line-height: 1.7;
+  margin: 0 0 2rem 0;
+  color: var(--tutorial-text);
   
   p {
-    margin: 0 0 theme('spacing.3') 0;
+    margin: 0 0 1rem 0;
     
     &:last-child {
       margin-bottom: 0;
     }
   }
+  
+  /* Enhanced typography for better readability */
+  strong {
+    color: var(--tutorial-primary);
+    font-weight: 600;
+  }
+  
+  em {
+    color: var(--tutorial-text-muted);
+    font-style: italic;
+  }
+  
+  code {
+    background: var(--tutorial-primary-ultra-light);
+    color: var(--tutorial-primary);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: 'Monaco', 'Menlo', monospace;
+  }
 }
 
-// Footer con botones
+/* ===== Premium Footer with Enhanced Buttons ===== */
 .shepherd-footer {
   display: flex;
-  gap: theme('spacing.3');
+  gap: 0.75rem;
   justify-content: flex-end;
-  margin-top: theme('spacing.6');
+  margin-top: 2rem;
+  align-items: center;
   
   .shepherd-button {
-    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-    
     border: none;
+    border-radius: 0.75rem;
     cursor: pointer;
-    min-width: theme('spacing.20');
+    font-family: var(--tutorial-font-family);
+    font-size: var(--tutorial-font-size-sm);
+    font-weight: 600;
+    min-width: 5rem;
+    padding: 0.75rem 1.5rem;
+    position: relative;
+    transition: all var(--tutorial-transition-smooth);
+    outline: none;
+    letter-spacing: 0.025em;
+    
+    /* Focus ring for accessibility */
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--tutorial-primary-light);
+    }
 
-    // Botón primario
+    /* Primary Button - AgriConnect Green */
     &.btn-primary,
     &.shepherd-button-primary {
-      @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+      background: linear-gradient(135deg, var(--tutorial-primary), var(--tutorial-primary-hover));
+      color: white;
+      box-shadow: var(--tutorial-shadow-soft);
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--tutorial-shadow-floating);
+        background: linear-gradient(135deg, var(--tutorial-primary-hover), var(--tutorial-primary));
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
     }
 
-    // Botón secundario
+    /* Secondary Button - Glass Effect */
     &.btn-secondary,
     &.shepherd-button-secondary {
-      @apply bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--tutorial-border-glass);
+      color: var(--tutorial-text-muted);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--tutorial-text);
+        transform: translateY(-1px);
+        box-shadow: var(--tutorial-shadow-soft);
+      }
     }
 
-    // Botón de éxito
+    /* Success Button - Enhanced Green */
     &.btn-success {
-      @apply bg-green-700 text-white hover:bg-green-800 focus:ring-green-600;
+      background: linear-gradient(135deg, var(--tutorial-primary), #059669);
+      color: white;
+      box-shadow: var(--tutorial-shadow-soft);
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--tutorial-shadow-floating);
+      }
     }
 
-    // Botón de peligro
+    /* Danger Button - Subtle Red */
     &.btn-danger {
-      @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      box-shadow: var(--tutorial-shadow-soft);
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+      }
     }
 
     &:disabled {
-      @apply opacity-50 cursor-not-allowed;
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
     }
   }
 }
 
-// Modal overlay
+/* ===== Enhanced Modal Overlay ===== */
 .shepherd-modal-overlay-container {
   z-index: 9998;
 
   .shepherd-modal-overlay {
-    background-color: var(--tutorial-overlay);
-    transition: opacity 0.3s ease;
+    background: var(--tutorial-overlay-glass);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all var(--tutorial-transition-smooth);
   }
 }
 
-// Target element highlighting
+/* ===== Premium Target Highlighting ===== */
 .shepherd-target-highlighted {
   position: relative;
   z-index: 9999;
@@ -150,67 +333,394 @@
   &::after {
     content: '';
     position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
+    top: -0.5rem;
+    left: -0.5rem;
+    right: -0.5rem;
+    bottom: -0.5rem;
     border: 2px solid var(--tutorial-primary);
-    border-radius: theme('borderRadius.md');
+    border-radius: 0.75rem;
     pointer-events: none;
-    animation: shepherd-pulse 2s infinite;
+    animation: shepherdPulseGlow 2s infinite;
+    box-shadow: 
+      0 0 0 4px rgba(22, 163, 74, 0.1),
+      var(--tutorial-shadow-floating);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -0.25rem;
+    left: -0.25rem;
+    right: -0.25rem;
+    bottom: -0.25rem;
+    background: linear-gradient(45deg, transparent, rgba(22, 163, 74, 0.05), transparent);
+    border-radius: 0.5rem;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
-@keyframes shepherd-pulse {
-  0% {
-    box-shadow: 0 0 0 0 var(--tutorial-primary);
-  }
-  70% {
-    box-shadow: 0 0 0 10px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
-// Progress indicator
+/* ===== Enhanced Progress Indicator ===== */
 .tutorial-progress {
   align-items: center;
   border-top: 1px solid var(--tutorial-border);
   display: flex;
-  gap: theme('spacing.3');
-  margin-top: theme('spacing.4');
-  padding-top: theme('spacing.4');
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  position: relative;
+  
+  /* Gradient line */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--tutorial-primary-ultra-light),
+      var(--tutorial-primary-light),
+      var(--tutorial-primary-ultra-light)
+    );
+  }
 
   .progress-bar {
-    background: theme('colors.gray.200');
-    border-radius: theme('borderRadius.full');
+    background: rgba(229, 231, 235, 0.6);
+    border-radius: 1rem;
     flex: 1;
-    height: theme('spacing.2');
+    height: 0.5rem;
     overflow: hidden;
+    position: relative;
     
     .progress-fill {
-      background: var(--tutorial-primary);
+      background: linear-gradient(90deg, var(--tutorial-primary), var(--tutorial-primary-hover));
       height: 100%;
-      transition: width 0.3s ease;
+      transition: width var(--tutorial-transition-smooth);
+      border-radius: 1rem;
+      position: relative;
+      
+      /* Shimmer effect */
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        animation: shimmer 2s infinite;
+      }
     }
   }
 
   .progress-text {
-    color: var(--tutorial-secondary);
-    font-size: theme('fontSize.sm');
+    color: var(--tutorial-text-muted);
+    font-size: var(--tutorial-font-size-sm);
+    font-weight: 500;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &::before {
+      content: '📍';
+      font-size: 0.75rem;
+    }
   }
 }
 
-// Responsive adjustments
-@media (max-width: theme('screens.sm')) {
+/* ===== Floating Tutorial Trigger Button ===== */
+.tutorial-floating-trigger {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  
+  .trigger-button {
+    background: linear-gradient(135deg, var(--tutorial-primary), var(--tutorial-primary-hover));
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--tutorial-shadow-floating);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    height: 4rem;
+    width: 4rem;
+    transition: all var(--tutorial-transition-smooth);
+    position: relative;
+    overflow: hidden;
+    
+    /* Pulse ring animation */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border: 2px solid var(--tutorial-primary);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulseRing 2s infinite;
+      opacity: 0.6;
+    }
+    
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 
+        var(--tutorial-shadow-floating),
+        0 0 40px rgba(22, 163, 74, 0.4);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 
+        var(--tutorial-shadow-floating),
+        0 0 0 4px var(--tutorial-primary-light);
+    }
+    
+    /* Loading state */
+    &.loading {
+      pointer-events: none;
+      
+      .icon {
+        animation: spin 1s linear infinite;
+      }
+    }
+    
+    /* Badge for new tutorials */
+    .notification-badge {
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      background: #ef4444;
+      border: 2px solid white;
+      border-radius: 50%;
+      width: 1rem;
+      height: 1rem;
+      animation: bounce 1s infinite;
+    }
+  }
+  
+  /* Tooltip */
+  .trigger-tooltip {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 0.5rem;
+    background: var(--tutorial-background-glass);
+    backdrop-filter: var(--tutorial-backdrop-blur);
+    -webkit-backdrop-filter: var(--tutorial-backdrop-blur);
+    border: 1px solid var(--tutorial-border-glass);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: var(--tutorial-text);
+    font-size: var(--tutorial-font-size-sm);
+    white-space: nowrap;
+    box-shadow: var(--tutorial-shadow-soft);
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: all var(--tutorial-transition-fast);
+    pointer-events: none;
+  }
+  
+  .trigger-button:hover + .trigger-tooltip,
+  .trigger-button:focus + .trigger-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Enhanced Auto Prompt ===== */
+.tutorial-auto-prompt {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--tutorial-background-glass);
+  backdrop-filter: var(--tutorial-backdrop-blur);
+  -webkit-backdrop-filter: var(--tutorial-backdrop-blur);
+  border: 1px solid var(--tutorial-border-glass);
+  border-radius: var(--tutorial-border-radius-lg);
+  box-shadow: var(--tutorial-shadow-premium);
+  max-width: 24rem;
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideInUpBounce var(--tutorial-transition-bouncy);
+  
+  /* Glassmorphism enhancement */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--tutorial-border-glass),
+      transparent
+    );
+  }
+  
+  .prompt-content {
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    
+    .prompt-icon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      background: linear-gradient(135deg, var(--tutorial-primary-light), var(--tutorial-primary-ultra-light));
+      border-radius: 50%;
+      color: var(--tutorial-primary);
+      font-size: 1.25rem;
+    }
+    
+    .prompt-text {
+      flex: 1;
+      
+      .prompt-title {
+        color: var(--tutorial-text);
+        font-family: var(--tutorial-font-family-heading);
+        font-size: var(--tutorial-font-size-lg);
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.025em;
+      }
+      
+      .prompt-description {
+        color: var(--tutorial-text-muted);
+        font-size: var(--tutorial-font-size-sm);
+        line-height: 1.5;
+        margin: 0 0 1.5rem 0;
+      }
+    }
+  }
+  
+  .prompt-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: 4rem;
+    margin-bottom: 1.5rem;
+    
+    .prompt-dismiss,
+    .prompt-start {
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: var(--tutorial-font-size-sm);
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      transition: all var(--tutorial-transition-fast);
+      
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--tutorial-primary-light);
+      }
+    }
+    
+    .prompt-dismiss {
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--tutorial-text-muted);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--tutorial-text);
+      }
+    }
+    
+    .prompt-start {
+      background: linear-gradient(135deg, var(--tutorial-primary), var(--tutorial-primary-hover));
+      color: white;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--tutorial-shadow-soft);
+      }
+    }
+  }
+  
+  .prompt-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 0.375rem;
+    color: var(--tutorial-text-muted);
+    cursor: pointer;
+    padding: 0.375rem;
+    transition: all var(--tutorial-transition-fast);
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--tutorial-primary-light);
+    }
+  }
+}
+
+/* ===== Tour Type Variations ===== */
+.tour-welcome .shepherd-element {
+  border-left: 4px solid var(--tutorial-primary);
+  
+  .shepherd-header .shepherd-title::before {
+    content: '👋 ';
+    margin-right: 0.5rem;
+  }
+}
+
+.tour-feature .shepherd-element {
+  border-left: 4px solid #3b82f6;
+  
+  .shepherd-header .shepherd-title::before {
+    content: '✨ ';
+    margin-right: 0.5rem;
+  }
+}
+
+.tour-warning .shepherd-element {
+  border-left: 4px solid #f59e0b;
+  
+  .shepherd-header .shepherd-title::before {
+    content: '⚠️ ';
+    margin-right: 0.5rem;
+  }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 640px) {
   .shepherd-element {
-    margin: theme('spacing.4');
-    max-width: calc(100vw - theme('spacing.8'));
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    min-width: auto;
     
     .shepherd-content {
-      padding: theme('spacing.4');
+      padding: 1.5rem;
     }
   }
 
@@ -219,63 +729,191 @@
     
     .shepherd-button {
       width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .tutorial-floating-trigger {
+    bottom: 1rem;
+    right: 1rem;
+    
+    .trigger-button {
+      width: 3.5rem;
+      height: 3.5rem;
+      font-size: 1.25rem;
+    }
+  }
+  
+  .tutorial-auto-prompt {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+    
+    .prompt-content {
+      padding: 1rem;
+      gap: 0.75rem;
+    }
+    
+    .prompt-actions {
+      margin-left: 0;
+      flex-direction: column;
     }
   }
 }
 
-// Dark mode support (if implemented)
-@media (prefers-color-scheme: dark) {
-  :root {
-    --tutorial-background: theme('colors.gray.800');
-    --tutorial-text: theme('colors.gray.100');
-    --tutorial-border: theme('colors.gray.600');
-    --tutorial-secondary: theme('colors.gray.400');
-  }
-}
-
-// Custom theme class
-.shepherd-theme-custom {
-  .shepherd-element {
-    // Custom styles already applied above
-  }
-}
-
-// Animation for tour entrance
-.shepherd-element {
-  animation: shepherd-slide-in 0.3s ease-out;
-}
-
-@keyframes shepherd-slide-in {
-  from {
+/* ===== Advanced Animations ===== */
+@keyframes shepherdSlideInScale {
+  0% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-1rem) scale(0.95);
   }
-  to {
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInUpBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-0.25rem);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-// Special styles for different tour types
-.tour-welcome {
-  .shepherd-element {
-    border-left: 4px solid var(--tutorial-success);
+@keyframes shepherdPulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 4px rgba(22, 163, 74, 0.1),
+      var(--tutorial-shadow-floating);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 8px rgba(22, 163, 74, 0.2),
+      var(--tutorial-shadow-floating);
   }
 }
 
-.tour-feature {
-  .shepherd-element {
-    border-left: 4px solid var(--tutorial-primary);
+@keyframes pulseRing {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
   }
 }
 
-.tour-warning {
-  .shepherd-element {
-    border-left: 4px solid theme('colors.orange.500');
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
   }
 }
 
-// Accessibility improvements
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -0.5rem, 0);
+  }
+  70% {
+    transform: translate3d(0, -0.25rem, 0);
+  }
+  90% {
+    transform: translate3d(0, -0.125rem, 0);
+  }
+}
+
+/* ===== Dark Mode Support ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tutorial-background: rgba(17, 24, 39, 0.95);
+    --tutorial-background-glass: rgba(17, 24, 39, 0.8);
+    --tutorial-text: rgb(243, 244, 246);
+    --tutorial-text-muted: rgb(156, 163, 175);
+    --tutorial-border: rgba(75, 85, 99, 0.8);
+    --tutorial-border-glass: rgba(255, 255, 255, 0.1);
+    --tutorial-overlay: rgba(0, 0, 0, 0.6);
+    --tutorial-overlay-glass: rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ===== High Contrast Mode ===== */
+@media (prefers-contrast: high) {
+  .shepherd-element {
+    border: 2px solid var(--tutorial-primary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: white;
+  }
+  
+  .shepherd-button {
+    border: 2px solid currentColor;
+  }
+  
+  .tutorial-floating-trigger .trigger-button {
+    border: 2px solid white;
+  }
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  .shepherd-element,
+  .tutorial-auto-prompt,
+  .tutorial-floating-trigger .trigger-button,
+  .shepherd-target-highlighted::after,
+  .progress-fill::after,
+  .trigger-button::before {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .shepherd-button:hover,
+  .tutorial-floating-trigger .trigger-button:hover {
+    transform: none !important;
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .shepherd-element,
+  .tutorial-floating-trigger,
+  .tutorial-auto-prompt,
+  .shepherd-modal-overlay-container {
+    display: none !important;
+  }
+}
+
+/* ===== Custom Theme Class ===== */
+.shepherd-theme-agriconnect {
+  .shepherd-element {
+    /* All styles are already applied globally */
+  }
+}
+
+/* ===== Focus Management for Accessibility ===== */
 .shepherd-element {
   &:focus-within {
     outline: 2px solid var(--tutorial-primary);
@@ -290,13 +928,101 @@
   }
 }
 
-// High contrast mode support
-@media (prefers-contrast: high) {
-  .shepherd-element {
-    border-width: 2px;
-  }
+/* Screen reader only content */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ===== Tour Completion Celebration ===== */
+.tutorial-celebration {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10001;
   
-  .shepherd-button {
-    border: 2px solid currentColor;
+  .celebration-content {
+    background: var(--tutorial-background-glass);
+    backdrop-filter: var(--tutorial-backdrop-blur);
+    -webkit-backdrop-filter: var(--tutorial-backdrop-blur);
+    border: 1px solid var(--tutorial-border-glass);
+    border-radius: var(--tutorial-border-radius-lg);
+    box-shadow: var(--tutorial-shadow-premium);
+    padding: 3rem;
+    text-align: center;
+    max-width: 24rem;
+    animation: celebrationAppear var(--tutorial-transition-bouncy);
+    
+    .celebration-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: celebrationBounce 0.6s ease-out;
+    }
+    
+    .celebration-title {
+      color: var(--tutorial-primary);
+      font-family: var(--tutorial-font-family-heading);
+      font-size: var(--tutorial-font-size-xl);
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .celebration-message {
+      color: var(--tutorial-text-muted);
+      font-size: var(--tutorial-font-size-base);
+      margin: 0 0 2rem 0;
+      line-height: 1.6;
+    }
+    
+    .celebration-button {
+      background: linear-gradient(135deg, var(--tutorial-primary), var(--tutorial-primary-hover));
+      border: none;
+      border-radius: 0.75rem;
+      color: white;
+      cursor: pointer;
+      font-size: var(--tutorial-font-size-base);
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      transition: all var(--tutorial-transition-smooth);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--tutorial-shadow-floating);
+      }
+    }
+  }
+}
+
+@keyframes celebrationAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes celebrationBounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -1rem, 0);
+  }
+  70% {
+    transform: translate3d(0, -0.5rem, 0);
+  }
+  90% {
+    transform: translate3d(0, -0.25rem, 0);
   }
 }

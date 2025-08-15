@@ -1,4 +1,4 @@
-import type { Step } from 'shepherd.js';
+import type { Step as ShepherdStep } from 'shepherd.js';
 
 /**
  * Interfaces y tipos para el sistema de tutoriales de AgriConnect
@@ -9,6 +9,9 @@ import type { Step } from 'shepherd.js';
  * @version 1.0.0
  * @author AgriConnect Team
  */
+
+// Type alias for Shepherd Step to avoid namespace conflicts
+export type StepOptions = ShepherdStep.StepOptions;
 
 // Roles de usuario disponibles
 export type UserRole = 'producer' | 'buyer' | 'admin';
@@ -39,7 +42,7 @@ export interface TutorialConfig {
   readonly description?: string;
   readonly targetRole: UserRole | UserRole[];
   readonly context: TutorialContext;
-  readonly steps: Step.StepOptions[];
+  readonly steps: StepOptions[];
   readonly autoStart?: boolean;
   readonly allowSkip?: boolean;
   readonly showProgress?: boolean;
@@ -57,11 +60,11 @@ export interface TutorialStartOptions {
   readonly userRole: UserRole;
   readonly context: TutorialContext;
   readonly forceStart?: boolean; // Forzar inicio aunque ya se haya completado
-  readonly customSteps?: Step.StepOptions[]; // Pasos personalizados
+  readonly customSteps?: StepOptions[]; // Pasos personalizados
 }
 
 // Configuración de un paso del tutorial
-export interface CustomStepOptions extends Step.StepOptions {
+export interface CustomStepOptions extends StepOptions {
   readonly contextualHelp?: string; // Ayuda adicional específica del contexto
   readonly prerequisites?: string[]; // Elementos que deben existir en el DOM
   readonly validation?: () => boolean; // Función para validar si se puede mostrar el paso

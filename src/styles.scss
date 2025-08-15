@@ -6,9 +6,9 @@
 @use "tailwindcss";
 
 /*
-  Import Tutorial Styles
+  Import Tutorial Styles - Using @use instead of deprecated @import
 */
-@import "./styles/tutorial.scss";
+@use "./styles/tutorial.scss";
 
 /*
   Theme Layer - CSS-first configuration for Tailwind v4
