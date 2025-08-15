@@ -8,11 +8,12 @@ import { InventoryEntry } from '../../../core/models/product.model';
 import { Product } from '../../../core/models/product.model';
 import { Producer } from '../../../core/models/user.model';
 import { InventoryEntryModal } from '../../../shared/components/inventory-entry-modal/inventory-entry-modal';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InventoryEntryModal],
+  imports: [CommonModule, ReactiveFormsModule, InventoryEntryModal, AdminHeaderComponent],
   templateUrl: './inventory.html',
   styleUrl: './inventory.scss'
 })

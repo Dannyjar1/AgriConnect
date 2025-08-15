@@ -6,11 +6,12 @@ import { ProducerService } from '../../../core/services/producer.service';
 import { Product } from '../../../core/models/product.model';
 import { Producer } from '../../../core/models/user.model';
 import { RegisterProductModal } from '../../../shared/components/register-product-modal/register-product-modal';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 @Component({
     selector: 'app-products',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RegisterProductModal],
+    imports: [CommonModule, ReactiveFormsModule, RegisterProductModal, AdminHeaderComponent],
     templateUrl: './products.html',
     styleUrl: './products.scss'
 })

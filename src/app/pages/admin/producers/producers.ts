@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ProducerService } from '../../../core/services/producer.service';
 import { Producer } from '../../../core/models/user.model';
 import { RegisterProducerModal } from '../../../shared/components/register-producer-modal/register-producer-modal';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 @Component({
   selector: 'app-producers',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RegisterProducerModal],
+  imports: [CommonModule, ReactiveFormsModule, RegisterProducerModal, AdminHeaderComponent],
   templateUrl: './producers.html',
   styleUrl: './producers.scss'
 })

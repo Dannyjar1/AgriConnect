@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 interface ReportData {
   title: string;
@@ -14,7 +15,7 @@ interface ReportData {
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminHeaderComponent],
   templateUrl: './reports.html'
 })
 export class Reports implements OnInit {

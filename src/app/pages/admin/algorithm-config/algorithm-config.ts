@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 interface AlgorithmSetting {
   id: string;
@@ -18,7 +19,7 @@ interface AlgorithmSetting {
 @Component({
   selector: 'app-algorithm-config',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminHeaderComponent],
   templateUrl: './algorithm-config.html',
   styleUrl: './algorithm-config.scss'
 })

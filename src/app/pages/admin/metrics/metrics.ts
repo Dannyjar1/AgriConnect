@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
+import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 interface MetricCard {
   title: string;
@@ -25,7 +26,7 @@ interface ChartData {
 @Component({
   selector: 'app-metrics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AdminHeaderComponent],
   templateUrl: './metrics.html',
   styleUrl: './metrics.scss'
 })
