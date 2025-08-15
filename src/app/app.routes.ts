@@ -51,6 +51,10 @@ export const routes: Routes = [
     canActivate: [cartGuard]
   },
   {
+    path: 'order-history-test',
+    loadComponent: () => import('./pages/buyer/order-history').then(m => m.OrderHistory)
+  },
+  {
     path: 'redirect',
     loadComponent: () => import('./shared/components/auto-redirect/auto-redirect').then(m => m.AutoRedirect)
   },

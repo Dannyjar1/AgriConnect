@@ -73,8 +73,6 @@ export class ProductoresComponent implements OnInit, OnDestroy {
       };
     });
     
-    this.categories.set(categoriesWithData);
-    
     return categoriesWithData;
   });
 
@@ -253,20 +251,4 @@ export class ProductoresComponent implements OnInit, OnDestroy {
     return this.activeTimers().has(producerId);
   }
 
-  /**
-   * Update categories with producers
-   */
-  private updateCategoriesWithProducers(): void {
-    const producers = this.allProducers();
-    const updatedCategories = this.categories().map(category => ({
-      ...category,
-      producers: producers.filter(producer => 
-        producer.certifications?.some(cert => 
-          cert.toLowerCase().includes(category.key.toLowerCase())
-        )
-      )
-    }));
-    
-    // Note: categories signal already updated in computed, this is for template compatibility
-  }
 }

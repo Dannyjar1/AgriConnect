@@ -624,11 +624,20 @@ export class OrderService {
       if (stored) {
         const orders = JSON.parse(stored);
         console.log(`✅ Parsed ${orders.length} orders for user ${userId}`);
-        if (orders.length > 0) {
-          console.log('📦 First order details:', orders[0]);
-          console.log('📦 First order has items:', orders[0].items?.length || 0);
+        
+        // Convert date strings back to Date objects
+        const ordersWithDates = orders.map((order: any) => ({
+          ...order,
+          orderDate: order.orderDate ? new Date(order.orderDate) : undefined,
+          estimatedDelivery: order.estimatedDelivery ? new Date(order.estimatedDelivery) : undefined,
+          lastUpdated: order.lastUpdated ? new Date(order.lastUpdated) : new Date()
+        }));
+        
+        if (ordersWithDates.length > 0) {
+          console.log('📦 First order details:', ordersWithDates[0]);
+          console.log('📦 First order has items:', ordersWithDates[0].items?.length || 0);
         }
-        return orders;
+        return ordersWithDates;
       } else {
         console.log(`📭 No orders found for user ${userId}`);
         return [];

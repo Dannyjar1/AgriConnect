@@ -1,1 +1,282 @@
-<p>order-history works!</p>
+<!-- Order History Page -->
+<div class="min-h-screen bg-gradient-agri font-noto-sans">
+  
+  <!-- Shared Header Component -->
+  <app-shared-header currentPage="orders"></app-shared-header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-6 py-8">
+    
+    <!-- Page Header -->
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 font-epilogue tracking-tight">
+        Historial de Compras
+      </h1>
+      <p class="mt-2 text-gray-600 font-noto-sans">
+        Revisa el estado y detalles de tus pedidos anteriores
+      </p>
+    </header>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="text-center py-16">
+        <div class="w-12 h-12 border-4 border-gray-200 border-t-agri-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-xl text-gray-600">Cargando historial de compras...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+        <div class="flex items-center">
+          <span class="material-icons text-red-500 mr-3">error</span>
+          <div>
+            <h3 class="text-lg font-semibold text-red-800">Error al cargar datos</h3>
+            <p class="text-red-600">{{ error() }}</p>
+            <button 
+              (click)="loadOrders()" 
+              class="mt-3 btn-secondary text-sm">
+              Reintentar
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Debug Info -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-sm">
+      <strong>Debug Info (Signals):</strong><br>
+      Loading: {{ isLoading() }}<br>
+      Error: {{ error() }}<br>
+      Orders count: {{ orders().length }}<br>
+      
+      <strong>Debug Info (Traditional):</strong><br>
+      Loading State: {{ loadingState }}<br>
+      Error Message: {{ errorMessage }}<br>
+      Orders Array count: {{ ordersArray.length }}<br>
+      
+      <strong>First Order:</strong><br>
+      {{ ordersArray[0] | json }}
+    </div>
+
+    <!-- Alternative display using traditional array -->
+    @if (ordersArray.length > 0) {
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+        <h3 class="font-bold text-green-800 mb-2">✅ Alternative Display (Traditional Array)</h3>
+        <div class="space-y-2">
+          @for (order of ordersArray; track order.orderId) {
+            <div class="bg-white p-3 rounded">
+              <strong>{{ order.orderId }}</strong> - {{ order.status }} - Items: {{ order.items?.length || 0 }}
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Orders Content -->
+    @if (orders().length === 0 && !isLoading() && !error()) {
+      <!-- Empty State -->
+      <div class="text-center py-20">
+        <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+          <span class="material-icons text-4xl text-gray-400">shopping_bag</span>
+        </div>
+        
+        <h2 class="text-2xl font-bold text-gray-900 font-epilogue mb-4">
+          Aún no tienes compras
+        </h2>
+        
+        <p class="text-gray-600 font-noto-sans mb-8 max-w-md mx-auto">
+          Explora nuestro marketplace y descubre productos frescos de productores locales ecuatorianos.
+        </p>
+        
+        <div class="space-y-4">
+          <button 
+            (click)="router.navigate(['/marketplace'])"
+            class="btn-primary inline-flex items-center justify-center space-x-2">
+            <span class="material-icons text-lg">storefront</span>
+            <span>Explorar Marketplace</span>
+          </button>
+          
+          <button 
+            (click)="router.navigate(['/productos'])"
+            class="btn-secondary inline-flex items-center justify-center space-x-2 ml-4">
+            <span class="material-icons text-lg">inventory_2</span>
+            <span>Ver Productos</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Simple Orders Display (Traditional Array) -->
+    @if (ordersArray.length > 0 && !loadingState) {
+      <div class="space-y-6">
+        <h2 class="text-xl font-bold text-gray-900">📦 Órdenes (Array Tradicional):</h2>
+        @for (order of ordersArray; track order.orderId) {
+          <article class="card p-6 border-2 border-blue-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">
+              Pedido #{{ order.orderId }}
+            </h3>
+            <p class="text-gray-600 text-sm mb-2">
+              Estado: {{ order.status }}
+            </p>
+            @if (order.items && order.items.length > 0) {
+              <p class="text-sm text-gray-600">
+                Productos: {{ order.items.length }}
+              </p>
+              @for (item of order.items; track item.id) {
+                <div class="bg-gray-50 p-2 rounded mt-2">
+                  {{ item.nombre }} ({{ item.qty }}x) - ${{ item.total }}
+                </div>
+              }
+            }
+            @if (order.summary) {
+              <p class="text-lg font-bold text-agri-green-600 mt-2">
+                Total: ${{ order.summary.total }}
+              </p>
+            }
+          </article>
+        }
+      </div>
+    }
+
+    @if (orders().length > 0) {
+        <!-- Orders List (Signals) -->
+        <div class="space-y-6">
+        <h2 class="text-xl font-bold text-gray-900">📦 Órdenes (Signals):</h2>
+          @for (order of orders(); track order.orderId) {
+            <article class="card p-6 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+              
+              <!-- Order Header -->
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900 font-epilogue mb-1">
+                    Pedido #{{ order.orderId }}
+                  </h3>
+                  <p class="text-gray-600 text-sm">
+                    @if (order.orderDate) {
+                      {{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}
+                    } @else {
+                      Fecha no disponible
+                    }
+                  </p>
+                </div>
+                
+                <div class="flex items-center space-x-3 mt-3 sm:mt-0">
+                  <span 
+                    [class]="'px-3 py-1 rounded-full text-sm font-medium ' + getStatusBadgeClass(order.status)">
+                    {{ getStatusText(order.status) }}
+                  </span>
+                  
+                  @if (order.trackingNumber) {
+                    <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+                      {{ order.trackingNumber }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <!-- Order Items -->
+              @if (order.items && order.items.length > 0) {
+                <div class="mb-6">
+                  <h4 class="text-sm font-semibold text-gray-700 mb-3">Productos ({{ order.items.length }})</h4>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @for (item of order.items; track item.id) {
+                      <div class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                        <div class="flex-shrink-0">
+                          <img 
+                            [src]="item.image || 'assets/images/multifrutas.webp'" 
+                            [alt]="item.nombre"
+                            class="w-12 h-12 object-cover rounded-lg"
+                            (error)="onImageError($event)">
+                        </div>
+                        <div class="flex-grow min-w-0">
+                          <p class="text-sm font-medium text-gray-900 truncate">{{ item.nombre }}</p>
+                          <p class="text-xs text-gray-500">Cantidad: {{ item.qty }}</p>
+                          <p class="text-sm font-semibold text-agri-green-600">${{ item.total.toFixed(2) }}</p>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Order Summary -->
+              @if (order.summary) {
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">Subtotal:</span>
+                    <span class="font-medium">${{ order.summary.subtotal.toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">IVA:</span>
+                    <span class="font-medium">${{ order.summary.tax.toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">Envío:</span>
+                    <span class="font-medium">
+                      @if (order.summary.shipping === 0) {
+                        <span class="text-agri-green-600">Gratis</span>
+                      } @else {
+                        ${{ order.summary.shipping.toFixed(2) }}
+                      }
+                    </span>
+                  </div>
+                  <hr class="my-2 border-gray-200">
+                  <div class="flex justify-between items-center">
+                    <span class="font-semibold text-gray-900">Total:</span>
+                    <span class="font-bold text-lg text-agri-green-600">${{ order.summary.total.toFixed(2) }}</span>
+                  </div>
+                </div>
+              }
+
+              <!-- Estimated Delivery -->
+              @if (order.estimatedDelivery) {
+                <div class="flex items-center text-sm text-gray-600 mb-4">
+                  <span class="material-icons text-sm mr-2">local_shipping</span>
+                  <span>
+                    Entrega estimada: {{ order.estimatedDelivery | date:'dd/MM/yyyy' }}
+                  </span>
+                </div>
+              }
+
+              <!-- Actions -->
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button 
+                  (click)="viewOrderDetails(order.orderId)"
+                  class="btn-secondary flex items-center justify-center space-x-2">
+                  <span class="material-icons text-sm">visibility</span>
+                  <span>Ver Detalles</span>
+                </button>
+                
+                @if (order.status === 'delivered') {
+                  <button 
+                    (click)="reorder(order)"
+                    class="btn-primary flex items-center justify-center space-x-2">
+                    <span class="material-icons text-sm">refresh</span>
+                    <span>Volver a Pedir</span>
+                  </button>
+                }
+                
+                @if (order.status === 'pending' || order.status === 'confirmed') {
+                  <button 
+                    class="text-red-600 hover:text-red-700 text-sm font-medium px-4 py-2 border border-red-200 hover:border-red-300 rounded-lg transition-colors">
+                    Cancelar Pedido
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+        
+      <!-- Load More (if needed) -->
+      @if (orders().length >= 10) {
+        <div class="text-center py-8">
+          <button class="btn-secondary">
+            Cargar Más Pedidos
+          </button>
+        </div>
+      }
+    }
+    
+  </main>
+</div>

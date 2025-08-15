@@ -73,7 +73,7 @@ import { User } from '../../../core/models/user.model';
                 class="flex items-center space-x-3 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-lg p-2 transition-colors">
                 
                 <!-- Avatar -->
-                <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+              <!--   <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                   @if (currentUser()?.photoURL) {
                     <img [src]="currentUser()?.photoURL" [alt]="currentUser()?.displayName || 'Admin'" class="w-8 h-8 rounded-full">
                   } @else {
@@ -81,11 +81,10 @@ import { User } from '../../../core/models/user.model';
                       {{ getInitials(currentUser()?.displayName || currentUser()?.email || 'A') }}
                     </span>
                   }
-                </div>
+                </div> -->
 
                 <!-- Info del usuario -->
                 <div class="hidden sm:block text-left">
-                  <p class="text-sm font-medium">{{ getDisplayName() }}</p>
                   <p class="text-xs text-gray-500">Administrador</p>
                 </div>
 
@@ -96,10 +95,10 @@ import { User } from '../../../core/models/user.model';
               <!-- Dropdown menu -->
               @if (isUserMenuOpen()) {
                 <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <div class="px-4 py-2 border-b border-gray-100">
+                 <!--  <div class="px-4 py-2 border-b border-gray-100">
                     <p class="text-sm font-medium text-gray-900">{{ getDisplayName() }}</p>
                     <p class="text-xs text-gray-500">{{ currentUser()?.email }}</p>
-                  </div>
+                  </div> -->
                   
                   <button 
                     (click)="navigateTo('/admin/profile')"

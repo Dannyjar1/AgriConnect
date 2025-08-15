@@ -314,8 +314,10 @@
         }
 
         <!-- Historial de Compras Tab -->
-        @if (activeTab() === 'history') {
+        @if (activeTab() === 'purchases') {
         <div role="tabpanel" aria-labelledby="history-tab" class="space-y-6">
+          
+          
           <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900 font-epilogue">Historial de Compras</h2>
             <div class="text-sm text-gray-600">
@@ -389,13 +391,13 @@
 
                 <!-- Actions -->
                 <div class="flex items-center space-x-3">
-                  @if (order.trackingNumber) {
+                 <!--  @if (order.trackingNumber) {
                   <button type="button" (click)="trackOrder(order.orderId)"
                     class="bg-agri-green-600 hover:bg-agri-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 text-sm transition-colors">
                     <span class="material-icons text-lg">track_changes</span>
                     <span>Rastrear</span>
                   </button>
-                  }
+                  } -->
 
                   <button type="button" (click)="showOrderDetails(order.orderId)"
                     class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 text-sm transition-colors">

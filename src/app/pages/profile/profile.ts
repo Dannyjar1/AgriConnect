@@ -413,19 +413,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
    * Load user's order history
    */
   private loadUserOrders(): void {
+    console.log('🔄 PROFILE: Starting to load user orders...');
     this.isLoadingOrders.set(true);
     
     this.orderService.getUserOrders()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (orders) => {
-          console.log('Loaded user orders:', orders);
+          console.log('✅ PROFILE: Loaded user orders:', orders);
+          console.log('📊 PROFILE: Orders count:', orders.length);
+          console.log('📊 PROFILE: isLoadingOrders before set:', this.isLoadingOrders());
           this.userOrders.set(orders);
+          console.log('📊 PROFILE: userOrders after set:', this.userOrders());
+          console.log('📊 PROFILE: userOrders length after set:', this.userOrders().length);
           this.loadUserStats(); // Update stats after loading orders
           this.isLoadingOrders.set(false);
+          console.log('📊 PROFILE: isLoadingOrders after set:', this.isLoadingOrders());
+          console.log('📊 PROFILE: activeTab:', this.activeTab());
         },
         error: (error) => {
-          console.error('Error loading user orders:', error);
+          console.error('❌ PROFILE: Error loading user orders:', error);
           this.userOrders.set([]);
           this.isLoadingOrders.set(false);
         }

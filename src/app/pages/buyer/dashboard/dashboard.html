@@ -1,1 +1,174 @@
-<p>dashboard works!</p>
+<!-- Buyer Dashboard -->
+<div class="min-h-screen bg-gradient-agri font-noto-sans">
+  
+  <!-- Shared Header Component -->
+  <app-shared-header currentPage="dashboard"></app-shared-header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-6 py-8">
+    
+    <!-- Welcome Section -->
+    <section class="mb-12">
+      <div class="relative overflow-hidden bg-gradient-to-r from-agri-green-600 to-agri-green-700 rounded-2xl p-8 text-white">
+        <div class="absolute inset-0 opacity-10">
+          <img src="assets/images/multifrutas.webp" alt="" class="w-full h-full object-cover">
+        </div>
+        <div class="relative z-10">
+          <h1 class="text-3xl md:text-4xl font-bold font-epilogue mb-4">
+            ¡Bienvenido a tu Dashboard!
+          </h1>
+          <p class="text-xl text-agri-green-100 mb-6">
+            Descubre productos frescos de productores locales ecuatorianos
+          </p>
+          <button 
+            (click)="navigateToMarketplace()"
+            class="bg-white text-agri-green-700 font-semibold px-6 py-3 rounded-lg hover:bg-agri-green-50 transition-colors">
+            Explorar Marketplace
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions Grid -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 font-epilogue mb-6">Acciones Rápidas</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Marketplace -->
+        <div 
+          (click)="navigateToMarketplace()"
+          class="card p-6 text-center cursor-pointer hover:shadow-lg transition-all duration-300 group">
+          <div class="w-16 h-16 bg-agri-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-agri-green-200 transition-colors">
+            <span class="material-icons text-2xl text-agri-green-600">storefront</span>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 font-epilogue mb-2">Marketplace</h3>
+          <p class="text-gray-600 text-sm">Explora productos frescos</p>
+        </div>
+
+        <!-- Order History -->
+        <div 
+          (click)="navigateToOrders()"
+          class="card p-6 text-center cursor-pointer hover:shadow-lg transition-all duration-300 group">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+            <span class="material-icons text-2xl text-blue-600">receipt_long</span>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 font-epilogue mb-2">Mis Compras</h3>
+          <p class="text-gray-600 text-sm">Historial de pedidos</p>
+        </div>
+
+        <!-- Producers -->
+        <div 
+          (click)="navigateToProductores()"
+          class="card p-6 text-center cursor-pointer hover:shadow-lg transition-all duration-300 group">
+          <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
+            <span class="material-icons text-2xl text-orange-600">agriculture</span>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 font-epilogue mb-2">Productores</h3>
+          <p class="text-gray-600 text-sm">Conoce a los productores</p>
+        </div>
+
+        <!-- Favorites -->
+        <div 
+          (click)="navigateToFavorites()"
+          class="card p-6 text-center cursor-pointer hover:shadow-lg transition-all duration-300 group">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-red-200 transition-colors">
+            <span class="material-icons text-2xl text-red-600">favorite</span>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 font-epilogue mb-2">Favoritos</h3>
+          <p class="text-gray-600 text-sm">Productos guardados</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 font-epilogue mb-6">Actividad Reciente</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Recent Orders -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 font-epilogue">Pedidos Recientes</h3>
+            <button 
+              (click)="navigateToOrders()"
+              class="text-agri-green-600 hover:text-agri-green-700 text-sm font-medium">
+              Ver todos
+            </button>
+          </div>
+          <div class="space-y-3">
+            <div class="text-center py-8 text-gray-500">
+              <span class="material-icons text-4xl mb-2">shopping_bag</span>
+              <p>No tienes pedidos recientes</p>
+              <button 
+                (click)="navigateToMarketplace()"
+                class="text-agri-green-600 hover:text-agri-green-700 text-sm font-medium mt-2">
+                Hacer tu primera compra
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended Products -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 font-epilogue">Productos Recomendados</h3>
+            <button 
+              (click)="navigateToMarketplace()"
+              class="text-agri-green-600 hover:text-agri-green-700 text-sm font-medium">
+              Ver más
+            </button>
+          </div>
+          <div class="space-y-3">
+            <div class="text-center py-8 text-gray-500">
+              <span class="material-icons text-4xl mb-2">recommend</span>
+              <p>Explora productos frescos</p>
+              <button 
+                (click)="navigateToMarketplace()"
+                class="text-agri-green-600 hover:text-agri-green-700 text-sm font-medium mt-2">
+                Ver marketplace
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Preview -->
+    <section>
+      <h2 class="text-2xl font-bold text-gray-900 font-epilogue mb-6">Categorías Populares</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        
+        <div class="card p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+          <div class="text-3xl mb-2">🍎</div>
+          <p class="text-sm font-medium text-gray-900 group-hover:text-agri-green-600">Frutas</p>
+        </div>
+
+        <div class="card p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+          <div class="text-3xl mb-2">🥬</div>
+          <p class="text-sm font-medium text-gray-900 group-hover:text-agri-green-600">Vegetales</p>
+        </div>
+
+        <div class="card p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+          <div class="text-3xl mb-2">🥛</div>
+          <p class="text-sm font-medium text-gray-900 group-hover:text-agri-green-600">Lácteos</p>
+        </div>
+
+        <div class="card p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+          <div class="text-3xl mb-2">🌾</div>
+          <p class="text-sm font-medium text-gray-900 group-hover:text-agri-green-600">Granos</p>
+        </div>
+
+        <div class="card p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+          <div class="text-3xl mb-2">🥩</div>
+          <p class="text-sm font-medium text-gray-900 group-hover:text-agri-green-600">Carnes</p>
+        </div>
+
+        <div class="card p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+          <div class="text-3xl mb-2">🌿</div>
+          <p class="text-sm font-medium text-gray-900 group-hover:text-agri-green-600">Orgánicos</p>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+</div>

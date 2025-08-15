@@ -9,8 +9,8 @@ export const BUYER_ROUTES: Routes = [
   },
   {
     path: 'orders',
-    loadComponent: () => import('./order-history/order-history').then(m => m.OrderHistory),
-    canActivate: [buyerGuard]
+    loadComponent: () => import('./order-history').then(m => m.OrderHistory)
+    // canActivate: [buyerGuard] // Temporarily disabled for debugging
   },
   {
     path: 'favorites',
