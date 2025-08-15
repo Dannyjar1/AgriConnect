@@ -6,6 +6,11 @@
 @use "tailwindcss";
 
 /*
+  Import Tutorial Styles
+*/
+@import "./styles/tutorial.scss";
+
+/*
   Theme Layer - CSS-first configuration for Tailwind v4
 */
 @layer theme {

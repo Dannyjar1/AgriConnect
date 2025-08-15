@@ -1,0 +1,302 @@
+/**
+ * Custom Shepherd.js styles for AgriConnect tutorials
+ * 
+ * Personaliza los estilos de los tours para que coincidan con el diseño
+ * de AgriConnect usando Tailwind CSS y variables personalizadas.
+ */
+
+// Variables para personalización del tema
+:root {
+  --tutorial-primary: theme('colors.green.600');
+  --tutorial-secondary: theme('colors.gray.600');
+  --tutorial-success: theme('colors.green.700');
+  --tutorial-danger: theme('colors.red.600');
+  --tutorial-background: theme('colors.white');
+  --tutorial-text: theme('colors.gray.800');
+  --tutorial-border: theme('colors.gray.200');
+  --tutorial-shadow: theme('boxShadow.lg');
+  --tutorial-border-radius: theme('borderRadius.lg');
+  --tutorial-font-family: theme('fontFamily.sans');
+  --tutorial-overlay: rgba(0, 0, 0, 0.75);
+}
+
+// Estilos base del tour
+.shepherd-element {
+  background: var(--tutorial-background);
+  border: 1px solid var(--tutorial-border);
+  border-radius: var(--tutorial-border-radius);
+  box-shadow: var(--tutorial-shadow);
+  color: var(--tutorial-text);
+  font-family: var(--tutorial-font-family);
+  font-size: theme('fontSize.base');
+  max-width: 420px;
+  z-index: 9999;
+  
+  .shepherd-content {
+    padding: theme('spacing.6');
+  }
+
+  .shepherd-arrow {
+    &:before {
+      background: var(--tutorial-background);
+      border: 1px solid var(--tutorial-border);
+    }
+  }
+}
+
+// Header del tutorial
+.shepherd-header {
+  align-items: center;
+  border-bottom: 1px solid var(--tutorial-border);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: theme('spacing.4');
+  padding-bottom: theme('spacing.4');
+
+  .shepherd-title {
+    color: var(--tutorial-primary);
+    font-size: theme('fontSize.lg');
+    font-weight: theme('fontWeight.semibold');
+    margin: 0;
+  }
+
+  .shepherd-cancel-icon {
+    background: transparent;
+    border: none;
+    color: var(--tutorial-secondary);
+    cursor: pointer;
+    font-size: theme('fontSize.xl');
+    padding: theme('spacing.2');
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--tutorial-danger);
+    }
+  }
+}
+
+// Contenido del tutorial
+.shepherd-text {
+  font-size: theme('fontSize.base');
+  line-height: theme('lineHeight.relaxed');
+  margin: 0 0 theme('spacing.6') 0;
+  
+  p {
+    margin: 0 0 theme('spacing.3') 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Footer con botones
+.shepherd-footer {
+  display: flex;
+  gap: theme('spacing.3');
+  justify-content: flex-end;
+  margin-top: theme('spacing.6');
+  
+  .shepherd-button {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    
+    border: none;
+    cursor: pointer;
+    min-width: theme('spacing.20');
+
+    // Botón primario
+    &.btn-primary,
+    &.shepherd-button-primary {
+      @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+    }
+
+    // Botón secundario
+    &.btn-secondary,
+    &.shepherd-button-secondary {
+      @apply bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500;
+    }
+
+    // Botón de éxito
+    &.btn-success {
+      @apply bg-green-700 text-white hover:bg-green-800 focus:ring-green-600;
+    }
+
+    // Botón de peligro
+    &.btn-danger {
+      @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    }
+
+    &:disabled {
+      @apply opacity-50 cursor-not-allowed;
+    }
+  }
+}
+
+// Modal overlay
+.shepherd-modal-overlay-container {
+  z-index: 9998;
+
+  .shepherd-modal-overlay {
+    background-color: var(--tutorial-overlay);
+    transition: opacity 0.3s ease;
+  }
+}
+
+// Target element highlighting
+.shepherd-target-highlighted {
+  position: relative;
+  z-index: 9999;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 2px solid var(--tutorial-primary);
+    border-radius: theme('borderRadius.md');
+    pointer-events: none;
+    animation: shepherd-pulse 2s infinite;
+  }
+}
+
+@keyframes shepherd-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--tutorial-primary);
+  }
+  70% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+// Progress indicator
+.tutorial-progress {
+  align-items: center;
+  border-top: 1px solid var(--tutorial-border);
+  display: flex;
+  gap: theme('spacing.3');
+  margin-top: theme('spacing.4');
+  padding-top: theme('spacing.4');
+
+  .progress-bar {
+    background: theme('colors.gray.200');
+    border-radius: theme('borderRadius.full');
+    flex: 1;
+    height: theme('spacing.2');
+    overflow: hidden;
+    
+    .progress-fill {
+      background: var(--tutorial-primary);
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+  }
+
+  .progress-text {
+    color: var(--tutorial-secondary);
+    font-size: theme('fontSize.sm');
+    white-space: nowrap;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: theme('screens.sm')) {
+  .shepherd-element {
+    margin: theme('spacing.4');
+    max-width: calc(100vw - theme('spacing.8'));
+    
+    .shepherd-content {
+      padding: theme('spacing.4');
+    }
+  }
+
+  .shepherd-footer {
+    flex-direction: column;
+    
+    .shepherd-button {
+      width: 100%;
+    }
+  }
+}
+
+// Dark mode support (if implemented)
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tutorial-background: theme('colors.gray.800');
+    --tutorial-text: theme('colors.gray.100');
+    --tutorial-border: theme('colors.gray.600');
+    --tutorial-secondary: theme('colors.gray.400');
+  }
+}
+
+// Custom theme class
+.shepherd-theme-custom {
+  .shepherd-element {
+    // Custom styles already applied above
+  }
+}
+
+// Animation for tour entrance
+.shepherd-element {
+  animation: shepherd-slide-in 0.3s ease-out;
+}
+
+@keyframes shepherd-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Special styles for different tour types
+.tour-welcome {
+  .shepherd-element {
+    border-left: 4px solid var(--tutorial-success);
+  }
+}
+
+.tour-feature {
+  .shepherd-element {
+    border-left: 4px solid var(--tutorial-primary);
+  }
+}
+
+.tour-warning {
+  .shepherd-element {
+    border-left: 4px solid theme('colors.orange.500');
+  }
+}
+
+// Accessibility improvements
+.shepherd-element {
+  &:focus-within {
+    outline: 2px solid var(--tutorial-primary);
+    outline-offset: 2px;
+  }
+}
+
+.shepherd-button {
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .shepherd-element {
+    border-width: 2px;
+  }
+  
+  .shepherd-button {
+    border: 2px solid currentColor;
+  }
+}
