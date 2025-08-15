@@ -20,10 +20,20 @@ export interface User {
 export interface Producer {
     id: string;
     name: string;
+    displayName?: string;
     email?: string;
     phone?: string;
     address: string;
     province: string;
+    logoUrl?: string;
+    companyName?: string;
+    productName?: string;
+    type?: string;
+    contactInfo?: {
+        phone?: string;
+        email?: string;
+        address?: string;
+    };
     certifications: string[];
     registeredBy: string; // UID del superadmin que lo registró
     registeredAt: any; // Firestore timestamp

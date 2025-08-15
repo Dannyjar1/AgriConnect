@@ -570,5 +570,16 @@ export class AuthService {
       console.error('Error verificando documento:', error);
     }
   }
+
+  /**
+   * Método síncrono para obtener el usuario actual (para compatibilidad)
+   */
+  getCurrentUser(): User | null {
+    let currentUser: User | null = null;
+    this.currentUser$.pipe(take(1)).subscribe(user => {
+      currentUser = user;
+    });
+    return currentUser;
+  }
 }
 

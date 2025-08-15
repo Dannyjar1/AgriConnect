@@ -271,4 +271,11 @@ export class ProductService {
       )
     );
   }
+
+  /**
+   * Obtener productos activos (alias para getProducts para compatibilidad)
+   */
+  getActiveProducts(): Observable<Product[]> {
+    return this.getProducts();
+  }
 }

@@ -33,6 +33,7 @@ export interface InventoryEntry {
     id: string;
     productId: string;
     producerId: string;
+    productName?: string; // Nombre del producto (opcional para conveniencia)
     quantity: number;
     unit: string;
     pricePerUnit: number;

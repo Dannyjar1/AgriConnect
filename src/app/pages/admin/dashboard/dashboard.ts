@@ -5,19 +5,12 @@ import { ProductService } from '../../../core/services/product.service';
 import { ProducerService } from '../../../core/services/producer.service';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ActivityService, Activity } from '../../../core/services/activity.service';
 import { Product, InventoryEntry } from '../../../core/models/product.model';
 import { Producer } from '../../../core/models/user.model';
 import { RegisterProducerModal } from '../../../shared/components/register-producer-modal/register-producer-modal';
 import { RegisterProductModal } from '../../../shared/components/register-product-modal/register-product-modal';
 import { InventoryEntryModal } from '../../../shared/components/inventory-entry-modal/inventory-entry-modal';
-
-interface Activity {
-  id: string;
-  type: 'producer' | 'product' | 'inventory' | 'order';
-  icon: string;
-  description: string;
-  timestamp: Date;
-}
 
 @Component({
   selector: 'app-dashboard',
@@ -37,6 +30,7 @@ export class Dashboard implements OnInit {
   private producerService = inject(ProducerService);
   private inventoryService = inject(InventoryService);
   private authService = inject(AuthService);
+  private activityService = inject(ActivityService);
   private router = inject(Router);
 
   // Signals for reactive data
@@ -115,43 +109,19 @@ export class Dashboard implements OnInit {
   }
 
   /**
-   * Cargar actividades recientes
+   * Cargar actividades recientes desde Firebase
    */
   private loadRecentActivities(): void {
-    // Simulación de actividades recientes
-    // En una implementación real, esto vendría de un servicio de auditoría
-    const activities: Activity[] = [
-      {
-        id: '1',
-        type: 'inventory',
-        icon: 'fas fa-truck',
-        description: 'Nueva entrega de Banano Premium registrada - 50 kg',
-        timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 minutos atrás
+    this.activityService.getRecentActivities(10).subscribe({
+      next: (activities) => {
+        this.recentActivities.set(activities);
       },
-      {
-        id: '2',
-        type: 'producer',
-        icon: 'fas fa-user-plus',
-        description: 'Nuevo productor registrado: Juan Pérez - Loja',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) // 2 horas atrás
-      },
-      {
-        id: '3',
-        type: 'product',
-        icon: 'fas fa-plus-circle',
-        description: 'Nuevo producto registrado: Quinua Orgánica',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4) // 4 horas atrás
-      },
-      {
-        id: '4',
-        type: 'inventory',
-        icon: 'fas fa-truck',
-        description: 'Entrega de Mango Tommy registrada - 25 kg',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6) // 6 horas atrás
+      error: (error) => {
+        console.error('Error loading activities:', error);
+        // Set empty array on error
+        this.recentActivities.set([]);
       }
-    ];
-
-    this.recentActivities.set(activities);
+    });
   }
 
   /**
@@ -175,17 +145,21 @@ export class Dashboard implements OnInit {
     this.closeRegisterProducerModal();
     this.loadProducers(); // Recargar estadísticas
     
-    // Agregar actividad reciente
-    const newActivity: Activity = {
-      id: Date.now().toString(),
-      type: 'producer',
-      icon: 'fas fa-user-plus',
-      description: `Nuevo productor registrado: ${producer.name} - ${producer.province}`,
-      timestamp: new Date()
-    };
-    
-    const currentActivities = this.recentActivities();
-    this.recentActivities.set([newActivity, ...currentActivities.slice(0, 9)]);
+    // Log activity to Firebase
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser?.uid) {
+      this.activityService.logProducerRegistration(
+        producer.name, 
+        producer.province || 'N/A', 
+        currentUser.uid
+      ).subscribe({
+        next: () => {
+          // Reload activities to include the new one
+          this.loadRecentActivities();
+        },
+        error: (error) => console.error('Error logging activity:', error)
+      });
+    }
   }
 
   /**
@@ -209,17 +183,21 @@ export class Dashboard implements OnInit {
     this.closeRegisterProductModal();
     this.loadProducts(); // Recargar estadísticas
     
-    // Agregar actividad reciente
-    const newActivity: Activity = {
-      id: Date.now().toString(),
-      type: 'product',
-      icon: 'fas fa-plus-circle',
-      description: `Nuevo producto registrado: ${product.name}`,
-      timestamp: new Date()
-    };
-    
-    const currentActivities = this.recentActivities();
-    this.recentActivities.set([newActivity, ...currentActivities.slice(0, 9)]);
+    // Log activity to Firebase
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser?.uid) {
+      this.activityService.logProductRegistration(
+        product.name, 
+        product.category, 
+        currentUser.uid
+      ).subscribe({
+        next: () => {
+          // Reload activities to include the new one
+          this.loadRecentActivities();
+        },
+        error: (error) => console.error('Error logging activity:', error)
+      });
+    }
   }
 
   /**
@@ -244,17 +222,22 @@ export class Dashboard implements OnInit {
     this.loadInventoryEntries(); // Recargar estadísticas
     this.loadLowStockProducts(); // Actualizar stock bajo
     
-    // Agregar actividad reciente
-    const newActivity: Activity = {
-      id: Date.now().toString(),
-      type: 'inventory',
-      icon: 'fas fa-truck',
-      description: `Nueva entrega registrada - ${entry.quantity} ${entry.unit}`,
-      timestamp: new Date()
-    };
-    
-    const currentActivities = this.recentActivities();
-    this.recentActivities.set([newActivity, ...currentActivities.slice(0, 9)]);
+    // Log activity to Firebase
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser?.uid) {
+      this.activityService.logInventoryEntry(
+        entry.productName || 'Producto', 
+        entry.quantity, 
+        entry.unit, 
+        currentUser.uid
+      ).subscribe({
+        next: () => {
+          // Reload activities to include the new one
+          this.loadRecentActivities();
+        },
+        error: (error) => console.error('Error logging activity:', error)
+      });
+    }
   }
 
   /**
