@@ -137,6 +137,9 @@ export class Login implements OnInit {
 
     this.isLoading.set(true);
     this.errorMessage.set('');
+    
+    // Disable form controls during loading
+    this.loginForm.disable();
 
     try {
       const formValue = this.loginForm.value;
@@ -195,6 +198,8 @@ export class Login implements OnInit {
       
     } finally {
       this.isLoading.set(false);
+      // Re-enable form controls
+      this.loginForm.enable();
     }
   }
 
@@ -207,6 +212,9 @@ export class Login implements OnInit {
     
     this.isGoogleLoading.set(true);
     this.errorMessage.set('');
+    
+    // Disable form controls during Google login
+    this.loginForm.disable();
     
     try {
       const result = await this.authService.loginWithGoogle().toPromise();
@@ -260,6 +268,8 @@ export class Login implements OnInit {
       
     } finally {
       this.isGoogleLoading.set(false);
+      // Re-enable form controls
+      this.loginForm.enable();
     }
   }
 
@@ -370,6 +380,13 @@ export class Login implements OnInit {
    */
   protected get passwordControl(): AbstractControl | null {
     return this.getControl('password');
+  }
+
+  /**
+   * Check if the form is currently disabled
+   */
+  protected get isFormDisabled(): boolean {
+    return this.loginForm.disabled;
   }
 
 }

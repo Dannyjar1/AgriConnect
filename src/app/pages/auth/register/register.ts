@@ -306,6 +306,9 @@ export class Register {
 
     this.isLoading.set(true);
     this.errorMessage.set('');
+    
+    // Disable form controls during loading
+    this.registerForm.disable();
 
     try {
       const formValue = this.registerForm.value;
@@ -352,6 +355,8 @@ export class Register {
       
     } finally {
       this.isLoading.set(false);
+      // Re-enable form controls
+      this.registerForm.enable();
     }
   }
 
@@ -393,6 +398,13 @@ export class Register {
   }
 
   /**
+   * Check if the form is currently disabled
+   */
+  protected get isFormDisabled(): boolean {
+    return this.registerForm.disabled;
+  }
+
+  /**
    * Handle Google registration
    */
   protected async registerWithGoogle(): Promise<void> {
@@ -401,6 +413,9 @@ export class Register {
     
     this.isGoogleLoading.set(true);
     this.errorMessage.set('');
+    
+    // Disable form controls during Google registration
+    this.registerForm.disable();
     
     try {
       await this.authService.registerWithGoogle().toPromise();
@@ -440,6 +455,8 @@ export class Register {
       
     } finally {
       this.isGoogleLoading.set(false);
+      // Re-enable form controls
+      this.registerForm.enable();
     }
   }
 }
