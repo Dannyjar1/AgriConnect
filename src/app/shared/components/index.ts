@@ -1,7 +1,7 @@
 /**
  * Shared Components Index - AgriConnect Angular 20
  * 
- * Centralized exports for all shared components following Angular 20 conventions.
+ * Centralized esxports for all shared components following Angular 20 conventions.
  * This allows for cleaner imports across the application.
  * 
  * Usage:
