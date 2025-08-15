@@ -1,0 +1,223 @@
+/* BillingModal Component Styles - TailwindCSS v4 Compatible */
+
+/* Modal animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal backdrop */
+.fixed.inset-0.bg-gray-900\/60 {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Modal panel */
+.bg-white.rounded-2xl {
+  animation: modalSlideUp 0.4s ease-out;
+}
+
+/* Custom input field styles for consistency */
+.input-field {
+  @apply w-full px-4 py-3 text-sm border border-gray-300 rounded-lg 
+         bg-white placeholder-gray-500 text-gray-900 
+         focus:border-agri-green-500 focus:ring-2 focus:ring-agri-green-500 focus:ring-opacity-20
+         transition-all duration-200;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-agri-green-500);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.input-field.border-red-500 {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.input-field.border-red-500:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Button styles */
+.btn-primary {
+  @apply bg-agri-green-600 hover:bg-agri-green-700 text-white font-semibold px-6 py-3 rounded-lg 
+         transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-agri-green-500 focus:ring-offset-2;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-3 rounded-lg 
+         transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+/* Search results styling */
+.max-h-48.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-agri-green-300) var(--color-gray-100);
+}
+
+.max-h-48.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.max-h-48.overflow-y-auto::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: 3px;
+}
+
+.max-h-48.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: var(--color-agri-green-300);
+  border-radius: 3px;
+}
+
+.max-h-48.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: var(--color-agri-green-400);
+}
+
+/* Saved address cards hover effects */
+.cursor-pointer .border.rounded-lg {
+  transition: all 0.2s ease-in-out;
+}
+
+.cursor-pointer .border.rounded-lg:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Coordinates display styling */
+.bg-agri-green-50.rounded-lg {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-agri-green-50.rounded-lg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-agri-green-500);
+}
+
+/* Loading spinner customization */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form validation states */
+.space-y-2 .text-red-600 {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Checkbox and radio styling */
+input[type="checkbox"], input[type="radio"] {
+  accent-color: var(--color-agri-green-600);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .max-w-4xl {
+    max-width: calc(100vw - 2rem);
+    margin: 1rem;
+  }
+  
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .flex.justify-end.space-x-4 {
+    flex-direction: column;
+    space-x: 0;
+    gap: 0.75rem;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Focus trap for accessibility */
+.fixed.inset-0[role="dialog"] {
+  isolation: isolate;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .input-field {
+    border-width: 2px;
+  }
+  
+  .btn-primary, .btn-secondary {
+    border: 2px solid transparent;
+  }
+  
+  .btn-primary {
+    border-color: var(--color-agri-green-700);
+  }
+  
+  .btn-secondary {
+    border-color: var(--color-gray-400);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .fixed.inset-0.bg-gray-900\/60,
+  .bg-white.rounded-2xl,
+  .cursor-pointer .border.rounded-lg,
+  .input-field,
+  .btn-primary,
+  .btn-secondary {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .fixed.inset-0 {
+    position: static;
+    background: white;
+  }
+  
+  .bg-white.rounded-2xl {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  button {
+    display: none;
+  }
+}
