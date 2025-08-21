@@ -89,6 +89,18 @@
            (keydown.space)="navigateToProductores()">
           Productores
         </a>
+        
+        <!-- Recetas -->
+        <a (click)="navigateToRecetas()" 
+           [class]="isActivePage('recetas') ? 
+             'text-agri-green-600 font-semibold px-3 py-2 rounded-lg bg-white font-epilogue cursor-pointer whitespace-nowrap transition-all' : 
+             'text-white hover:text-green-100 font-medium px-3 py-2 rounded-lg hover:bg-agri-green-700 transition-all font-epilogue cursor-pointer whitespace-nowrap'"
+           role="button"
+           tabindex="0"
+           (keydown.enter)="navigateToRecetas()"
+           (keydown.space)="navigateToRecetas()">
+          Recetas
+        </a>
       </div>
       
       <!-- Right Actions -->
@@ -211,6 +223,20 @@
           <div class="flex items-center space-x-3">
             <span class="material-icons text-xl">agriculture</span>
             <span>Productores</span>
+          </div>
+        </a>
+        
+        <a (click)="navigateToRecetas()" 
+           [class]="isActivePage('recetas') ? 
+             'block text-agri-green-600 font-semibold px-4 py-3 rounded-lg bg-agri-green-50 font-epilogue cursor-pointer' : 
+             'block text-gray-600 hover:text-agri-green-600 font-medium px-4 py-3 rounded-lg hover:bg-gray-50 transition-all font-epilogue cursor-pointer'"
+           role="button"
+           tabindex="0"
+           (keydown.enter)="navigateToRecetas()"
+           (keydown.space)="navigateToRecetas()">
+          <div class="flex items-center space-x-3">
+            <span class="material-icons text-xl">restaurant</span>
+            <span>Recetas</span>
           </div>
         </a>
         

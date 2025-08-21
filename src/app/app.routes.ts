@@ -46,6 +46,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/productores/productores').then(m => m.ProductoresComponent)
   },
   {
+    path: 'recetas',
+    loadComponent: () => import('./pages/recetas/recetas').then(m => m.Recetas)
+  },
+  {
     path: 'carrito',
     loadComponent: () => import('./pages/carrito/carrito').then(m => m.CarritoComponent),
     canActivate: [cartGuard]

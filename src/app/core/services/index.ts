@@ -10,4 +10,5 @@ export { Firebase } from './firebase';
 export * from './auth.service';
 export * from './email.service';
 export * from './product.service';
+export * from './recipe.service';
 export * from './order';

@@ -117,6 +117,14 @@ export class SharedHeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Navegación a la página de recetas
+   */
+  navigateToRecetas(): void {
+    this.router.navigate(['/recetas']);
+    this.closeMenu();
+  }
+
+  /**
    * Navegación al perfil del usuario
    */
   navigateToProfile(): void {
