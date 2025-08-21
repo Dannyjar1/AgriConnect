@@ -474,6 +474,14 @@
       background-color: #ecfdf5;
     }
 
+    .bg-blue-100 {
+      background-color: #dbeafe;
+    }
+
+    .bg-purple-100 {
+      background-color: #ede9fe;
+    }
+
     .bg-black {
       background-color: #000000;
     }
@@ -536,6 +544,22 @@
 
     .text-green-100 {
       color: #dcfce7;
+    }
+
+    .text-blue-800 {
+      color: #1e40af;
+    }
+
+    .text-blue-900 {
+      color: #1e3a8a;
+    }
+
+    .text-purple-800 {
+      color: #6b21a8;
+    }
+
+    .text-purple-900 {
+      color: #581c87;
     }
 
     .border {
@@ -818,6 +842,108 @@
       color: #b91c1c;
     }
 
+    .hover\:text-agri-green-900:hover {
+      color: var(--color-agri-green-900);
+    }
+
+    .hover\:text-blue-900:hover {
+      color: #1e3a8a;
+    }
+
+    .hover\:text-purple-900:hover {
+      color: #581c87;
+    }
+
+    .hover\:scale-105:hover {
+      transform: scale(1.05);
+    }
+
+    .block {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .inline-flex {
+      display: inline-flex;
+    }
+
+    .gap-2 > * + * {
+      margin-left: 0.5rem;
+    }
+
+    .gap-3 > * + * {
+      margin-left: 0.75rem;
+    }
+
+    .gap-4 > * + * {
+      margin-left: 1rem;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .flex-row {
+      flex-direction: row;
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+
+    .mx-1 {
+      margin-left: 0.25rem;
+      margin-right: 0.25rem;
+    }
+
+    .max-w-md {
+      max-width: 28rem;
+    }
+
+    .max-w-2xl {
+      max-width: 42rem;
+    }
+
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .ml-1 {
+      margin-left: 0.25rem;
+    }
+
+    .mt-3 {
+      margin-top: 0.75rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    .mr-1 {
+      margin-right: 0.25rem;
+    }
+
+    .underline {
+      text-decoration: underline;
+    }
+
+    .rounded-xl {
+      border-radius: 0.75rem;
+    }
+
+    .w-12 {
+      width: 3rem;
+    }
+
+    .h-12 {
+      height: 3rem;
+    }
+
     .animate-pulse {
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
@@ -828,6 +954,19 @@
       }
       50% {
         opacity: .5;
+      }
+    }
+
+    /* Responsive utilities */
+    @media (min-width: 640px) {
+      .sm\:flex-row {
+        flex-direction: row;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .md\:hidden {
+        display: none;
       }
     }
 

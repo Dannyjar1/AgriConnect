@@ -89,6 +89,9 @@ export class Recetas implements OnInit {
     return this.recipeService.getIngredientsGroupedByCategory(scaled);
   });
 
+  // Signal para contar resultados filtrados
+  readonly filteredRecipesCount = signal<number>(0);
+
   constructor() {
     // Configurar filtros reactivos
     this.filteredRecipes$ = combineLatest([
@@ -99,7 +102,11 @@ export class Recetas implements OnInit {
         distinctUntilChanged()
       )
     ]).pipe(
-      map(([recipes, filters]) => this.filterRecipes(recipes, filters))
+      map(([recipes, filters]) => {
+        const filtered = this.filterRecipes(recipes, filters);
+        this.filteredRecipesCount.set(filtered.length);
+        return filtered;
+      })
     );
 
     // Suscribirse a errores del servicio
@@ -128,18 +135,27 @@ export class Recetas implements OnInit {
   }
 
   private filterRecipes(recipes: Recipe[], filters: Partial<RecipeSearchForm>): Recipe[] {
-    if (!recipes || !filters) return recipes;
+    if (!recipes) return [];
+    if (!filters) return recipes;
 
     return recipes.filter(recipe => {
-      // Filtro por término de búsqueda
-      if (filters.searchTerm) {
-        const searchTerm = filters.searchTerm.toLowerCase();
-        const matchesSearch = 
-          recipe.nombre.toLowerCase().includes(searchTerm) ||
-          recipe.descripcion?.toLowerCase().includes(searchTerm) ||
-          recipe.ingredientes.some(ingredient => 
-            ingredient.nombre.toLowerCase().includes(searchTerm)
+      // Filtro por término de búsqueda - mejorado para búsqueda más flexible
+      if (filters.searchTerm && filters.searchTerm.trim()) {
+        const searchTerm = filters.searchTerm.toLowerCase().trim();
+        const searchWords = searchTerm.split(/\s+/); // Dividir por espacios para búsqueda por palabras
+        
+        const matchesSearch = searchWords.every(word => {
+          return (
+            recipe.nombre.toLowerCase().includes(word) ||
+            recipe.descripcion?.toLowerCase().includes(word) ||
+            recipe.categoria?.toLowerCase().includes(word) ||
+            recipe.ingredientes.some(ingredient => 
+              ingredient.nombre.toLowerCase().includes(word) ||
+              ingredient.categoria.toLowerCase().includes(word)
+            )
           );
+        });
+        
         if (!matchesSearch) return false;
       }
 
@@ -274,5 +290,37 @@ export class Recetas implements OnInit {
   getPreparationTimeText(time?: number): string {
     if (!time) return 'Tiempo no especificado';
     return time < 60 ? `${time} min` : `${Math.floor(time / 60)}h ${time % 60}min`;
+  }
+
+  /**
+   * Handle search form submission (Enter key)
+   * Scroll to recipes section automatically
+   */
+  onSearchSubmit(): void {
+    const recipesSection = document.getElementById('recetas-disponibles');
+    if (recipesSection) {
+      recipesSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }
+
+  /**
+   * Get search results count for display
+   */
+  getSearchResultsCount(): number {
+    return this.filteredRecipesCount();
+  }
+
+  /**
+   * Check if search has active terms
+   */
+  hasActiveSearch(): boolean {
+    const searchTerm = this.searchForm.get('searchTerm')?.value;
+    const category = this.searchForm.get('category')?.value;
+    const difficulty = this.searchForm.get('difficulty')?.value;
+    
+    return !!(searchTerm || (category && category !== 'Todas') || (difficulty && difficulty !== 'Todas'));
   }
 }

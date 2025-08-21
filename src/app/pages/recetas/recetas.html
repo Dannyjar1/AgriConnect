@@ -39,40 +39,39 @@
                loading="lazy">
         </div>
         
-        <!-- Primary Search Bar -->
+        <!-- Enhanced Search Bar with Enter submission -->
         <div class="mb-8">
-          <form [formGroup]="searchForm" class="max-w-2xl mx-auto">
+          <form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" class="max-w-2xl mx-auto">
             <div class="relative">
               <span class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 material-icons text-2xl">search</span>
               <input 
                 type="text" 
                 formControlName="searchTerm"
-                placeholder="Busca recetas, ingredientes..."
+                placeholder="Busca recetas por nombre o ingredientes (ej: 'papa', 'tortilla')..."
                 class="w-full pl-16 pr-6 py-6 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-agri-green-100 focus:border-agri-green-500 transition-all duration-300 bg-white shadow-lg"
-                aria-label="Buscar recetas">
+                aria-label="Buscar recetas por nombre o ingredientes">
+              
+              <!-- Search button (visible on mobile) -->
+              <button 
+                type="submit"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-agri-green-600 hover:bg-agri-green-700 text-white w-12 h-12 rounded-xl transition-all hover:scale-105 md:hidden">
+                <span class="material-icons">search</span>
+              </button>
             </div>
+            
+            <!-- Hidden submit button for Enter key functionality -->
+            <button type="submit" class="hidden" aria-hidden="true">Buscar</button>
           </form>
-        </div>
-        
-        <!-- Portions Selector -->
-        <div class="max-w-md mx-auto">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Número de personas:</label>
-          <div class="flex items-center justify-center space-x-4">
-            <button 
-              type="button"
-              (click)="updatePortions(selectedPortions() - 1)"
-              [disabled]="selectedPortions() <= 1"
-              class="w-10 h-10 rounded-full bg-agri-green-600 text-white hover:bg-agri-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all">
-              <span class="material-icons">remove</span>
-            </button>
-            <span class="text-2xl font-bold text-agri-green-600 min-w-[3rem] text-center">{{ selectedPortions() }}</span>
-            <button 
-              type="button"
-              (click)="updatePortions(selectedPortions() + 1)"
-              [disabled]="selectedPortions() >= 50"
-              class="w-10 h-10 rounded-full bg-agri-green-600 text-white hover:bg-agri-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all">
-              <span class="material-icons">add</span>
-            </button>
+          
+          <!-- Search suggestions -->
+          <div class="max-w-2xl mx-auto mt-3">
+            <p class="text-sm text-gray-500 text-center">
+              <span class="font-medium">Prueba buscar:</span> 
+              <button type="button" (click)="searchForm.patchValue({searchTerm: 'papa'})" class="text-agri-green-600 hover:text-agri-green-700 mx-1 underline">papa</button>, 
+              <button type="button" (click)="searchForm.patchValue({searchTerm: 'tortilla'})" class="text-agri-green-600 hover:text-agri-green-700 mx-1 underline">tortilla</button>, 
+              <button type="button" (click)="searchForm.patchValue({searchTerm: 'tomate'})" class="text-agri-green-600 hover:text-agri-green-700 mx-1 underline">tomate</button>
+              <span class="ml-2 text-xs">• Presiona Enter para ir a resultados</span>
+            </p>
           </div>
         </div>
       </div>
@@ -137,13 +136,61 @@
     </section>
 
     <!-- Recipes Grid Section -->
-    <section class="py-12">
+    <section class="py-12" id="recetas-disponibles">
       <div class="max-w-6xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold text-gray-900 mb-4 font-epilogue">Recetas Disponibles</h2>
+          <h2 class="text-4xl font-bold text-gray-900 mb-4 font-epilogue">
+            Recetas Disponibles
+            @if (hasActiveSearch()) {
+              <span class="text-lg font-normal text-agri-green-600 block mt-2">
+                ({{ getSearchResultsCount() }} {{ getSearchResultsCount() === 1 ? 'resultado' : 'resultados' }} {{ getSearchResultsCount() === 1 ? 'encontrado' : 'encontrados' }})
+              </span>
+            }
+          </h2>
           <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            Selecciona una receta y personaliza las cantidades según el número de personas
+            @if (hasActiveSearch()) {
+              Resultados de tu búsqueda. Selecciona una receta para ver los ingredientes escalados
+            } @else {
+              Selecciona una receta y personaliza las cantidades según el número de personas
+            }
           </p>
+          
+          <!-- Active search indicator -->
+          @if (hasActiveSearch()) {
+            <div class="mt-6 flex flex-wrap justify-center gap-2">
+              @if (searchForm.get('searchTerm')?.value) {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-agri-green-100 text-agri-green-800">
+                  <span class="material-icons text-sm mr-1">search</span>
+                  "{{ searchForm.get('searchTerm')?.value }}"
+                  <button type="button" (click)="searchForm.patchValue({searchTerm: ''})" class="ml-2 hover:text-agri-green-900">
+                    <span class="material-icons text-sm">close</span>
+                  </button>
+                </span>
+              }
+              @if (searchForm.get('category')?.value && searchForm.get('category')?.value !== 'Todas') {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  <span class="material-icons text-sm mr-1">category</span>
+                  {{ searchForm.get('category')?.value }}
+                  <button type="button" (click)="searchForm.patchValue({category: 'Todas'})" class="ml-2 hover:text-blue-900">
+                    <span class="material-icons text-sm">close</span>
+                  </button>
+                </span>
+              }
+              @if (searchForm.get('difficulty')?.value && searchForm.get('difficulty')?.value !== 'Todas') {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                  <span class="material-icons text-sm mr-1">star</span>
+                  {{ searchForm.get('difficulty')?.value }}
+                  <button type="button" (click)="searchForm.patchValue({difficulty: 'Todas'})" class="ml-2 hover:text-purple-900">
+                    <span class="material-icons text-sm">close</span>
+                  </button>
+                </span>
+              }
+              <button type="button" (click)="onClearFilters()" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+                <span class="material-icons text-sm mr-1">clear_all</span>
+                Limpiar filtros
+              </button>
+            </div>
+          }
         </div>
         
         @if (isLoading()) {
@@ -211,14 +258,51 @@
               }
             } @else {
               <div class="col-span-full text-center py-20">
-                <div class="text-8xl mb-8 opacity-60">🍳</div>
-                <h3 class="text-2xl font-bold text-gray-700 mb-4 font-epilogue">No se encontraron recetas</h3>
+                <div class="text-8xl mb-8 opacity-60">
+                  @if (hasActiveSearch()) {
+                    🔍
+                  } @else {
+                    🍳
+                  }
+                </div>
+                <h3 class="text-2xl font-bold text-gray-700 mb-4 font-epilogue">
+                  @if (hasActiveSearch()) {
+                    No se encontraron recetas para tu búsqueda
+                  } @else {
+                    No hay recetas disponibles
+                  }
+                </h3>
                 <p class="text-gray-600 mb-8 max-w-md mx-auto">
-                  Prueba ajustando tus criterios de búsqueda o navega por nuestras categorías sugeridas
+                  @if (hasActiveSearch()) {
+                    @if (searchForm.get('searchTerm')?.value) {
+                      No encontramos recetas que contengan "<strong>{{ searchForm.get('searchTerm')?.value }}</strong>". 
+                      Prueba con términos como "papa", "tortilla", "tomate" o ajusta tus filtros.
+                    } @else {
+                      Prueba ajustando tus criterios de búsqueda o navega por nuestras categorías sugeridas
+                    }
+                  } @else {
+                    Parece que aún no hay recetas cargadas en el sistema. Vuelve pronto para descubrir deliciosas recetas.
+                  }
                 </p>
-                <button (click)="onClearFilters()" class="btn-primary">
-                  Ver Todas las Recetas
-                </button>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                  @if (hasActiveSearch()) {
+                    <button (click)="onClearFilters()" class="btn-primary">
+                      <span class="material-icons mr-2 text-sm">clear_all</span>
+                      Ver Todas las Recetas
+                    </button>
+                    @if (searchForm.get('searchTerm')?.value) {
+                      <button (click)="searchForm.patchValue({searchTerm: 'papa'})" class="btn-secondary">
+                        <span class="material-icons mr-2 text-sm">search</span>
+                        Buscar "papa"
+                      </button>
+                    }
+                  } @else {
+                    <button (click)="loadRecipes()" class="btn-primary">
+                      <span class="material-icons mr-2 text-sm">refresh</span>
+                      Recargar Recetas
+                    </button>
+                  }
+                </div>
               </div>
             }
           }
