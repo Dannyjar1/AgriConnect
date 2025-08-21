@@ -51,6 +51,7 @@ export class SharedHeaderComponent implements OnInit, OnDestroy {
    */
   protected readonly logoLoadError = signal<boolean>(false);
   protected readonly logoLoaded = signal<boolean>(false);
+  protected imageLoadError = false;
 
   /**
    * Cart count for real-time updates
@@ -166,6 +167,21 @@ export class SharedHeaderComponent implements OnInit, OnDestroy {
   onLogoError(): void {
     this.logoLoadError.set(true);
     this.logoLoaded.set(false);
+  }
+
+  /**
+   * Handle SVG logo loading errors gracefully
+   * Falls back to agricultural-themed SVG icon
+   */
+  onImageError(event: Event): void {
+    console.warn('AgriConnect logo failed to load, using fallback icon');
+    this.imageLoadError = true;
+    
+    // Hide the failed image element
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.style.display = 'none';
+    }
   }
 
   /**
