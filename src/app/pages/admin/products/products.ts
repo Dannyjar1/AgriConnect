@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { ProductService } from '../../../core/services/product.service';
 import { ProducerService } from '../../../core/services/producer.service';
 import { Product } from '../../../core/models/product.model';
@@ -68,7 +69,7 @@ export class Products implements OnInit {
         this.isLoading.set(true);
         try {
             const products$ = this.productService.getProducts();
-            const products = await products$.toPromise();
+            const products = await firstValueFrom(products$);
             this.products.set(products || []);
         } catch (error) {
             console.error('Error cargando productos:', error);
@@ -83,7 +84,7 @@ export class Products implements OnInit {
     private async loadProducers(): Promise<void> {
         try {
             const producers$ = this.producerService.getProducers();
-            const producers = await producers$.toPromise();
+            const producers = await firstValueFrom(producers$);
             this.producers.set(producers || []);
         } catch (error) {
             console.error('Error cargando productores:', error);

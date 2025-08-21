@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
-import { AdminHeaderComponent } from '../../../shared/components/admin-header/admin-header.component';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AdminHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './users.html',
   styleUrl: './users.scss'
 })

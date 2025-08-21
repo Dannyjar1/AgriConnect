@@ -119,7 +119,7 @@ export class Recetas implements OnInit {
     this.loadRecipes();
   }
 
-  private loadRecipes(): void {
+  public loadRecipes(): void {
     this.isLoading.set(true);
     this.recipeService.getRecipes().subscribe({
       next: (recipes) => {

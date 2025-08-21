@@ -31,3 +31,13 @@ export { RoleSelectionModal } from './role-selection-modal/role-selection-modal'
 
 // Utility components
 export { AutoRedirect } from './auto-redirect/auto-redirect';
+
+// Admin components
+export { AdminHeaderComponent } from './admin-header/admin-header.component';
+export { RegisterProductModal } from './register-product-modal/register-product-modal';
+export { SeedButtonComponent } from './seed-button/seed-button.component';
+export { BillingModal } from './billing-modal/billing-modal';
+
+// Image upload components
+export { ImageUploadComponent } from './image-upload/image-upload.component';
+export type { UploadedImage } from './image-upload/image-upload.component';

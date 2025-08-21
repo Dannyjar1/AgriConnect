@@ -7,5 +7,16 @@ export const environment = {
     storageBucket: "agriconnect-6f074.firebasestorage.app",
     messagingSenderId: "516989396690",
     appId: "1:516989396690:web:eb73c4f06aa59adf1a6f0b"
+  },
+   cloudinary: {
+    cloudName: 'dnyidkcvk',
+    uploadPreset: 'productos', // Configurado con carpeta 'productos'
+    // Upload Preset configurado como:
+    // - Sobrescribir: true
+    // - Nombre único: false  
+    // - Usar nombre como display: true
+    // - Carpeta: productos
+    // - Tipo: upload
   }
 };
+

@@ -1,15 +1,17 @@
-import { Component, EventEmitter, Output, inject, signal, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, inject, signal, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { ProductService } from '../../../core/services/product.service';
 import { ProducerService } from '../../../core/services/producer.service';
 import { Product } from '../../../core/models/product.model';
 import { Producer } from '../../../core/models/user.model';
+import { ImageUploadComponent, UploadedImage } from '../image-upload/image-upload.component';
 
 @Component({
   selector: 'app-register-product-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ImageUploadComponent],
   template: `
     <!-- Backdrop -->
     <div class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" 
@@ -311,6 +313,23 @@ import { Producer } from '../../../core/models/user.model';
               </div>
             </div>
 
+            <!-- Image Upload Section -->
+            <div class="mb-8">
+              <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Imágenes del Producto</h3>
+              </div>
+              
+              <app-image-upload
+                [maxImages]="5"
+                (imagesChanged)="onImagesChanged($event)">
+              </app-image-upload>
+            </div>
+
             <!-- Certifications Section -->
             <div class="mb-8">
               <div class="flex items-center mb-6">
@@ -390,6 +409,7 @@ import { Producer } from '../../../core/models/user.model';
 export class RegisterProductModal implements OnInit {
   @Output() onClose = new EventEmitter<void>();
   @Output() onProductRegistered = new EventEmitter<Product>();
+  @ViewChild(ImageUploadComponent) imageUpload!: ImageUploadComponent;
 
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
@@ -398,6 +418,7 @@ export class RegisterProductModal implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly errorMessage = signal<string>('');
   readonly producers = signal<Producer[]>([]);
+  readonly productImages = signal<UploadedImage[]>([]);
 
   readonly categories = [
     'Frutas', 'Verduras y Hortalizas', 'Lácteos', 'Carne y Aves',
@@ -460,6 +481,13 @@ export class RegisterProductModal implements OnInit {
     }
   }
 
+  /**
+   * Handle image upload changes
+   */
+  onImagesChanged(images: UploadedImage[]): void {
+    this.productImages.set(images);
+  }
+
   isFieldInvalid(fieldName: string): boolean {
     const field = this.productForm.get(fieldName);
     return !!(field?.invalid && (field.dirty || field.touched));
@@ -499,7 +527,7 @@ export class RegisterProductModal implements OnInit {
         producerId: formValue.producerId!,
         category: formValue.category!,
         description: formValue.description!,
-        images: [], // Por ahora vacío, se puede agregar funcionalidad de subida de imágenes después
+        images: this.productImages().map(img => img.url),
         price: {
           perUnit: formValue.pricePerUnit!,
           unit: formValue.unit!,
@@ -512,10 +540,10 @@ export class RegisterProductModal implements OnInit {
         isActive: true
       };
 
-      const productId = await this.productService.createProduct(productData).toPromise();
+      const productId = await firstValueFrom(this.productService.createProduct(productData));
       
       const newProduct: Product = {
-        id: productId!,
+        id: productId,
         ...productData,
         registeredBy: '', // Se llenará en el servicio
         createdAt: new Date(),
@@ -523,7 +551,11 @@ export class RegisterProductModal implements OnInit {
         isActive: true
       };
 
+      // Emit success - el componente padre cerrará el modal
       this.onProductRegistered.emit(newProduct);
+      
+      // Show success feedback
+      console.log('Producto registrado exitosamente:', productId);
     } catch (error: any) {
       console.error('Error registrando producto:', error);
       this.errorMessage.set(error.message || 'Error al registrar el producto');
